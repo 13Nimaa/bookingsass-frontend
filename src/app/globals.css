@@ -1,33 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --background: #fbf8f3;
+  --foreground: #221f1c;
+  --primary: #a8492e;
+  --primary-hover: #944028;
+  --accent-muted: #6b7a5e;
   --surface: #ffffff;
-  --surface-elevated: #f8fafc;
-  --border: #e2e8f0;
-  --error: #dc2626;
-  --success: #16a34a;
-  --warning: #d97706;
-  --muted: #64748b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-    --primary: #6366f1;
-    --primary-hover: #818cf8;
-    --surface: #1e293b;
-    --surface-elevated: #334155;
-    --border: #334155;
-    --error: #ef4444;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --muted: #94a3b8;
-  }
+  --surface-elevated: #f5f0e8;
+  --border: #e4ddd1;
+  --error: #b3423a;
+  --success: #6b7a5e;
+  --warning: #a8662e;
+  --muted: #7d756b;
 }
 
 @theme inline {
@@ -35,6 +20,7 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-accent-muted: var(--accent-muted);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
   --color-border: var(--border);
@@ -42,8 +28,10 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-muted: var(--muted);
-  --font-sans: var(--font-vazirmatn);
-  --font-mono: var(--font-vazirmatn);
+  /* Body stack: Inter for Latin, Vazirmatn for Persian — next/font provides both */
+  --font-sans: var(--font-inter), var(--font-vazirmatn), system-ui, sans-serif;
+  /* Display stack: Fraunces for Latin headlines, Vazirmatn covers Persian */
+  --font-display: var(--font-fraunces), var(--font-vazirmatn), serif;
 }
 
 body {

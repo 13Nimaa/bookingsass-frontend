@@ -162,11 +162,12 @@ async function doRefresh(
 ): Promise<boolean> {
   try {
     const res = await fetch("/api/auth/refresh", { method: "POST" });
-    if (res.status === 429) {
-      // Rate-limited, not a dead session — keep state, caller retries later
+    if (res.status === 429 || res.status >= 500) {
+      // Rate-limited or backend down — transient, keep state, caller retries later
       return false;
     }
     if (!res.ok) {
+      
       set({
         user: null,
         accessToken: null,

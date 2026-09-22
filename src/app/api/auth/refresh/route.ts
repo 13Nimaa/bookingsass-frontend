@@ -11,10 +11,16 @@ export async function POST() {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const backendRes = await proxyToBackend("/api/auth/refresh", {
-    method: "POST",
-    body: JSON.stringify({ refreshToken }),
-  });
+  let backendRes: Response;
+  try {
+    backendRes = await proxyToBackend("/api/auth/refresh", {
+      method: "POST",
+      body: JSON.stringify({ refreshToken }),
+    });
+  } catch {
+    // Backend unreachable — transient, don't clear the cookie
+    return new NextResponse("Backend unavailable", { status: 503 });
+  }
 
   if (!backendRes.ok) {
     // Rate limit is not an auth failure — forward it and keep the cookie
