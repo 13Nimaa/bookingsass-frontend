@@ -1,40 +1,19 @@
-"use client";
+import * as React from "react"
+import { Input as InputPrimitive } from "@base-ui/react/input"
+import { cn } from "cn"
 
-import { forwardRef, useId } from "react";
-
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  error?: string;
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+  return (
+    <InputPrimitive
+      type={type}
+      data-slot="input"
+      className={cn(
+        "h-8 w-full min-w-0 rounded-2xl border border-transparent bg-input/50 px-2.5 py-1 text-base transition-[color,box-shadow] duration-200 outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, error, id, className = "", ...props },
-  ref
-) {
-  const autoId = useId();
-  const inputId = id ?? autoId;
-  const errorId = `${inputId}-error`;
-
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={inputId} className="text-sm font-medium text-foreground">
-        {label}
-      </label>
-      <input
-        ref={ref}
-        id={inputId}
-        aria-invalid={!!error}
-        aria-describedby={error ? errorId : undefined}
-        className={`h-10 w-full rounded-md border bg-surface px-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-          error ? "border-error" : "border-border"
-        } ${className}`}
-        {...props}
-      />
-      {error && (
-        <p id={errorId} className="text-xs text-error">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-});
+export { Input }

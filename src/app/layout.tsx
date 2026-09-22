@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { Vazirmatn, Fraunces, Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
+import "@fontsource-variable/estedad";
 import { SessionInitializer } from "@/components/session-initializer";
 import "./globals.css";
-
-const vazirmatn = Vazirmatn({
-  variable: "--font-vazirmatn",
-  subsets: ["arabic"],
-});
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -28,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fa"
       dir="rtl"
-      className={`${vazirmatn.variable} ${fraunces.variable} ${inter.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <SessionInitializer />

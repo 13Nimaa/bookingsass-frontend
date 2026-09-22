@@ -54,30 +54,48 @@ export function BusinessForm({ mode, initial, onDone, onCancel }: BusinessFormPr
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
       {error && <AuthError ref={errorRef} message={error} />}
 
-      <Input
-        label="نام کسب‌وکار"
-        autoComplete="organization"
-        placeholder="مثلاً سالن زیبایی آرتا"
-        error={errors.name?.message}
-        {...register("name")}
-      />
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="business-name" className="text-sm font-medium text-foreground">
+          نام کسب‌وکار
+        </label>
+        <Input
+          id="business-name"
+          aria-invalid={!!errors.name}
+          autoComplete="organization"
+          placeholder="مثلاً سالن زیبایی آرتا"
+          {...register("name")}
+        />
+        {errors.name && <p className="text-xs text-error">{errors.name.message}</p>}
+      </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Input
-          label="شهر"
-          autoComplete="address-level2"
-          placeholder="مثلاً تهران"
-          error={errors.city?.message}
-          {...register("city")}
-        />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="business-city" className="text-sm font-medium text-foreground">
+            شهر
+          </label>
+          <Input
+            id="business-city"
+            aria-invalid={!!errors.city}
+            autoComplete="address-level2"
+            placeholder="مثلاً تهران"
+            {...register("city")}
+          />
+          {errors.city && <p className="text-xs text-error">{errors.city.message}</p>}
+        </div>
 
-        <Input
-          label="نشانی"
-          autoComplete="street-address"
-          placeholder="مثلاً خیابان ولیعصر، پلاک ۱۲"
-          error={errors.address?.message}
-          {...register("address")}
-        />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="business-address" className="text-sm font-medium text-foreground">
+            نشانی
+          </label>
+          <Input
+            id="business-address"
+            aria-invalid={!!errors.address}
+            autoComplete="street-address"
+            placeholder="مثلاً خیابان ولیعصر، پلاک ۱۲"
+            {...register("address")}
+          />
+          {errors.address && <p className="text-xs text-error">{errors.address.message}</p>}
+        </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -98,8 +116,12 @@ export function BusinessForm({ mode, initial, onDone, onCancel }: BusinessFormPr
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit" loading={isSubmitting} loadingText="در حال ذخیره...">
-          {mode === "create" ? "ایجاد کسب‌وکار" : "ذخیره تغییرات"}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? "در حال ذخیره..."
+            : mode === "create"
+              ? "ایجاد کسب‌وکار"
+              : "ذخیره تغییرات"}
         </Button>
         {onCancel && (
           <Button type="button" variant="ghost" onClick={() => { clearError(); onCancel(); }}>
