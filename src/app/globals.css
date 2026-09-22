@@ -166,3 +166,67 @@ body {
   font-family: var(--font-body);
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+/* ========================================
+   Landing motion
+   ======================================== */
+
+@keyframes landing-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -32px, 0) scale(1.05);
+  }
+}
+
+@keyframes landing-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-28px, 24px, 0) scale(1.04);
+  }
+}
+
+@keyframes chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.landing-drift-a {
+  animation: landing-drift-a 16s ease-in-out infinite;
+}
+
+.landing-drift-b {
+  animation: landing-drift-b 20s ease-in-out infinite;
+}
+
+.chart-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: chart-draw 1.4s ease-out 0.35s backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .landing-drift-a,
+  .landing-drift-b,
+  .chart-line {
+    animation: none;
+  }
+}
+

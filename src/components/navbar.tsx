@@ -13,8 +13,8 @@ export interface NavbarLink {
 }
 
 const DEFAULT_LINKS: readonly NavbarLink[] = [
-  { label: "امکانات", href: "/#features" },
-  { label: "نحوه کار", href: "/#how-it-works" },
+  { label: "امکانات", href: "/#capabilities" },
+  { label: "پنل مدیریت", href: "/#product" },
   { label: "قیمت‌گذاری", href: "/#pricing" },
   { label: "سوالات متداول", href: "/#faq" },
 ];
@@ -36,8 +36,16 @@ export function Navbar({
   signupHref = "/register",
 }: NavbarProps) {
   const [open, setOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
   const reduceMotion = useReducedMotion();
   const headerRef = React.useRef<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const closeMenu = React.useCallback(() => setOpen(false), []);
 
@@ -76,7 +84,9 @@ export function Navbar({
     <header
       ref={headerRef}
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-[#E5E7EB] bg-white/90 pt-[env(safe-area-inset-top)] backdrop-blur-md",
+        "sticky top-0 z-50 w-full border-b border-[#E5E7EB] bg-white/90 pt-[env(safe-area-inset-top)] backdrop-blur-md transition-shadow duration-200",
+        scrolled &&
+          "shadow-[0_1px_2px_rgba(17,24,39,0.04),0_10px_24px_-12px_rgba(17,24,39,0.10)]",
         className
       )}
     >
