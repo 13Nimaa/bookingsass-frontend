@@ -13,7 +13,7 @@ export default function LoginPage() {
   const login = useAuthStore((s) => s.login);
 
   const handleLogin = async (data: LoginFormValues) => {
-    const ok = await login(data.email, data.password);
+    const ok = await login(data.phoneNumber, data.password);
 
     if (!ok) {
       throw new Error(
@@ -28,7 +28,7 @@ export default function LoginPage() {
     const target =
       redirect && redirect.startsWith("/") && !redirect.startsWith("//")
         ? redirect
-        : "/dashboard";
+        : "/";
 
     router.push(target);
   };

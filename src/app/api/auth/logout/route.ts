@@ -12,6 +12,8 @@ export async function POST() {
     try {
       await proxyToBackend("/api/auth/logout", {
         method: "POST",
+        // Backend revokes the token from a cookie, not the JSON body.
+        headers: { Cookie: `refreshToken=${refreshToken}` },
         body: JSON.stringify({ refreshToken }),
       });
     } catch {

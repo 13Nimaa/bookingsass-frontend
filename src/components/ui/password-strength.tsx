@@ -24,6 +24,9 @@ export function PasswordStrength({ password }: { password: string }) {
   if (!password) return null;
 
   const level = LEVELS[value - 1];
+console.log(value);
+console.log(level);
+
 
   return (
     <div className="flex flex-col gap-1" aria-live="polite">
@@ -37,7 +40,7 @@ export function PasswordStrength({ password }: { password: string }) {
           />
         ))}
       </div>
-      <span className="text-xs text-muted">استحکام رمز عبور: {level.label}</span>
+      <span className="text-xs text-muted">استحکام رمز عبور: {level?.label}</span>
     </div>
   );
 }

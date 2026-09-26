@@ -15,14 +15,15 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import {
+  phoneNumberSchema,
+  registerSchema,
+  type RegisterFormData,
+} from "@/lib/validations";
 import { PasswordStrength } from "@/components/ui/password-strength";
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "ایمیل را وارد کنید.")
-    .email("فرمت ایمیل صحیح نیست."),
+  phoneNumber: phoneNumberSchema,
 
   password: z
     .string()
@@ -36,7 +37,7 @@ export type SignupFormValues = RegisterFormData;
 
 type InternalFormValues = {
   name: string;
-  email: string;
+  phoneNumber: string;
   password: string;
   confirmPassword: string;
   rememberMe: boolean;
@@ -89,7 +90,7 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
-      email: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
       rememberMe: false,
@@ -106,13 +107,13 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
       if (isSignup) {
         await props.onSubmit({
           name: data.name,
-          email: data.email,
+          phoneNumber: data.phoneNumber,
           password: data.password,
           confirmPassword: data.confirmPassword,
         });
       } else {
         await props.onSubmit({
-          email: data.email,
+          phoneNumber: data.phoneNumber,
           password: data.password,
           rememberMe: data.rememberMe,
         });
@@ -249,31 +250,31 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
             )}
 
             {/* =========================
-                EMAIL
+                PHONE NUMBER
             ========================== */}
 
             <motion.div variants={itemVariants}>
               <label
-                htmlFor="email"
+                htmlFor="phoneNumber"
                 className="mb-2 block text-sm font-medium text-[#374151]"
               >
-                ایمیل
+                شماره موبایل
               </label>
 
               <input
-                id="email"
-                type="email"
+                id="phoneNumber"
+                type="tel"
                 dir="ltr"
-                autoComplete="email"
-                placeholder="you@example.com"
+                autoComplete="tel"
+                placeholder="09123456789"
                 disabled={isLoading}
-                {...form.register("email")}
+                {...form.register("phoneNumber")}
                 className={inputClassName}
               />
 
-              {form.formState.errors.email && (
+              {form.formState.errors.phoneNumber && (
                 <p className="mt-1.5 text-xs text-[#DC2626]">
-                  {form.formState.errors.email.message}
+                  {form.formState.errors.phoneNumber.message}
                 </p>
               )}
             </motion.div>

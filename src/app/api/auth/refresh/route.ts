@@ -15,6 +15,9 @@ export async function POST() {
   try {
     backendRes = await proxyToBackend("/api/auth/refresh", {
       method: "POST",
+      // Backend reads the token from a cookie (Request.Cookies["refreshToken"]),
+      // not from the JSON body.
+      headers: { Cookie: `refreshToken=${refreshToken}` },
       body: JSON.stringify({ refreshToken }),
     });
   } catch {
@@ -38,6 +41,7 @@ export async function POST() {
 
   const data = await backendRes.json();
   const response = NextResponse.json({
+    user: data.user,
     accessToken: data.accessToken,
     expiresAt: data.expiresAt,
   });

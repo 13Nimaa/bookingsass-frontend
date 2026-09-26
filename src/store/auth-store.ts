@@ -8,7 +8,7 @@ let refreshPromise: Promise<boolean> | null = null;
 
 // Backend returns English messages; the UI is Persian-only.
 const FA_MESSAGES = {
-  loginFailed: "ایمیل یا رمز عبور اشتباه است.",
+  loginFailed: "شماره موبایل یا رمز عبور اشتباه است.",
   registerFailed: "ثبت‌نام انجام نشد. اطلاعات را بررسی کنید.",
   network: "اتصال به سرور ممکن نیست. لطفاً دوباره تلاش کنید.",
 } as const;
@@ -26,8 +26,13 @@ interface AuthState {
 }
 
 interface AuthActions {
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string, confirmPassword: string) => Promise<boolean>;
+  login: (phoneNumber: string, password: string) => Promise<boolean>;
+  register: (
+    name: string,
+    phoneNumber: string,
+    password: string,
+    confirmPassword: string
+  ) => Promise<boolean>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
   refresh: () => Promise<boolean>;
@@ -45,13 +50,13 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
   // Actions
   clearError: () => set({ error: null }),
 
-  login: async (email, password) => {
+  login: async (phoneNumber, password) => {
     set({ status: "loading", error: null });
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ phoneNumber, password }),
       });
 
       if (!res.ok) {
@@ -75,13 +80,13 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
     }
   },
 
-  register: async (name, email, password, confirmPassword) => {
+  register: async (name, phoneNumber, password, confirmPassword) => {
     set({ status: "loading", error: null });
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, confirmPassword }),
+        body: JSON.stringify({ name, phoneNumber, password, confirmPassword }),
       });
 
       if (!res.ok) {

@@ -1,7 +1,7 @@
 export interface User {
-  id: string;
+  userId: string;
   name: string;
-  email: string;
+  phoneNumber: string;
 }
 
 export interface AuthResponse {
@@ -19,13 +19,13 @@ export interface ClientAuthResponse {
 }
 
 export interface LoginRequest {
-  email: string;
+  phoneNumber: string;
   password: string;
 }
 
 export interface RegisterRequest {
   name: string;
-  email: string;
+  phoneNumber: string;
   password: string;
   confirmPassword: string;
 }

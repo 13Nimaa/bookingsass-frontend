@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "cn";
 import FloatingNav from "@/components/ui/floating-nav";
+import { useAuthStore } from "@/store/auth-store";
 
 export interface NavbarLink {
   label: string;
@@ -39,6 +40,9 @@ export function Navbar({
   const [scrolled, setScrolled] = React.useState(false);
   const reduceMotion = useReducedMotion();
   const headerRef = React.useRef<HTMLElement | null>(null);
+  const status = useAuthStore((s) => s.status);
+  const user = useAuthStore((s) => s.user);
+  const authedUser = status === "authenticated" ? user : null;
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -140,27 +144,52 @@ export function Navbar({
 
           {/* Actions */}
           <div className="flex items-center justify-self-end gap-1.5 lg:gap-2">
-            {/* Login */}
-            <Link
-              href={loginHref}
-              className={cn(
-                "hidden min-h-[44px] items-center rounded-[10px] px-3 text-[14px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827] md:inline-flex",
-                FOCUS_RING
-              )}
-            >
-              ورود
-            </Link>
+            {authedUser ? (
+              /* Logged in — show profile chip instead of auth CTAs */
+              <Link
+                href="/dashboard"
+                onClick={closeMenu}
+                aria-label={`پروفایل ${authedUser.name}`}
+                className={cn(
+                  "hidden min-h-[44px] items-center gap-2 rounded-[10px] px-2 transition-colors duration-150 hover:bg-[#F8F9FB] md:inline-flex lg:px-2.5",
+                  FOCUS_RING
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EEF2FF] text-[13px] font-semibold text-[#4F46E5]"
+                >
+                  {authedUser.name.trim().charAt(0) || "ک"}
+                </span>
+                <span className="max-w-[120px] truncate text-[14px] font-medium text-[#374151] lg:max-w-[160px]">
+                  {authedUser.name}
+                </span>
+              </Link>
+            ) : (
+              <>
+                {/* Login */}
+                <Link
+                  href={loginHref}
+                  className={cn(
+                    "hidden min-h-[44px] items-center rounded-[10px] px-3 text-[14px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827] md:inline-flex",
+                    FOCUS_RING
+                  )}
+                >
+                  ورود
+                </Link>
 
-            {/* Signup */}
-            <Link
-              href={signupHref}
-              className={cn(
-                "hidden h-10 items-center rounded-[10px] bg-[#4F46E5] px-3.5 text-[14px] font-medium text-white shadow-[0_1px_2px_rgba(17,24,39,0.05)] transition-colors duration-150 hover:bg-[#4338CA] active:bg-[#3730A3] md:inline-flex lg:px-4",
-                FOCUS_RING
-              )}
-            >
-              شروع رایگان
-            </Link>
+                {/* Signup */}
+                <Link
+                  href={signupHref}
+                  className={cn(
+                    "hidden h-10 items-center rounded-[10px] bg-[#4F46E5] px-3.5 text-[14px] font-medium text-white shadow-[0_1px_2px_rgba(17,24,39,0.05)] transition-colors duration-150 hover:bg-[#4338CA] active:bg-[#3730A3] md:inline-flex lg:px-4",
+                    FOCUS_RING
+                  )}
+                >
+                  شروع رایگان
+                </Link>
+              </>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -245,29 +274,51 @@ export function Navbar({
               </ul>
 
               <div className="mt-2 flex flex-col gap-2 border-t border-[#E5E7EB] pt-4">
-                {/* Mobile Login */}
-                <Link
-                  href={loginHref}
-                  onClick={closeMenu}
-                  className={cn(
-                    "flex min-h-[48px] items-center justify-center rounded-[10px] text-[15px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827]",
-                    FOCUS_RING
-                  )}
-                >
-                  ورود
-                </Link>
+                {authedUser ? (
+                  /* Logged in — profile link instead of auth CTAs */
+                  <Link
+                    href="/dashboard"
+                    onClick={closeMenu}
+                    className={cn(
+                      "flex min-h-[48px] items-center justify-center gap-2.5 rounded-[10px] px-3 text-[15px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#4F46E5]",
+                      FOCUS_RING
+                    )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EEF2FF] text-[13px] font-semibold text-[#4F46E5]"
+                    >
+                      {authedUser.name.trim().charAt(0) || "ک"}
+                    </span>
+                    <span className="truncate">{authedUser.name}</span>
+                  </Link>
+                ) : (
+                  <>
+                    {/* Mobile Login */}
+                    <Link
+                      href={loginHref}
+                      onClick={closeMenu}
+                      className={cn(
+                        "flex min-h-[48px] items-center justify-center rounded-[10px] text-[15px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827]",
+                        FOCUS_RING
+                      )}
+                    >
+                      ورود
+                    </Link>
 
-                {/* Mobile Signup */}
-                <Link
-                  href={signupHref}
-                  onClick={closeMenu}
-                  className={cn(
-                    "flex min-h-[48px] items-center justify-center rounded-[10px] bg-[#4F46E5] text-[15px] font-medium text-white shadow-[0_1px_2px_rgba(17,24,39,0.05)] transition-colors duration-150 hover:bg-[#4338CA] active:bg-[#3730A3]",
-                    FOCUS_RING
-                  )}
-                >
-                  شروع رایگان
-                </Link>
+                    {/* Mobile Signup */}
+                    <Link
+                      href={signupHref}
+                      onClick={closeMenu}
+                      className={cn(
+                        "flex min-h-[48px] items-center justify-center rounded-[10px] bg-[#4F46E5] text-[15px] font-medium text-white shadow-[0_1px_2px_rgba(17,24,39,0.05)] transition-colors duration-150 hover:bg-[#4338CA] active:bg-[#3730A3]",
+                        FOCUS_RING
+                      )}
+                    >
+                      شروع رایگان
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </motion.div>

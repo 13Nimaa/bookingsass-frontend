@@ -15,6 +15,9 @@ export async function GET() {
   // refresh here gives us a fresh access token AND proves the session is alive.
   const backendRes = await proxyToBackend("/api/auth/refresh", {
     method: "POST",
+    // Backend reads the token from a cookie (Request.Cookies["refreshToken"]),
+    // not from the JSON body.
+    headers: { Cookie: `refreshToken=${refreshToken}` },
     body: JSON.stringify({ refreshToken }),
   });
 
