@@ -1,11 +1,14 @@
 @import "tailwindcss";
-
+body,
+body * {
+  cursor: default;
+}
 :root {
   /* ========================================
      Base
      ======================================== */
 
-  --background: #f8f9fb;
+--background: #f5f6f8;
   --foreground: #111827;
 
   /* ========================================
@@ -21,6 +24,8 @@
   /* ========================================
      Surfaces
      ======================================== */
+--surface: #ffffff;
+
 
   --surface: #ffffff;
   --surface-hover: #fcfcfd;
@@ -31,9 +36,9 @@
      Borders
      ======================================== */
 
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
-  --border-subtle: #f1f2f4;
+--border: #dfe2e7;
+--border-strong: #cbd0d8;
+--border-subtle: #eceef2;
 
   /* ========================================
      Typography
@@ -113,6 +118,16 @@
   --color-primary-pressed: var(--primary-pressed);
   --color-primary-soft: var(--primary-soft);
   --color-primary-subtle: var(--primary-subtle);
+  --color-primary-foreground: #ffffff;
+
+  --color-ring: var(--primary);
+  --color-input: var(--border);
+  --color-muted-foreground: var(--muted);
+
+  --color-secondary: var(--surface-secondary);
+  --color-secondary-foreground: var(--foreground);
+
+  --color-destructive: var(--error);
 
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);

@@ -1,5 +1,5 @@
-import { AuthGuard } from "@/components/auth/auth-guard";
-import { Sidebar } from "@/components/dashboard/sidebar";
+import { AuthGuard } from "@/features/auth/components/auth-guard";
+import { Sidebar } from "@/components/layout/sidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

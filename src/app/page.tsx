@@ -1,12 +1,12 @@
-import { Navbar } from "@/components/navbar";
-import { Hero } from "@/components/landing/Hero";
-import { ValueProposition } from "@/components/landing/ValueProposition";
-import { FeatureGrid } from "@/components/landing/FeatureGrid";
-import { ProductShowcase } from "@/components/landing/ProductShowcase";
-import { Pricing } from "@/components/landing/Pricing";
-import { Faq } from "@/components/landing/Faq";
-import { LandingBackground } from "@/components/landing/LandingBackground";
-import { ScrollProgress } from "@/components/landing/ScrollProgress";
+import { Navbar } from "@/components/layout/navbar";
+import { Hero } from "@/features/landing/components/Hero";
+import { ValueProposition } from "@/features/landing/components/ValueProposition";
+import { FeatureGrid } from "@/features/landing/components/FeatureGrid";
+import { ProductShowcase } from "@/features/landing/components/ProductShowcase";
+import { Pricing } from "@/features/landing/components/Pricing";
+import { Faq } from "@/features/landing/components/Faq";
+import { LandingBackground } from "@/features/landing/components/LandingBackground";
+import { ScrollProgress } from "@/features/landing/components/ScrollProgress";
 
 export default function Home() {
   return (

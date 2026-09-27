@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "@fontsource-variable/estedad";
-import { SessionInitializer } from "@/components/session-initializer";
+import { SessionInitializer } from "@/providers/session-initializer";
 import "./globals.css";
 
 const fraunces = Fraunces({

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarCheck, MapPin } from "lucide-react";
-import type { BusinessDto } from "@/types/business";
+import { listBusinesses } from "@/lib/api/endpoints/business.endpoints";
 
 export const metadata: Metadata = {
   title: "کسب‌وکارها - BookFlow",
@@ -10,19 +10,8 @@ export const metadata: Metadata = {
 // Fresh on every request — new businesses appear immediately.
 export const dynamic = "force-dynamic";
 
-async function getBusinesses(): Promise<{ data: BusinessDto[]; failed: boolean }> {
-  const base = process.env.BACKEND_URL || "http://localhost:5135";
-  try {
-    const res = await fetch(`${base}/api/business`, { cache: "no-store" });
-    if (!res.ok) return { data: [], failed: true };
-    return { data: (await res.json()) as BusinessDto[], failed: false };
-  } catch {
-    return { data: [], failed: true };
-  }
-}
-
 export default async function BusinessesPage() {
-  const { data: businesses, failed } = await getBusinesses();
+  const { data: businesses, failed } = await listBusinesses();
 
   return (
     <main className="flex min-h-full flex-1 flex-col">
