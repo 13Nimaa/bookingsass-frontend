@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarCheck, LogOut, Store, Sparkles, Users } from "lucide-react";
+import { CalendarCheck, LogOut, Store, Sparkles, Users, UserRound } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth-store";
 
 const NAV = [
+  { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
   { href: "/dashboard/business", label: "کسب‌وکار", icon: Store },
   { href: "/dashboard/services", label: "خدمات", icon: Sparkles },
   { href: "/dashboard/customers", label: "مشتریان", icon: Users },
@@ -17,7 +18,7 @@ export function Sidebar() {
   const logout = useAuthStore((s) => s.logout);
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-e border-border bg-surface lg:h-full lg:w-60">
+    <aside className="flex w-full shrink-0 flex-col border-e border-border bg-surface lg:h-[100vh] lg:w-60">
       <div className="flex items-center gap-2 px-5 py-5 text-lg font-semibold">
         <CalendarCheck size={22} className="text-primary" />
         BookFlow
