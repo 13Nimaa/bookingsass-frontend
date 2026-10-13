@@ -95,8 +95,8 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="business-description" className="block text-sm font-medium text-[#29251f]">
-          توضیحات <span className="font-normal text-[#8d867d]">(اختیاری)</span>
+        <label htmlFor="business-description" className="block text-sm font-bold text-[#1e1b4b]">
+          توضیحات <span className="font-medium text-slate-400">(اختیاری)</span>
         </label>
         <textarea
           id="business-description"
@@ -107,26 +107,27 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
             rounded-xl
             border
             px-4 py-3
-            text-sm
-            shadow-[0_1px_2px_rgba(34,31,28,0.03)]
+            text-[15px]
+            font-medium
+            shadow-[0_1px_2px_rgba(79,70,229,0.08)]
             outline-none
             transition-all duration-200
             ${
               errors.description
-                ? "border-[#b3423a] bg-[#fffdfa] text-[#221f1c] placeholder:text-[#aaa39a] focus:border-[#b3423a] focus:bg-white focus:ring-4 focus:ring-[#b3423a]/8"
-                : "border-[#e4ddd1] bg-[#fffdfa] text-[#221f1c] placeholder:text-[#aaa39a] hover:border-[#d5cdc0] focus:border-[#a8492e] focus:bg-white focus:ring-4 focus:ring-[#a8492e]/8"
+                ? "border-error bg-surface text-[#1e1b4b] placeholder:text-slate-400 focus:border-error focus:bg-surface focus:ring-4 focus:ring-error-soft"
+                : "border-border bg-surface text-[#1e1b4b] placeholder:text-slate-400 hover:border-border-strong focus:border-primary focus:bg-surface focus:ring-4 focus:ring-primary-soft"
             }
           `}
           placeholder="چند خط درباره‌ی کسب‌وکار، خدمات و فضای آن..."
           {...register("description")}
         />
         {errors.description && (
-          <p className="text-xs font-medium text-[#b3423a]">{errors.description.message}</p>
+          <p className="text-[13px] leading-5 font-bold text-error-text">{errors.description.message}</p>
         )}
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit" size="lg" className="h-11 px-6" disabled={isSubmitting}>
+        <Button type="submit" size="lg" className="h-11 px-6 text-[15px] font-bold" disabled={isSubmitting}>
           {isSubmitting
             ? "در حال ذخیره..."
             : mode === "create"

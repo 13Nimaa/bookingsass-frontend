@@ -109,7 +109,7 @@ export function Navbar({
             </span>
 
             <span className="flex flex-col">
-              <span className="text-[15px] font-semibold leading-tight tracking-tight text-[#111827]">
+              <span className="text-[15px] font-semibold leading-tight tracking-tight text-[#1e1b4b]">
                 BarberCRM
               </span>
 
@@ -130,7 +130,7 @@ export function Navbar({
                   <Link
                     href={link.href}
                     className={cn(
-                      "inline-flex min-h-[44px] items-center rounded-[10px] px-2.5 text-base font-medium text-[#151618] font-medium transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827] lg:px-3",
+                      "inline-flex min-h-[44px] items-center rounded-[10px] px-2.5 text-base font-medium text-[#1e1b4b] font-medium transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#1e1b4b] lg:px-3",
                       FOCUS_RING
                     )}
                   >
@@ -170,7 +170,7 @@ export function Navbar({
                 <Link
                   href={loginHref}
                   className={cn(
-                    "hidden min-h-[44px] items-center rounded-[10px] px-3 text-[14px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827] md:inline-flex",
+                    "hidden min-h-[44px] items-center rounded-[10px] px-3 text-[14px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#1e1b4b] md:inline-flex",
                     FOCUS_RING
                   )}
                 >
@@ -194,7 +194,7 @@ export function Navbar({
             <button
               type="button"
               className={cn(
-                "inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827] md:hidden",
+                "inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#1e1b4b] md:hidden",
                 FOCUS_RING
               )}
               aria-label={open ? "بستن منو" : "باز کردن منو"}
@@ -298,7 +298,7 @@ export function Navbar({
                       href={loginHref}
                       onClick={closeMenu}
                       className={cn(
-                        "flex min-h-[48px] items-center justify-center rounded-[10px] text-[15px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#111827]",
+                        "flex min-h-[48px] items-center justify-center rounded-[10px] text-[15px] font-medium text-[#374151] transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#1e1b4b]",
                         FOCUS_RING
                       )}
                     >

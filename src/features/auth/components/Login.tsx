@@ -181,7 +181,7 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
           {/* Heading */}
 
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-[28px] font-bold text-[#111827]">
+            <h1 className="text-[28px] font-bold text-[#1e1b4b]">
               {title}
             </h1>
 

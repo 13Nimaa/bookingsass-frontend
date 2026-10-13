@@ -13,7 +13,7 @@ export function AuthLogo() {
       </div>
 
       <div>
-        <span className="block text-lg font-bold tracking-tight text-[#111827]">
+        <span className="block text-lg font-bold tracking-tight text-[#1e1b4b]">
           BarberCRM
         </span>
 

@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-[var(--text-primary)]"
+            className="block text-sm font-bold text-[#1e1b4b]"
           >
             {label}
           </label>
@@ -64,8 +64,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               bg-[var(--surface)]
               px-4
 
-              text-sm
-              text-[var(--text-primary)]
+              text-[15px]
+              font-medium
+              text-[#1e1b4b]
               outline-none
 
               placeholder:text-[var(--text-disabled)]
@@ -113,11 +114,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error ? (
-          <p className="text-xs font-medium text-[var(--error-text)]">
+          <p className="text-[13px] leading-5 font-bold text-[var(--error-text)]">
             {error}
           </p>
         ) : hint ? (
-          <p className="text-xs text-[var(--muted)]">
+          <p className="text-[13px] leading-5 font-medium text-slate-600">
             {hint}
           </p>
         ) : null}

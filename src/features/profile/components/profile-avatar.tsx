@@ -57,11 +57,11 @@ export function ProfileAvatar({
   };
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-2">
       <div className="relative">
-        {/* Ring + avatar */}
-        <div className="rounded-full bg-gradient-to-bl from-primary via-primary-pressed to-premium p-1 shadow-lg shadow-primary/20">
-          <div className="relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-surface sm:h-28 sm:w-28">
+        {/* Ring + avatar — brand blue ring, single primary accent */}
+        <div className="rounded-full bg-primary p-1 shadow-[0_8px_20px_-10px_rgba(79,70,229,0.5)]">
+          <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-surface sm:h-24 sm:w-24">
             {imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -72,7 +72,7 @@ export function ProfileAvatar({
             ) : (
               <span
                 aria-hidden="true"
-                className="flex h-full w-full items-center justify-center bg-primary-soft text-3xl font-bold text-primary"
+                className="flex h-full w-full items-center justify-center bg-primary-soft text-2xl font-extrabold tracking-tight text-primary sm:text-[28px]"
               >
                 {initialsOf(name)}
               </span>
@@ -80,7 +80,7 @@ export function ProfileAvatar({
 
             {/* Uploading veil */}
             {uploading && (
-              <span className="absolute inset-0 flex items-center justify-center bg-foreground/45 backdrop-blur-[1px]">
+              <span className="absolute inset-0 flex items-center justify-center bg-primary-pressed/55 backdrop-blur-[1px]">
                 <Loader2 className="h-6 w-6 animate-spin text-white" />
               </span>
             )}
@@ -119,7 +119,7 @@ export function ProfileAvatar({
           type="button"
           onClick={pickFile}
           disabled={uploading}
-          className="text-xs font-medium text-primary transition hover:text-primary-hover disabled:opacity-60"
+          className="text-[13px] font-bold text-primary transition hover:text-primary-hover disabled:opacity-60"
         >
           {imageUrl ? "تغییر تصویر" : "افزودن تصویر"}
         </button>
@@ -133,7 +133,7 @@ export function ProfileAvatar({
               onClick={onDelete}
               onBlur={() => setConfirmingDelete(false)}
               disabled={uploading}
-              className={`flex items-center gap-1 text-xs font-medium transition disabled:opacity-60 ${
+              className={`flex items-center gap-1 text-[13px] font-bold transition disabled:opacity-60 ${
                 confirmingDelete
                   ? "text-error hover:text-error-text"
                   : "text-muted hover:text-error"
@@ -147,12 +147,12 @@ export function ProfileAvatar({
       </div>
 
       {localError && (
-        <p role="alert" className="max-w-60 text-center text-xs font-medium text-error-text">
+        <p role="alert" className="max-w-60 text-center text-[13px] leading-5 font-bold text-error-text">
           {localError}
         </p>
       )}
       {!imageUrl && !localError && (
-        <p className="flex items-center gap-1 text-[11px] text-text-disabled">
+        <p className="flex items-center gap-1 text-[12px] font-medium text-slate-400">
           <UserRound className="h-3 w-3" />
           JPG، PNG یا WebP تا ۵ مگابایت
         </p>

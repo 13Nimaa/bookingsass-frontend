@@ -89,7 +89,7 @@ export function ProfileForm({
       />
 
       <div className="flex items-center gap-3 pt-1">
-        <Button type="submit" size="lg" className="h-11 px-6" disabled={saving || !isDirty}>
+        <Button type="submit" size="lg" className="h-11 px-6 text-[15px] font-bold" disabled={saving || !isDirty}>
           {saving ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />

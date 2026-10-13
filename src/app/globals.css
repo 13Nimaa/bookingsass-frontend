@@ -1,15 +1,11 @@
 @import "tailwindcss";
-body,
-body * {
-  cursor: default;
-}
 :root {
   /* ========================================
      Base
      ======================================== */
 
 --background: #f5f6f8;
-  --foreground: #111827;
+  --foreground: #1e1b4b;
 
   /* ========================================
      Brand / Primary
@@ -41,13 +37,15 @@ body * {
 --border-subtle: #eceef2;
 
   /* ========================================
-     Typography
+     Typography — hardened for contrast.
+     Blue-tinted ink scale (no black, no warm/cool mixing).
+     Body copy never drops below slate-600.
      ======================================== */
 
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --muted: #6b7280;
-  --text-disabled: #9ca3af;
+  --text-primary: #1e1b4b;
+  --text-secondary: #3730a3;
+  --muted: #475569;
+  --text-disabled: #94a3b8;
 
   /* ========================================
      Semantic Colors
@@ -179,6 +177,68 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis-weight: auto;
+}
+
+/* Interactive affordance: pointer on actionable elements only. */
+a,
+button,
+[role="button"],
+input[type="submit"],
+label[for] {
+  cursor: pointer;
+}
+input:disabled,
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ── Dashboard typography hardening ───────────────────────────
+   Persian script needs generous line-height and zero negative
+   tracking (joins break under tracking-tighter). Headings get
+   weight + ink instead of sheer size. */
+h1, h2, h3 {
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Dense tabular numbers for metrics (Cockpit-ready). */
+.tnum {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Skeleton shimmer — layout-matched loaders, transform/opacity only. */
+@keyframes dashboard-shimmer {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.65) 50%,
+    transparent 100%
+  );
+  animation: dashboard-shimmer 1.6s ease-in-out infinite;
+  pointer-events: none;
 }
 
 html {
@@ -240,7 +300,8 @@ html {
 
   .landing-drift-a,
   .landing-drift-b,
-  .chart-line {
+  .chart-line,
+  .skeleton-shimmer::after {
     animation: none;
   }
 }

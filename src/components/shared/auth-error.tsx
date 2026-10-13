@@ -8,9 +8,9 @@ export const AuthError = forwardRef<HTMLDivElement, { message: string }>(
         ref={ref}
         role="alert"
         tabIndex={-1}
-        className="flex items-center gap-2 rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error focus:outline-none"
+        className="flex items-start gap-2.5 rounded-2xl border border-error-border bg-error-soft px-4 py-3.5 text-sm leading-6 font-semibold text-error-text shadow-[0_1px_2px_rgba(220,38,38,0.08)] focus:outline-none"
       >
-        <AlertCircle size={16} className="shrink-0" />
+        <AlertCircle size={18} className="mt-0.5 shrink-0" />
         <span>{message}</span>
       </div>
     );

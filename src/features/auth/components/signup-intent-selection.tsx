@@ -78,7 +78,7 @@ function IntentOption({
         </span>
 
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-[#111827]">
+          <span className="block text-sm font-semibold text-[#1e1b4b]">
             {title}
           </span>
           <span className="mt-1 block text-xs leading-5 text-[#6B7280]">
@@ -123,7 +123,7 @@ export function SignupIntentSelection({
           </motion.div>
 
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-[28px] font-bold text-[#111827]">
+            <h1 className="text-[28px] font-bold text-[#1e1b4b]">
               ساخت حساب کاربری
             </h1>
 
