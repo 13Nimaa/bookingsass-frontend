@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "@fontsource-variable/estedad";
 import { SessionInitializer } from "@/providers/session-initializer";
-import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -30,7 +29,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <SessionInitializer />
         {children}
-        <MobileTabBar />
       </body>
     </html>
   );

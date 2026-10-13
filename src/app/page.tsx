@@ -7,6 +7,7 @@ import { Pricing } from "@/features/landing/components/Pricing";
 import { Faq } from "@/features/landing/components/Faq";
 import { LandingBackground } from "@/features/landing/components/LandingBackground";
 import { ScrollProgress } from "@/features/landing/components/ScrollProgress";
+import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
         <Pricing />
         <Faq />
       </main>
+      <MobileTabBar />
     </div>
   );
 }

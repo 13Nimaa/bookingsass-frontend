@@ -154,27 +154,21 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
   return (
     <div
       dir="rtl"
-      className="min-h-screen w-full bg-white lg:grid lg:grid-cols-2"
+      className="min-h-dvh w-full bg-white lg:grid lg:grid-cols-2"
     >
       {/* =========================
           FORM
       ========================== */}
 
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-10 sm:px-8 lg:px-12">
-        {/* Soft primary glow — palette tint, not gray */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(560px_280px_at_50%_-80px,rgba(79,70,229,0.14),transparent)]"
-        />
+      <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-5 pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-8 lg:px-12">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="relative w-full max-w-[420px]"
+          className="relative w-full max-w-sm"
         >
-          {/* Logo */}
-
-          <motion.div variants={itemVariants} className="mb-8">
+          {/* Logo — mobile/tablet only; desktop shows the brand panel instead */}
+          <motion.div variants={itemVariants} className="mb-8 lg:hidden">
             {logo}
           </motion.div>
 
@@ -328,7 +322,7 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
                 REMEMBER + FORGOT (login only)
             ========================== */}
 
-            {!isSignup && (
+            {/* {!isSignup && (
               <motion.div
                 variants={itemVariants}
                 className="flex items-center justify-between"
@@ -366,7 +360,7 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
                   فراموشی رمز عبور؟
                 </a>
               </motion.div>
-            )}
+            )} */}
 
             {/* =========================
                 SERVER ERROR
@@ -481,13 +475,13 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
 
           {/* Footer */}
 
-          <motion.p
+          {/* <motion.p
             variants={itemVariants}
             className="mt-10 text-center text-[11px] leading-5 text-[#9CA3AF]"
           >
             با {isSignup ? "ایجاد حساب" : "ورود به حساب"}، با شرایط استفاده و
             حریم خصوصی موافقت می‌کنید.
-          </motion.p>
+          </motion.p> */}
         </motion.div>
       </div>
 

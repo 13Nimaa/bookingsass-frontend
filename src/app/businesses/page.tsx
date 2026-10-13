@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarCheck, MapPin } from "lucide-react";
 import { listBusinesses } from "@/lib/api/endpoints/business.endpoints";
+import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 
 export const metadata: Metadata = {
   title: "کسب‌وکارها - BookFlow",
@@ -59,6 +60,7 @@ export default async function BusinessesPage() {
           </ul>
         )}
       </div>
+      <MobileTabBar />
     </main>
   );
 }

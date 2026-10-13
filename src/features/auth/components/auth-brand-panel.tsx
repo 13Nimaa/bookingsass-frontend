@@ -1,12 +1,18 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { CalendarDays, TrendingUp, Users } from "lucide-react";
+import { CalendarDays, Scissors, TrendingUp, Users } from "lucide-react";
 
 const APPOINTMENTS = [
   { initial: "ع", name: "علی رضایی", service: "کوت + ریش", time: "۱۰:۳۰", done: true },
   { initial: "س", name: "سارا محمدی", service: "رنگ مو", time: "۱۲:۰۰", done: false },
   { initial: "ا", name: "امیر کریمی", service: "فیشال", time: "۱۴:۰۰", done: false },
+] as const;
+
+const FEATURE_CHIPS = [
+  { icon: Users, label: "مدیریت مشتریان" },
+  { icon: CalendarDays, label: "رزرو و نوبت‌دهی" },
+  { icon: TrendingUp, label: "گزارش عملکرد" },
 ] as const;
 
 function RevenueSparkline() {
@@ -77,14 +83,15 @@ export function AuthBrandPanel() {
         }}
       />
 
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col p-12 xl:p-16">
-        {/* Floating glass dashboard card */}
-        <div className="flex flex-1 items-center justify-center">
+      {/* Content — one max-w-md container so preview card, heading,
+          description and chips share a single alignment axis */}
+      <div className="absolute inset-0 overflow-y-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center gap-8 p-12 xl:p-16">
+          {/* Floating glass dashboard card */}
           <motion.div
             animate={reduceMotion ? undefined : { y: [0, -12, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative w-full max-w-sm"
+            className="relative w-full"
           >
             {/* Depth card */}
             <div
@@ -162,49 +169,43 @@ export function AuthBrandPanel() {
               </div>
             </div>
           </motion.div>
-        </div>
 
-        {/* Copy */}
-        <div className="max-w-lg text-white">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 backdrop-blur-md">
-              <CalendarDays className="h-5 w-5" />
+          {/* Copy — same axis as the card above */}
+          <div className="text-white">
+            {/* Single brand mark: scissors icon + one subtitle (matches AuthLogo) */}
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 backdrop-blur-md">
+                <Scissors className="h-5 w-5" aria-hidden="true" />
+              </div>
+
+              <span className="text-sm font-medium text-white/90">
+                مدیریت هوشمند آرایشگاه
+              </span>
             </div>
 
-            <span className="text-sm font-medium text-white/90">
-              مدیریت هوشمند آرایشگاه
-            </span>
-          </div>
+            <h2 className="mt-6 text-4xl font-bold leading-[1.5]  ">
+              همه چیز برای مدیریت بهتر در یکجا.
+            </h2>
 
-          <h2 className="text-3xl font-bold leading-tight xl:text-4xl">
-            همه چیز برای مدیریت بهتر
-            <br />
-            در یکجا.
-          </h2>
+            <p className="mt-4 text-[15px] leading-8 text-white/80">
+              مشتری‌ها، نوبت‌ها، خدمات و عملکرد کسب‌وکارتان را ساده‌تر و
+              حرفه‌ای‌تر مدیریت کنید.
+            </p>
 
-          <p className="mt-4 max-w-md text-sm leading-7 text-white/75">
-            مشتری‌ها، نوبت‌ها، خدمات و عملکرد کسب‌وکارتان را ساده‌تر و
-            حرفه‌ای‌تر مدیریت کنید.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-              <Users className="mb-2 h-4 w-4 text-white/80" />
-
-              <p className="text-xs text-white/70">مدیریت مشتریان</p>
-            </div>
-
-            <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-              <CalendarDays className="mb-2 h-4 w-4 text-white/80" />
-
-              <p className="text-xs text-white/70">رزرو و نوبت‌دهی</p>
-            </div>
-
-            <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-              <TrendingUp className="mb-2 h-4 w-4 text-white/80" />
-
-              <p className="text-xs text-white/70">گزارش عملکرد</p>
-            </div>
+            {/* Static badges — not interactive, no hover or button affordance */}
+            <ul className="mt-6 flex flex-wrap gap-2.5">
+              {FEATURE_CHIPS.map(({ icon: Icon, label }) => (
+                <li
+                  key={label}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur-md"
+                >
+                  <Icon className="h-4 w-4 text-white/80" aria-hidden="true" />
+                  <span className="text-[13px] font-medium text-white/80">
+                    {label}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
