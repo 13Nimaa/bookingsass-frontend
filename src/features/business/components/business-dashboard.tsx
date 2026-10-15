@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useBusinessStore } from "@/features/business/store/business-store";
 import { BusinessForm } from "@/features/business/components/business-form";
 import { Button } from "@/components/ui/button";
 import { AuthError } from "@/components/shared/auth-error";
 import { PageHeader } from "@/components/shared/page-header";
-import { ArrowLeft, MapPin, Building2, Pencil, Store, FileText } from "lucide-react";
+import { registerBusinessRequest } from "@/lib/api/endpoints/business.endpoints";
+import { useAuthStore } from "@/features/auth/store/auth-store";
+import type { AuthResponse } from "@/features/auth/types";
+import type { BusinessInput } from "@/features/business/types";
+import { MapPin, Building2, Pencil, Store, FileText } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 14 },
@@ -36,10 +39,44 @@ export function BusinessDashboard() {
   const error = useBusinessStore((s) => s.error);
   const fetchMine = useBusinessStore((s) => s.fetchMine);
   const [editing, setEditing] = useState(false);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
+  const upgradeErrorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMine();
   }, [fetchMine]);
+
+  useEffect(() => {
+    if (upgradeError) upgradeErrorRef.current?.focus();
+  }, [upgradeError]);
+
+  // Post-registration creation: backend upgrades the user to BusinessOwner
+  // and rotates tokens, so the new session in the response body must be
+  // applied to the auth store — otherwise the rotated-out tokens would
+  // silently log the user out.
+  const submitUpgrade = async (input: BusinessInput): Promise<boolean> => {
+    setUpgradeError(null);
+    try {
+      const res = await registerBusinessRequest(input);
+
+      if (res.status === 409) {
+        setUpgradeError("شما قبلاً یک کسب‌وکار ثبت کرده‌اید.");
+        return false;
+      }
+      if (!res.ok) {
+        await res.text().catch(() => "");
+        setUpgradeError("ایجاد کسب‌وکار انجام نشد. اطلاعات را بررسی کنید.");
+        return false;
+      }
+      const data: AuthResponse = await res.json();
+      useAuthStore.getState().applySession(data);
+      await fetchMine();
+      return true;
+    } catch {
+      setUpgradeError("اتصال به سرور ممکن نیست. لطفاً دوباره تلاش کنید.");
+      return false;
+    }
+  };
 
   if (status === "loading" || status === "idle") {
     return <LoadingState />;
@@ -68,11 +105,10 @@ export function BusinessDashboard() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-10 sm:py-10">
         <PageHeader
           eyebrow="کسب‌وکار"
-          title="کسب‌وکار خود را بسازید"
-          description="هنوز کسب‌وکاری نساخته‌اید. با ثبت سالن، حساب شما به مدیر آرایشگاه ارتقا پیدا می‌کند."
+          title="ارتقا به مدیر سالن"
+          description="اطلاعات سالن خود را ثبت کنید تا حساب شما به مدیر سالن ارتقا پیدا کند و به پنل مدیریت خدمات، مشتریان و نوبت‌ها دسترسی پیدا کنید."
         />
 
-        {/* ── Upgrade CTA — asymmetric, single accent, diffusion shadow ── */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -81,28 +117,12 @@ export function BusinessDashboard() {
           className="mt-8 grid w-full grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]"
         >
           <div className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-[0_20px_40px_-24px_rgba(79,70,229,0.28)] sm:p-8">
-            <div className="flex items-start gap-4">
-              <span className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-primary-soft p-3.5 text-primary">
-                <Store className="h-6 w-6" aria-hidden="true" />
-              </span>
-              <div className="min-w-0">
-                <h2 className="text-[17px] font-extrabold tracking-tight text-[#1e1b4b]">
-                  می‌خواهید آرایشگاه خود را مدیریت کنید؟
-                </h2>
-                <p className="mt-1.5 max-w-[52ch] text-sm leading-7 font-medium text-slate-600">
-                  اطلاعات سالن خود را ثبت کنید تا حساب شما به «مدیر آرایشگاه» تبدیل شود و به
-                  پنل مدیریت خدمات، مشتریان و نوبت‌ها دسترسی پیدا کنید.
-                </p>
+            {upgradeError && (
+              <div className="mb-5">
+                <AuthError ref={upgradeErrorRef} message={upgradeError} />
               </div>
-            </div>
-
-            <Link
-              href="/register/business"
-              className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-[15px] font-bold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px active:scale-[0.98] sm:w-auto"
-            >
-              ثبت‌نام به عنوان مدیر آرایشگاه
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            </Link>
+            )}
+            <BusinessForm mode="create" submit={submitUpgrade} onDone={() => {}} />
           </div>
 
           <aside
@@ -110,13 +130,16 @@ export function BusinessDashboard() {
             className="rounded-[1.75rem] border border-border bg-surface-subtle p-6 sm:p-7"
           >
             <h3 className="text-[15px] font-extrabold tracking-tight text-[#1e1b4b]">
+              <span className="mr-2 inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-primary-soft p-2 text-primary align-middle">
+                <Store className="h-4.5 w-4.5" aria-hidden="true" />
+              </span>
               بعد از ثبت چه می‌شود؟
             </h3>
             <ul className="mt-4 flex flex-col gap-3.5">
               {[
-                "حساب شما به مدیر آرایشگاه ارتقا می‌یابد",
+                "حساب شما به مدیر سالن ارتقا می‌یابد",
                 "صفحه کسب‌وکار شما در فهرست عمومی نمایش داده می‌شود",
-                "به‌زودی: مدیریت خدمات، مشتریان و نوبت‌ها",
+                "به مدیریت خدمات، مشتریان و نوبت‌ها دسترسی پیدا می‌کنید",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm leading-6 font-semibold text-[#312e81]">
                   <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
@@ -170,6 +193,17 @@ export function BusinessDashboard() {
               </Button>
             }
           />
+
+          {business.profileImageUrl && (
+            <div className="mt-8">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={business.profileImageUrl}
+                alt={`تصویر ${business.name}`}
+                className="h-28 w-28 rounded-[1.25rem] border border-border bg-surface object-cover shadow-[0_20px_40px_-24px_rgba(79,70,229,0.35)] sm:h-32 sm:w-32"
+              />
+            </div>
+          )}
 
           <dl className="mt-8 w-full max-w-2xl border-t border-border">
             {details.map(({ icon: Icon, label, value }) => (

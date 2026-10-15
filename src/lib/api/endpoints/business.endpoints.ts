@@ -60,3 +60,21 @@ export function registerBusinessRequest(
     body: JSON.stringify(input),
   });
 }
+
+// POST /api/business/image — multipart upload of the owned business's image.
+// Do NOT set Content-Type; the browser adds the boundary. Backend accepts
+// jpg/png/webp <= 5MB. Requires an existing owned business — only call this
+// after the business has been created.
+export function uploadBusinessImageRequest(file: File): Promise<Response> {
+  const form = new FormData();
+  form.append("file", file);
+  return apiClient("/api/business/image", {
+    method: "POST",
+    body: form,
+  });
+}
+
+// DELETE /api/business/image — remove the owned business's image.
+export function deleteBusinessImageRequest(): Promise<Response> {
+  return apiClient("/api/business/image", { method: "DELETE" });
+}
