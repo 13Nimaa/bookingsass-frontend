@@ -123,13 +123,12 @@ export function SignupIntentSelection({
           </motion.div>
 
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-[28px] font-bold text-[#1e1b4b]">
+            <h1 className="text-[28px] font-bold text-[#1E1B4B]">
               ساخت حساب کاربری
             </h1>
 
-            <p className="mt-2 text-sm leading-6 text-[#6B7280]">
-              برای شروع، مشخص کنید می‌خواهید به عنوان مشتری نوبت رزرو
-              کنید یا آرایشگاه خود را مدیریت کنید.
+            <p className="mt-2 text-balance text-[15px] leading-relaxed text-slate-600">
+              نقش خود را انتخاب کنید تا ادامه دهیم.
             </p>
           </motion.div>
 
@@ -137,14 +136,14 @@ export function SignupIntentSelection({
             <IntentOption
               icon={<UserRound className="h-5 w-5" />}
               title="ثبت‌نام به عنوان مشتری"
-              description="رزرو نوبت از سالن‌ها و پیگیری نوبت‌های خود."
+              description="رزرو نوبت از آرایشگاه‌ها و پیگیری نوبت‌های خود."
               onSelect={() => onSelect("customer")}
             />
 
             <IntentOption
               icon={<Store className="h-5 w-5" />}
               title="ثبت‌نام به عنوان مدیر آرایشگاه"
-              description="ثبت سالن و مدیریت خدمات، مشتریان و نوبت‌ها."
+              description="ثبت آرایشگاه و مدیریت خدمات، مشتریان و نوبت‌ها."
               onSelect={() => onSelect("business")}
             />
           </div>

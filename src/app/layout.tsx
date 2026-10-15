@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BookFlow",
+  title: "BarberCRM",
   description: "پلتفرم مدرن مدیریت رزرو",
 };
 

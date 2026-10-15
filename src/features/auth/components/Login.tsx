@@ -243,7 +243,11 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
                 endIcon={
                   <button
                     type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
+                    onClick={(e) => {
+                      e.preventDefault()
+
+                    setShowPassword((prev) => !prev)
+                    }}
                     disabled={isLoading}
                     aria-label={
                       showPassword
@@ -251,7 +255,7 @@ export function AuthFormSplitScreen(props: AuthFormSplitScreenProps) {
                         : "نمایش رمز عبور"
                     }
                     className="
-                      p-1
+                      p-1 z-50
                       transition
                       hover:opacity-60
                       disabled:opacity-50

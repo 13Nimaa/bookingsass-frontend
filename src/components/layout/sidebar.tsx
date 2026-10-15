@@ -21,8 +21,8 @@ export function Sidebar() {
     <aside className="flex w-full shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-[100vh] md:w-64 md:border-b-0 md:border-e">
       {/* Brand header — on mobile this is the full sidebar; primary
           navigation lives in the global MobileTabBar on small screens. */}
-      <div className="flex items-center gap-2.5 px-4 py-3 md:px-5 md:py-5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
+      <Link href={'/'} className="flex items-center gap-2.5 px-4 py-3 md:px-5 md:py-5">
+        <span  className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
           <CalendarCheck size={20} aria-hidden="true" />
         </span>
         <span className="text-[17px] font-extrabold tracking-tight text-[#1e1b4b]">BookFlow</span>
@@ -36,7 +36,7 @@ export function Sidebar() {
         >
           <LogOut size={18} aria-hidden="true" />
         </button>
-      </div>
+      </Link>
 
       {/* Desktop / tablet vertical nav — hidden on mobile (MobileTabBar covers it) */}
       <nav className="hidden px-3 md:flex md:flex-col md:gap-1" aria-label="ناوبری داشبورد">

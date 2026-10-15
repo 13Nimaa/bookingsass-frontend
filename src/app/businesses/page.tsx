@@ -5,7 +5,7 @@ import { listBusinesses } from "@/lib/api/endpoints/business.endpoints";
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 
 export const metadata: Metadata = {
-  title: "کسب‌وکارها - BookFlow",
+  title: "کسب‌وکارها - BarberCRM",
 };
 
 // Fresh on every request — new businesses appear immediately.
