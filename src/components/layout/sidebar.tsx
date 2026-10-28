@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarCheck, LogOut, Store, Sparkles, Users, UserRound } from "lucide-react";
+import { CalendarCheck, LogOut, Store, Sparkles, UserRoundCog, Users, UserRound } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth-store";
 
 const NAV = [
   { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
   { href: "/dashboard/business", label: "کسب‌وکار", icon: Store },
+  { href: "/dashboard/employees", label: "کارمندان", icon: UserRoundCog },
   { href: "/dashboard/services", label: "خدمات", icon: Sparkles },
   { href: "/dashboard/customers", label: "مشتریان", icon: Users },
 ] as const;

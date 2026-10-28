@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Store, UserRound, Activity } from "lucide-react";
+import { ArrowLeft, Store, UserRound, UserRoundCog, Activity } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 
 const QUICK_ACTIONS = [
@@ -16,6 +16,13 @@ const QUICK_ACTIONS = [
     title: "مدیریت کسب‌وکار",
     description: "مشخصات سالن، شهر و نشانی را ثبت کنید و حساب خود را به مدیر آرایشگاه ارتقا دهید.",
     cta: "مدیریت کسب‌وکار",
+  },
+  {
+    href: "/dashboard/employees",
+    icon: UserRoundCog,
+    title: "مدیریت کارمندان",
+    description: "کارمندان مجموعه را اضافه کنید و برنامهٔ کاری هفتگی هرکدام را مدیریت کنید.",
+    cta: "مدیریت کارمندان",
   },
 ] as const;
 
@@ -40,7 +47,7 @@ export default function DashboardPage() {
             شروع سریع
           </h2>
           <p className="mt-1.5 text-sm leading-6 font-medium text-slate-600">
-            دو قدمی که بیشتر مدیران اول برمی‌دارند — از همین‌جا ادامه دهید.
+            کارهای پرتکرار مدیران — هر بخش را باز کنید و مرحله‌به‌مرحله جلو بروید.
           </p>
 
           <div className="mt-6 flex flex-col divide-y divide-border-subtle border-y border-border-subtle">
