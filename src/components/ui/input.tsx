@@ -6,6 +6,8 @@ interface InputProps
   label?: string;
   error?: string;
   hint?: string;
+  /** Shows a required asterisk next to the label. */
+  requiredMark?: boolean;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
 }
@@ -17,6 +19,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       label,
       error,
       hint,
+      requiredMark,
       startIcon,
       endIcon,
       id,
@@ -34,6 +37,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className="block text-sm font-bold text-[#1e1b4b]"
           >
             {label}
+            {requiredMark && (
+              <span className="ms-1 text-[var(--error)]" aria-hidden="true">
+                *
+              </span>
+            )}
           </label>
         )}
 

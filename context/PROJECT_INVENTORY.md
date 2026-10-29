@@ -18,10 +18,10 @@
 | `features/profile` | `/dashboard/profile` | `profile.endpoints.ts` | `profile-store` |
 | `features/business` | `/dashboard/business`, `/businesses` (public list) | `business.endpoints.ts` | `business-store` |
 | `features/employee` | `/dashboard/employees` | `employee.endpoints.ts` | `employee-store` |
+| `features/service` | `/dashboard/services` | `service.endpoints.ts` | `service-store` |
 | `features/landing` | `/` (marketing only, mock data) | — | — |
 
 **Missing feature modules (no folder, no endpoints, no pages):**
-- `services` — sidebar link only (`/dashboard/services` → **404**)
 - `customers` — sidebar link only (`/dashboard/customers` → **404**)
 - `bookings` / appointments — landing mockups only
 - Public business detail + booking flow
@@ -43,8 +43,9 @@
 | `/dashboard/profile` | Auth | Profile CRUD + image |
 | `/dashboard/business` | Auth | Mine / update / image / register |
 | `/dashboard/employees` | Auth | Employees + working hours |
+| `/dashboard/services` | Auth | Services CRUD for owned business |
 
-**Nav links without pages:** `/dashboard/services`, `/dashboard/customers` (in `sidebar.tsx`).
+**Nav links without pages:** `/dashboard/customers` (in `sidebar.tsx`).
 
 ---
 
@@ -106,10 +107,13 @@ Legend: **Wired** = FE calls it · **Partial** = endpoint helper or UI incomplet
 
 | Method | Path | Frontend | Notes |
 |--------|------|----------|-------|
-| GET | `/` | **Missing FE** | No module / page |
-| POST | `/` | **Missing FE** | |
+| GET | `/` | **Wired** | Public list via `backendFetch`; owner dashboard |
+| GET | `/{serviceId}` | **Wired** | Endpoint helper; UI edits from list row |
+| POST | `/` | **Wired** | Create dialog |
+| PUT | `/{serviceId}` | **Wired** | Edit dialog |
+| DELETE | `/{serviceId}` | **Wired** | Confirm dialog |
 
-BE also missing: update, delete, get-by-id, employee↔service assign.
+Still missing product-wise: employee↔service assign; public catalog on business detail page.
 
 ### 3.7 Customers (CRM) — `api/business/{id}/customers`
 
@@ -148,7 +152,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | Employee add/list/remove | Done |
 | Working hours create/list/delete | Done |
 | Working hours update (edit slot) | Endpoint only — UI missing |
-| Services management UI | **Not started** (nav stub) |
+| Services management UI | Done (`/dashboard/services`) |
 | CRM customers UI | **Not started** (nav stub) |
 | Business detail page | **Not started** |
 | Public / customer booking flow | **Not started** |
@@ -179,10 +183,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 
 ### P1 — Finish owner dashboard (BE mostly ready)
 
-5. **Services module** (`/dashboard/services`):
-   - Wire `GET/POST .../services`
-   - UI: list + create
-   - After BE adds update/delete/assign → wire those too
+5. ~~**Services module**~~ — Done (list/create/edit/delete on `/dashboard/services`). Still open: employee↔service assign + public catalog on business detail.
 6. **Customers module** (`/dashboard/customers`):
    - Wire CRM CRUD
    - **Depends on BE fix:** allow `BusinessOwner` (not only Admin)
@@ -208,13 +209,13 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 
 | Issue | Detail |
 |-------|--------|
-| Dead nav links | Sidebar → `/dashboard/services`, `/dashboard/customers` with no pages |
+| Dead nav links | Sidebar → `/dashboard/customers` with no page |
 | `createBusinessRequest` | Hits Admin-only `POST /api/business`; owner flows use `/register` but store still exposes `create` |
 | WH update unused | Endpoint helper present; store only create/delete |
 | No roles in auth user | `AuthResponse.user` has no roles; roles only on Profile — nav cannot gate by role until profile/session loaded |
 | Bookings marketing vs reality | Landing shows appointment UI; product has no booking surface |
 | CRM role bug on BE | Even after FE customers page, owners need BE role fix |
-| Services incomplete on BE | FE can ship create/list now; edit/delete/assign need BE |
+| Employee↔service assign | Not in owner services UI yet (needs BE contract if not ready) |
 | Token in localStorage | Documented XSS tradeoff; matches current SPA setup |
 
 ---
@@ -222,8 +223,8 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 ## 7. Suggested FE implementation order
 
 ```
-1. Fix landmines (create→register, WH update UI, dead nav or stub pages)
-2. Services feature (list + create) — BE ready today
+1. Fix landmines (create→register, WH update UI, customers dead nav)
+2. ~~Services feature~~ — done
 3. Customers feature — after BE allows BusinessOwner
 4. Business detail page (GET by id + services list)
 5. Wait/ship BE booking + availability
@@ -244,7 +245,7 @@ src/lib/api/
     profile.endpoints.ts  — get, update, image up/del
     business.endpoints.ts — list, mine, create*, update, register, image
     employee.endpoints.ts — employees CRUD-ish + working hours
-    (missing) service.endpoints.ts
+    service.endpoints.ts  — public list + owner CRUD
     (missing) customer.endpoints.ts
     (missing) booking.endpoints.ts
 ```
@@ -260,7 +261,7 @@ src/lib/api/
 | Business list/mine/register/update/image | Done | Done | Detail page FE; Admin delete FE |
 | Employees | Done | Done | Public list for booking (BE+FE) |
 | Working hours | Done | Mostly | FE update UI; public read (BE) |
-| Services | Create+list only | **None** | FE P1; BE update/delete/assign |
+| Services | CRUD ready (per feature-spec) | Owner dashboard Done | Assign + public detail catalog |
 | Customers CRM | Partial (Admin bug) | **None** | BE role fix + FE P1 |
 | Bookings | **Not wired** | **None** | BE P0 then FE P0 |
 | Availability | Missing | Missing | BE then FE |

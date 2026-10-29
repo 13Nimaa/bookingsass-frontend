@@ -23,10 +23,11 @@ src/lib/api/
     ├── business.endpoints.ts
     ├── business.endpoints.test.ts
     ├── employee.endpoints.ts
+    ├── service.endpoints.ts
     └── profile.endpoints.ts
 ```
 
-Missing (not started): `service.endpoints.ts`, `customer.endpoints.ts`, `booking.endpoints.ts`.
+Missing (not started): `customer.endpoints.ts`, `booking.endpoints.ts`.
 
 ## Signatures
 
@@ -57,6 +58,7 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | `business.endpoints.ts` | both | public list, mine, create*, update, register, image |
 | `profile.endpoints.ts` | `apiClient` | get, update, image up/delete |
 | `employee.endpoints.ts` | `apiClient` | employees + working hours |
+| `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
 
 Naming: `{domain}.endpoints.ts`, exports like `loginRequest`, `getMineBusiness`, `listEmployeesRequest`.
 
@@ -81,6 +83,7 @@ Colocated under features — not under `src/lib/api`:
 | `features/business/types.ts` | `BusinessDto`, `MyBusinessResponse`, `BusinessInput`, image rules |
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
 | `features/employee/types.ts` | `EmployeeDto`, `WorkingHourDto`, inputs |
+| `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
 
 Zod schemas in `features/*/schemas/` map form values → API inputs.
 
@@ -103,6 +106,7 @@ UI → Zustand store → *.endpoints.ts → backendFetch | apiClient → fetch
 | `useBusinessStore` | `features/business/store/business-store.ts` |
 | `useProfileStore` | `features/profile/store/profile-store.ts` |
 | `useEmployeeStore` | `features/employee/store/employee-store.ts` |
+| `useServiceStore` | `features/service/store/service-store.ts` |
 
 Some flows bypass the store intentionally (e.g. register-business content calls `registerBusinessRequest` then `applySession`).
 

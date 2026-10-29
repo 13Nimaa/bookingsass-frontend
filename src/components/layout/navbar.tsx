@@ -130,7 +130,7 @@ export function Navbar({
                   <Link
                     href={link.href}
                     className={cn(
-                      "inline-flex min-h-[44px] items-center rounded-[10px] px-2.5 text-base font-medium text-[#1e1b4b] font-medium transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#1e1b4b] lg:px-3",
+                      "inline-flex min-h-[44px] items-center rounded-[10px] px-2.5 text-sm font-bold text-[#1e1b4b] font-medium transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-[#1e1b4b] lg:px-3",
                       FOCUS_RING
                     )}
                   >

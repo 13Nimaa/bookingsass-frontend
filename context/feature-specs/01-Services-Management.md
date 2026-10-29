@@ -3,7 +3,111 @@
 Project: BookingSaaS frontend (Next.js App Router, React, TypeScript, Zustand, Tailwind CSS).
 
 The backend Services CRUD endpoints are now implemented. Create the frontend Services management feature and connect it to the actual backend API.
+## 0. Backend Docs
+Services API (frontend)
+Base path: /api/business/{businessId}/services
+Auth header (except list): Authorization: Bearer <accessToken>
+JSON property names are camelCase.
 
+Roles
+
+Public: list only
+BusinessOwner: manage services for a business they own
+Admin: manage services for any business
+Shared types
+Service
+
+
+{
+  "id": 1,
+  "title": "Haircut",
+  "price": 250000,
+  "durationMinutes": 30,
+  "businessId": 5
+}
+Create / Update body
+
+
+{
+  "title": "Haircut",
+  "price": 250000,
+  "durationMinutes": 30
+}
+1. List services (public)
+GET /api/business/{businessId}/services
+
+Auth: none
+Success 200: Service[]
+
+GET /api/business/5/services
+Use this for booking/public business pages.
+
+2. Get one service (owner / admin)
+GET /api/business/{businessId}/services/{serviceId}
+
+Auth: Bearer + role BusinessOwner or Admin
+Success 200: Service
+Errors: 401, 403 (not owner and not admin), 404 (business or service missing / service not in that business)
+
+GET /api/business/5/services/12
+Authorization: Bearer ...
+3. Create service
+POST /api/business/{businessId}/services
+
+Auth: Bearer + BusinessOwner or Admin
+Body: create payload above
+Success 201: Service (+ Location header)
+Errors: 401, 403, 404 (business not found)
+
+POST /api/business/5/services
+Authorization: Bearer ...
+Content-Type: application/json
+{
+  "title": "Haircut",
+  "price": 250000,
+  "durationMinutes": 30
+}
+4. Update service
+PUT /api/business/{businessId}/services/{serviceId}
+
+Auth: Bearer + BusinessOwner or Admin
+Body: full update (same fields as create)
+Success 200: Service
+Errors: 401, 403, 404
+
+PUT /api/business/5/services/12
+Authorization: Bearer ...
+Content-Type: application/json
+{
+  "title": "Haircut + Beard",
+  "price": 350000,
+  "durationMinutes": 45
+}
+5. Delete service
+DELETE /api/business/{businessId}/services/{serviceId}
+
+Auth: Bearer + BusinessOwner or Admin
+Success 200:
+
+{ "message": "خدمت با موفقیت حذف شد." }
+Errors: 401, 403, 404
+Note: delete may fail if the service is still referenced by appointments/bookings (FK restrict).
+Frontend notes
+Use case	Endpoint
+Public catalog / booking UI
+GET .../services
+Owner dashboard detail
+GET .../services/{id}
+Owner create form
+POST .../services
+Owner edit form
+PUT .../services/{id}
+Owner remove
+DELETE .../services/{id}
+Put businessId in the URL, not the body.
+Owner must use the business they own (from GET /api/Business/mine or equivalent).
+Non-owners with BusinessOwner get 403.
+Employee/Customer cannot call create/update/delete/get-by-id.
 ## 1. Inspect First
 
 Before coding, inspect:
@@ -11,7 +115,7 @@ Before coding, inspect:
 - Current `/dashboard/services` route, if any.
 - Business and employee feature architecture.
 - API client, authentication headers, error handling, and Zustand store conventions.
-- The actual `ServiceController`, DTOs, routes, request payloads, and response formats from the backend API documentation available in the repository.
+
 - Existing shared UI components and form patterns.
 
 Do not guess API contracts. Use the actual backend implementation as the source of truth.

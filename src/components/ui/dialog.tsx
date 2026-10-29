@@ -38,7 +38,7 @@ function DialogContent({
           {showClose && (
             <DialogPrimitive.Close
               aria-label="بستن"
-              className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-surface-secondary hover:text-[#1e1b4b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]"
+              className="absolute top-4 start-4 flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-surface-secondary hover:text-[#1e1b4b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]"
             >
               <X className="h-4.5 w-4.5" aria-hidden="true" />
             </DialogPrimitive.Close>
@@ -50,7 +50,7 @@ function DialogContent({
 }
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex flex-col gap-1.5 pe-10", className)} {...props} />;
+  return <div className={cn("flex flex-col gap-1.5 ps-10", className)} {...props} />;
 }
 
 function DialogTitle({

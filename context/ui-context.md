@@ -40,10 +40,10 @@ Tailwind color names map from `@theme` (e.g. `bg-primary`, `bg-surface`, `text-t
 
 | Role | Font | Notes |
 | ---- | ---- | ----- |
-| Body | Inter + Estedad Variable | `--font-body` / `font-body` |
-| Display | Fraunces + Estedad | `--font-display-stack` / `font-display` |
+| Body | Modam + Inter | `--font-body` / `font-body` |
+| Display | Modam + Fraunces | `--font-display-stack` / `font-display` |
 
-Loaded in `src/app/layout.tsx` via `next/font` + `@fontsource-variable/estedad`. Root: `lang="fa"` `dir="rtl"`.
+Loaded in `src/app/layout.tsx` via `next/font/local` (Modam TTFs in `src/fonts/modam/`) + `next/font/google` (Inter, Fraunces). Root: `lang="fa"` `dir="rtl"`.
 
 Conventions observed:
 

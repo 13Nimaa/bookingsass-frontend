@@ -7,6 +7,8 @@ import { cn } from "cn";
 interface PageHeaderProps {
   eyebrow?: string;
   title: string;
+  /** Optional badge rendered inline next to the title. */
+  badge?: React.ReactNode;
   description?: string;
   actions?: React.ReactNode;
   /** Hide the back button (e.g. dashboard home). */
@@ -23,6 +25,7 @@ interface PageHeaderProps {
 export function PageHeader({
   eyebrow,
   title,
+  badge,
   description,
   actions,
   hideBack = false,
@@ -50,9 +53,12 @@ export function PageHeader({
               {eyebrow}
             </p>
           )}
-          <h1 className="text-balance text-[28px] leading-[1.3] font-bold tracking-tight text-[#1e1b4b] sm:text-[32px] sm:leading-[1.25]">
-            {title}
-          </h1>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-balance text-[28px] leading-[1.3] font-bold tracking-tight text-[#1e1b4b] sm:text-[32px] sm:leading-[1.25]">
+              {title}
+            </h1>
+            {badge}
+          </div>
           {description && (
             <p className="mt-2 max-w-[65ch] text-sm leading-6 font-medium text-slate-600 sm:text-[15px] sm:leading-7">
               {description}

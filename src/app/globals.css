@@ -81,25 +81,25 @@
 
   /* ========================================
      Body stack:
-     Inter for Latin
-     Estedad for Persian
+     Modam for Persian (primary)
+     Inter for Latin fallback
      ======================================== */
 
   --font-body:
+    var(--font-modam),
     var(--font-inter),
-    "Estedad Variable",
     system-ui,
     sans-serif;
 
   /* ========================================
      Display stack:
-     Fraunces for Latin headlines
-     Estedad for Persian
+     Modam for Persian headlines
+     Fraunces for Latin fallback
      ======================================== */
 
   --font-display-stack:
+    var(--font-modam),
     var(--font-fraunces),
-    "Estedad Variable",
     serif;
 }
 
