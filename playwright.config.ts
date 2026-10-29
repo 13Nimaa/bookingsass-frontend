@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 // Frontend under test. Override per environment, e.g.
 // PLAYWRIGHT_BASE_URL=https://staging.example.com npx playwright test
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:4000';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -41,7 +41,7 @@ export default defineConfig({
   /* Start the local dev server on demand; reuse it when already running
      (e.g. `npm run dev` in another terminal). Safe: local only. */
   webServer: {
-    command: 'npm run dev',
+    command: 'npm run dev -- --port 4000',
     url: baseURL,
     reuseExistingServer: true,
     timeout: 120_000,

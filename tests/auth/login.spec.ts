@@ -4,7 +4,7 @@ import { test, expect, type Page } from '@playwright/test';
  * E2E coverage for the Login page (`/login`) against the REAL backend.
  *
  * Environment:
- * - Frontend: PLAYWRIGHT_BASE_URL (default http://localhost:3000, see
+ * - Frontend: PLAYWRIGHT_BASE_URL (default http://localhost:4000, see
  *   playwright.config.ts — the dev server is started/reused automatically).
  * - Backend: the app's own NEXT_PUBLIC_BACKEND_URL (local dev backend,
  *   never production). The suite never changes it; tests talk to the app

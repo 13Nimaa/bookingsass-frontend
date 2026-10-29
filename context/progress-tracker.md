@@ -1,83 +1,117 @@
-# Auth frontend test progress (`context/auth-test.md`)
+# Frontend test progress
 
 **Last updated:** 2026-10-29  
-**Status:** Complete for current scope (unit + login E2E). Real-backend E2E skipped (no creds).
+**Current task:** `context/business-test.md` — **Complete** for current scope (unit + mocked E2E). Real-backend business E2E skipped (no creds).  
+**Prior:** `context/auth-test.md` — complete (see § Auth summary).
 
-## Audit (Step 1) — verified against source
+---
+
+# Business module (`context/business-test.md`)
+
+## Audit — verified against source
 
 | Lead | Verified behavior |
 |------|-------------------|
-| Zustand auth store | `src/features/auth/store/auth-store.ts` |
-| Session key `bf_session` | `STORAGE_KEY = "bf_session"` |
-| Refresh body `{ refreshToken }` | `src/lib/api/endpoints/auth.endpoints.ts` |
-| Restore via storage + refresh (not `/session`) | `restoreSession` → `refresh()` |
-| Proactive refresh | `src/lib/auth/token-timer.ts` |
-| Single-flight + 401 retry | store `refreshPromise`; `src/lib/api/client.ts` |
-| Roles in login response | **Not present** — `User` is `{ userId, name, phoneNumber }` only |
+| Business store | `src/features/business/store/business-store.ts` — `fetchMine` / `create` / `update` / image |
+| Owner registration | `registerBusinessRequest` → `POST /api/Business/register` |
+| Store `create` (CRUD) | `createBusinessRequest` → `POST /api/business` (not the owner-upgrade path) |
+| Register UI | `/register/business` + dashboard `notFound` upgrade both pass `submit` → register endpoint |
+| Public list | `listBusinesses` → `GET /api/business` via `backendFetch` |
+| Mine | `GET /api/business/mine` → `{ hasBusiness, business }` |
+| Image rules | JPG/PNG/WebP, ≤5MB (`BUSINESS_IMAGE_RULES`) |
+| Auth gate | Dashboard + `/register/business` wrapped in `AuthGuard` |
+| Roles in session | **Not present** — no frontend Customer vs BusinessOwner gating |
+
+**Regression note:** Owner flows correctly call `/api/Business/register`. Store `create` still hits `/api/business`; only used when `BusinessForm` has no `submit` override.
 
 ## 1. Files created or modified
 
 | File | Change |
 |------|--------|
-| `vitest.config.ts` | Vitest + jsdom + `@/` alias |
-| `package.json` | `test` / `test:unit` scripts; `@rolldown/binding-win32-x64-msvc` (Windows Vitest native binding) |
-| `src/features/auth/store/auth-store.test.ts` | Store unit tests (mocked endpoints) |
-| `src/lib/api/client.test.ts` | Bearer / 401 retry / redirect unit tests |
-| `src/features/auth/schemas/auth.schema.test.ts` | Phone / password schema tests |
-| `tests/auth/login.spec.ts` | Pre-existing Playwright login E2E (unchanged) |
+| `vitest.setup.ts` | RTL `cleanup` after each test |
+| `vitest.config.ts` | `setupFiles: ./vitest.setup.ts` |
+| `src/features/business/store/business-store.test.ts` | Store unit tests |
+| `src/features/business/schemas/business.schema.test.ts` | Schema / `toBusinessInput` |
+| `src/lib/api/endpoints/business.endpoints.test.ts` | Public list + register vs create paths |
+| `src/features/business/components/register-business-content.test.tsx` | Registration UI |
+| `src/features/business/components/business-form.test.tsx` | Edit populate + submit override |
+| `src/features/business/components/business-image-field.test.tsx` | Type/size validation |
+| `src/features/auth/components/auth-guard.test.tsx` | Unauth redirect / auth children |
+| `tests/business/business.spec.ts` | Playwright business E2E |
 | `context/progress-tracker.md` | This report |
 
 ## 2. Scenarios covered
 
-### Unit (Vitest, mocked HTTP) — 21
-- Login success → store + `bf_session`
-- Invalid credentials / network login errors
-- Register success / failure (no partial auth)
-- Logout clears state + storage
-- Restore: missing / malformed storage; refresh on restore
-- Refresh fail clears session; network / 429 keep session
-- Concurrent refresh single-flight
-- `apiClient` bearer header, retry after refresh, login redirect on dead session
-- Schema: phone normalize, login/register validation
+### Unit / component (Vitest) — +30 new (51 total suite)
+- `fetchMine` success / notFound / 404 / 401 error
+- `create` bare DTO + envelope unwrap; failed create keeps prior business
+- `update` success / 403 / no-business short-circuit; network keeps loaded business
+- Image upload URL update + delete
+- Schema required fields, max length, trim → null description
+- Endpoints: public list, register vs create paths, mine/update
+- Register UI: validation, register endpoint (not create), 409, network, loading disable
+- Form edit populate; create uses `submit` override
+- Image field type/size reject + valid jpeg
+- AuthGuard unauthenticated → `/login`; authenticated renders children
 
-### E2E (Playwright) — 5 run + 3 skipped
-- Client validation (empty / bad phone / empty password)
-- Aborted login → network error UI
-- Unauthenticated `/dashboard/profile` → `/login`
-- Real-backend login / invalid creds / logout+reload (**skipped** — no `E2E_TEST_*`)
+### E2E (Playwright `tests/business/business.spec.ts`) — 4 run + 1 skipped
+- Unauthenticated `/dashboard/business` → `/login`
+- Unauthenticated `/register/business` → `/login`
+- Client validation on `/register/business` (seeded session + mocked refresh)
+- Mocked successful register → `/dashboard/business` with loaded business
+- Live authenticated open `/dashboard/business` (**skipped** — no `E2E_TEST_*`)
 
 ## 3. Commands used
 
 ```bash
 npm run test:unit
-npm run test:e2e -- tests/auth/login.spec.ts
+npm run test:e2e -- tests/business/business.spec.ts
 ```
+
+Default Playwright / `npm run dev` port: `4000`.
 
 ## 4. Results
 
 | Suite | Passed | Failed | Skipped |
 |-------|--------|--------|---------|
-| Vitest unit | **21** | 0 | 0 |
-| Playwright `tests/auth/login.spec.ts` | **5** | 0 | **3** |
-| **Total** | **26** | **0** | **3** |
+| Vitest unit (full suite, auth + business) | **51** | 0 | 0 |
+| Playwright `tests/business/business.spec.ts` | **4** | 0 | **1** |
+| **Business-related total** | **55** | **0** | **1** |
 
-Skip reason (all 3): `E2E_TEST_PHONE_NUMBER` / `E2E_TEST_PASSWORD` unset. `.env.local` only has `BACKEND_URL` / `NEXT_PUBLIC_BACKEND_URL`.
+Skip reason: `E2E_TEST_PHONE_NUMBER` / `E2E_TEST_PASSWORD` unset.
 
 ## 5. Confirmed frontend bugs
 
-None found in the executed suites. All failures would have been classified; there were no failures.
+None that failed a test assertion.
 
-**Note (not a confirmed runtime bug):** duplicate login password schemas — `Login.tsx` uses `"رمز عبور را وارد کنید."` while `auth.schema.ts` `loginSchema` uses `"رمز عبور الزامی است."`. Login page uses the local `Login.tsx` schema; shared schema is currently unused for login UI.
+**Risks (observed, not failing suites):**
+- Logout does **not** clear `useBusinessStore` — stale business can remain in memory until remount/refetch.
+- No role-based UI hiding (session has no roles); sidebar shows owner links to all authenticated users. Backend must enforce.
 
-## 6. Missing coverage / risks
+## 6. Missing Business functionality / coverage
 
-- Real-backend E2E not exercised (set `E2E_TEST_PHONE_NUMBER` + `E2E_TEST_PASSWORD`)
-- No registration / business-register E2E or component tests
-- No E2E for refresh/401 (covered in unit only)
-- No role-based navigation tests (frontend has no roles in session)
-- Token timer proactive refresh not unit-tested
-- XSS-readable tokens in `localStorage` (documented tradeoff in store) — security boundary remains backend
+- No dedicated business detail route beyond dashboard mine view
+- Real-backend register/update/image E2E not run
+- Dashboard upgrade form (`BusinessDashboard` `submitUpgrade`) covered indirectly via shared `BusinessForm` + endpoint tests, not a separate component suite
+- Public `/businesses` page is server-rendered; only `listBusinesses` helper is unit-tested
 
 ## 7. Production-code changes
 
-**None.** Test harness + Vitest Windows binding only. Auth behavior was not altered to make tests pass.
+**None.** Tests + Vitest setup only.
+
+## 8. Recommended next steps
+
+1. Set `E2E_TEST_PHONE_NUMBER` + `E2E_TEST_PASSWORD` and run live business E2E.
+2. Clear or reset business store on logout / account change.
+3. Optional: component test for `BusinessDashboard` upgrade + edit paths.
+
+---
+
+# Auth summary (`context/auth-test.md`) — previously complete
+
+| Suite | Passed | Failed | Skipped |
+|-------|--------|--------|---------|
+| Vitest auth (included in 51 above) | 21 originally | 0 | 0 |
+| Playwright `tests/auth/login.spec.ts` | 5 | 0 | 3 |
+
+No production auth changes. Roles absent from login response. Real-backend login E2E still needs `E2E_TEST_*`.
