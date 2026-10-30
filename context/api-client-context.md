@@ -82,7 +82,7 @@ Colocated under features — not under `src/lib/api`:
 | `features/auth/types.ts` | `User`, `AuthResponse`, `LoginRequest`, `RegisterRequest` |
 | `features/business/types.ts` | `BusinessDto`, `MyBusinessResponse`, `BusinessInput`, image rules |
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
-| `features/employee/types.ts` | `EmployeeDto`, `WorkingHourDto`, inputs |
+| `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
 
 Zod schemas in `features/*/schemas/` map form values → API inputs.

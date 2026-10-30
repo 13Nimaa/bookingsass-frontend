@@ -10,6 +10,7 @@ export interface EmployeeDto {
 export interface WorkingHourDto {
   id: number;
   employeeId: number;
+  date: string | null; // Gregorian ISO date: "YYYY-MM-DD"
   dayOfWeek: number;
   startTime: string; // "HH:mm:ss"
   endTime: string; // "HH:mm:ss"
@@ -20,7 +21,7 @@ export interface CreateEmployeeInput {
 }
 
 export interface WorkingHourInput {
-  dayOfWeek: number;
+  date: string; // Gregorian ISO date: "YYYY-MM-DD"
   startTime: string; // "HH:mm:ss"
   endTime: string; // "HH:mm:ss"
 }

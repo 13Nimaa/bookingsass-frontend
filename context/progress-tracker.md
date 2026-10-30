@@ -1,8 +1,50 @@
 # Frontend progress
 
 **Last updated:** 2026-10-30  
-**Current task:** `context/current-issues.md` — Services UX + sidebar — **Complete**  
-**Prior:** Install Modam font — complete
+**Current task:** Shared `Select` / `SelectField` UI primitive — **Complete**
+**Prior:** `context/feature-specs/02-staff-page.md` — Staff page UX — complete (date-based backend update wired)
+
+---
+
+# Shared Select dropdown
+
+| Area | Status |
+|------|--------|
+| `src/components/ui/select.tsx` | Base UI Select wrappers + `SelectField` convenience API | Done |
+| Schedule modal | Native `<select>` replaced with `SelectField` (time range) | Done |
+| Docs | `shared-components.md` inventory + import example | Done |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+```
+
+---
+
+# Staff page UX (`feature-specs/02-staff-page.md`)
+
+| Area | Status |
+|------|--------|
+| Date-based schedule update | Jalali calendar picker converts selected dates to/from Gregorian ISO; working-hours payloads and overlap/listing/copy/undo now use `date` instead of `dayOfWeek` | Done |
+| Staff page | Breadcrumb, employee-count badge, responsive 1/2-column staff cards, RTL Persian/localized-digit schedule summaries, empty/loading/error states | Done |
+| Staff identity | Avatar initials, normalized phone display, current-user `شما` badge | Done |
+| Staff actions | Clear schedule action, 40px delete target, named confirmation dialog | Done |
+| Add-staff dialog | Autofocus, live Persian/Arabic digit normalization and `0912 345 6789` formatting, inline validation, valid-only submit/loading state | Done |
+| Working-hours dialog | Jalali date picker, 30-minute 24-hour dropdowns, multiple intervals, date-scoped overlap/end-time validation, presets, copy previous date/next six days, saving indicator, and closed-date state | Done |
+| Schedule removal | 40px target plus a timed undo toast (recreates the deleted interval) | Done |
+| Accessibility | Existing Base UI dialog focus trap / Esc / modal semantics retained; labelled controls and visible focus styles added | Done |
+
+## Deferred: backend-dependent lookup/invitation
+
+The requested debounced user lookup and **send invite** flow are intentionally not implemented: the documented API inventory exposes only `POST /api/business/{id}/employees` (which links an existing user by phone), with no safe lookup or invitation endpoint/contract. The existing add-by-phone request remains functional. Confirm the backend API before adding lookup or invitation transport.
+
+## Verify
+
+```bash
+npx tsc --noEmit
+npm run build
+```
 
 ---
 

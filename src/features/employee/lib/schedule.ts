@@ -1,20 +1,6 @@
 import type { WorkingHourDto } from "@/features/employee/types";
 
-// .NET DayOfWeek → Persian weekday label.
-export const DAY_LABELS: Record<number, string> = {
-  0: "یکشنبه",
-  1: "دوشنبه",
-  2: "سه‌شنبه",
-  3: "چهارشنبه",
-  4: "پنجشنبه",
-  5: "جمعه",
-  6: "شنبه",
-};
-
-// Persian week reads Saturday → Friday.
-export const WEEK_ORDER: readonly number[] = [6, 0, 1, 2, 3, 4, 5];
-
-// "HH:mm:ss" → "HH:mm" for <input type="time">.
+// "HH:mm:ss" → "HH:mm" for display and time controls.
 export function toTimeInput(value: string): string {
   return value.slice(0, 5);
 }
@@ -25,16 +11,17 @@ export function toTimePayload(value: string): string {
 }
 
 export function compareWorkingHours(a: WorkingHourDto, b: WorkingHourDto): number {
-  if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+  if (a.date !== b.date) return (a.date ?? "").localeCompare(b.date ?? "");
   return a.startTime.localeCompare(b.startTime);
 }
 
-export function groupByDay(hours: WorkingHourDto[]): Map<number, WorkingHourDto[]> {
-  const map = new Map<number, WorkingHourDto[]>();
+export function groupByDate(hours: WorkingHourDto[]): Map<string, WorkingHourDto[]> {
+  const map = new Map<string, WorkingHourDto[]>();
   for (const hour of hours) {
-    const list = map.get(hour.dayOfWeek) ?? [];
+    if (!hour.date) continue;
+    const list = map.get(hour.date) ?? [];
     list.push(hour);
-    map.set(hour.dayOfWeek, list);
+    map.set(hour.date, list);
   }
   for (const list of map.values()) {
     list.sort((a, b) => a.startTime.localeCompare(b.startTime));
@@ -42,7 +29,7 @@ export function groupByDay(hours: WorkingHourDto[]): Map<number, WorkingHourDto[
   return map;
 }
 
-// Total number of days that have at least one shift scheduled.
-export function scheduledDayCount(hours: WorkingHourDto[]): number {
-  return new Set(hours.map((h) => h.dayOfWeek)).size;
+// Total number of calendar dates that have at least one shift scheduled.
+export function scheduledDateCount(hours: WorkingHourDto[]): number {
+  return new Set(hours.flatMap((hour) => hour.date ? [hour.date] : [])).size;
 }

@@ -23,6 +23,7 @@ Alias: `@/*` → `src/*`. Prefer these before inventing new banners, headers, di
 | `dialog.tsx` | `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` | Modal shell. Compose feature dialogs from this. |
 | `confirm-dialog.tsx` | `ConfirmDialog` | Confirm/cancel (`tone`: `danger` \| `primary`, supports `loading`). |
 | `password-strength.tsx` | `PasswordStrength` | Auth signup password meter (Persian labels). |
+| `select.tsx` | `SelectField`, `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectLabel`, `SelectGroup`, `SelectSeparator` | Custom dropdown (Base UI). Prefer `SelectField` for labeled single-select forms; compose parts for groups / custom item UI. Portal z-index sits above dialogs; `modal` defaults `false` on `SelectField` for nested modals. |
 
 Stack: Base UI + CVA + `cn` package (`import { cn } from "cn"`). `components.json` expects `@/lib/utils` but that file does not exist yet — keep using the `cn` package.
 
@@ -97,6 +98,7 @@ No `src/hooks/` folder. Common imports:
 ```ts
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SelectField } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { PageHeader } from "@/components/shared/page-header";

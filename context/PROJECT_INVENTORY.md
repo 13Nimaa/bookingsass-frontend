@@ -150,7 +150,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | My business + update + image | Done |
 | Self-service business register → BusinessOwner | Done |
 | Employee add/list/remove | Done |
-| Working hours create/list/delete | Done |
+| Date-based working hours create/list/delete | Done (Jalali picker converts to/from Gregorian ISO) |
 | Working hours update (edit slot) | Endpoint only — UI missing |
 | Services management UI | Done (`/dashboard/services`) |
 | CRM customers UI | **Not started** (nav stub) |
