@@ -1,8 +1,36 @@
 # Frontend progress
 
-**Last updated:** 2026-10-30  
-**Current task:** Shared `Select` / `SelectField` UI primitive — **Complete**
-**Prior:** `context/feature-specs/02-staff-page.md` — Staff page UX — complete (date-based backend update wired)
+**Last updated:** 2026-10-31  
+**Current task:** Customers CRM — create / edit / detail — **Complete**
+**Prior:** Customers store + list/delete wire — complete
+
+---
+
+# Customers CRM (`03` + `04`)
+
+| Area | Status |
+|------|--------|
+| Store | `useCustomerStore` — list / create / update / remove | Done |
+| List | Search, filters, sort, pagination, soft-delete | Done |
+| Create / edit | `CustomerFormDialog` + Zod schema | Done |
+| Detail | `CustomerDetailDialog` via `getCustomerRequest`; edit / delete / reactivate | Done |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/features/customer/store/customer-store.ts` | Zustand CRM store |
+| `src/features/customer/schemas/customer.schema.ts` | Zod + phone/email helpers |
+| `src/features/customer/components/customer-form-dialog.tsx` | Create/edit |
+| `src/features/customer/components/customer-detail-dialog.tsx` | Detail drawer |
+| `src/features/customer/components/customer-dashboard.tsx` | List + wiring |
+| `src/app/(dashboard)/dashboard/customers/page.tsx` | Thin route |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+```
 
 ---
 

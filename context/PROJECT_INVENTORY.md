@@ -22,7 +22,7 @@
 | `features/landing` | `/` (marketing only, mock data) | — | — |
 
 **Missing feature modules (no folder, no endpoints, no pages):**
-- `customers` — sidebar link only (`/dashboard/customers` → **404**)
+- `customers` — `/dashboard/customers` list wired (create/edit forms deferred)
 - `bookings` / appointments — landing mockups only
 - Public business detail + booking flow
 - Admin UI
@@ -45,7 +45,7 @@
 | `/dashboard/employees` | Auth | Employees + working hours |
 | `/dashboard/services` | Auth | Services CRUD for owned business |
 
-**Nav links without pages:** `/dashboard/customers` (in `sidebar.tsx`).
+**Nav links without pages:** none currently (customers list exists).
 
 ---
 
@@ -119,9 +119,15 @@ Still missing product-wise: employee↔service assign; public catalog on busines
 
 | Method | Path | Frontend | Notes |
 |--------|------|----------|-------|
-| POST / GET / GET id / PUT | all | **Missing FE** | Sidebar dead link |
+| GET | `/` (paged) | **Wired** | List page |
+| GET | `/{customerId}` | **Wired** | Detail dialog |
+| POST | `/` | **Wired** | Create dialog |
+| PUT | `/{customerId}` | **Wired** | Edit dialog + reactivate |
+| DELETE | `/{customerId}` | **Wired** | Soft-delete (list + detail) |
 
-BE caveat: CRM is **Admin-gated** today — owner FE would get `Forbid` until BE is fixed.
+Types: `src/features/customer/types.ts`. Transport: `customer.endpoints.ts`. Store: `customer-store.ts`. Full list CRM UI live.
+
+BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid` until BE is fixed.
 
 ### 3.8 Bookings
 
@@ -153,7 +159,8 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | Date-based working hours create/list/delete | Done (Jalali picker converts to/from Gregorian ISO) |
 | Working hours update (edit slot) | Endpoint only — UI missing |
 | Services management UI | Done (`/dashboard/services`) |
-| CRM customers UI | **Not started** (nav stub) |
+| CRM customers API (types + endpoints) | Done |
+| CRM customers UI | Done (list + create/edit/detail + soft-delete/reactivate) |
 | Business detail page | **Not started** |
 | Public / customer booking flow | **Not started** |
 | Owner booking calendar | **Not started** |
@@ -185,7 +192,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 
 5. ~~**Services module**~~ — Done (list/create/edit/delete on `/dashboard/services`). Still open: employee↔service assign + public catalog on business detail.
 6. **Customers module** (`/dashboard/customers`):
-   - Wire CRM CRUD
+   - Types + endpoints done; still need store + UI
    - **Depends on BE fix:** allow `BusinessOwner` (not only Admin)
 7. **Working hours edit:** use existing `updateWorkingHourRequest` in store + schedule dialog
 8. **Remove or fix** `business-store.create` → should call `registerBusinessRequest`, not Admin `POST /api/business`
@@ -209,7 +216,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 
 | Issue | Detail |
 |-------|--------|
-| Dead nav links | Sidebar → `/dashboard/customers` with no page |
+| Customers CRM BE role | Owners may still get Forbid until BE allows BusinessOwner |
 | `createBusinessRequest` | Hits Admin-only `POST /api/business`; owner flows use `/register` but store still exposes `create` |
 | WH update unused | Endpoint helper present; store only create/delete |
 | No roles in auth user | `AuthResponse.user` has no roles; roles only on Profile — nav cannot gate by role until profile/session loaded |
@@ -246,7 +253,7 @@ src/lib/api/
     business.endpoints.ts — list, mine, create*, update, register, image
     employee.endpoints.ts — employees CRUD-ish + working hours
     service.endpoints.ts  — public list + owner CRUD
-    (missing) customer.endpoints.ts
+    customer.endpoints.ts
     (missing) booking.endpoints.ts
 ```
 

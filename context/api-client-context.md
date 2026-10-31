@@ -24,10 +24,11 @@ src/lib/api/
     ├── business.endpoints.test.ts
     ├── employee.endpoints.ts
     ├── service.endpoints.ts
+    ├── customer.endpoints.ts
     └── profile.endpoints.ts
 ```
 
-Missing (not started): `customer.endpoints.ts`, `booking.endpoints.ts`.
+Missing (not started): `booking.endpoints.ts`.
 
 ## Signatures
 
@@ -59,6 +60,7 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | `profile.endpoints.ts` | `apiClient` | get, update, image up/delete |
 | `employee.endpoints.ts` | `apiClient` | employees + working hours |
 | `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
+| `customer.endpoints.ts` | `apiClient` | CRM list (paged) / get / create / update / soft-delete |
 
 Naming: `{domain}.endpoints.ts`, exports like `loginRequest`, `getMineBusiness`, `listEmployeesRequest`.
 
@@ -84,6 +86,7 @@ Colocated under features — not under `src/lib/api`:
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
 | `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
+| `features/customer/types.ts` | `CustomerDto`, `PagedCustomers`, list/create/update inputs |
 
 Zod schemas in `features/*/schemas/` map form values → API inputs.
 
@@ -107,6 +110,7 @@ UI → Zustand store → *.endpoints.ts → backendFetch | apiClient → fetch
 | `useProfileStore` | `features/profile/store/profile-store.ts` |
 | `useEmployeeStore` | `features/employee/store/employee-store.ts` |
 | `useServiceStore` | `features/service/store/service-store.ts` |
+| `useCustomerStore` | `features/customer/store/customer-store.ts` |
 
 Some flows bypass the store intentionally (e.g. register-business content calls `registerBusinessRequest` then `applySession`).
 
