@@ -25,9 +25,7 @@ const fadeUp = {
 function LoadingState() {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-10 sm:py-10" aria-busy="true">
-      <div className="h-9 w-28 animate-pulse rounded-full bg-surface-secondary motion-reduce:animate-none" />
-      <div className="skeleton-shimmer h-10 w-64 rounded-xl bg-surface-secondary" />
-      <div className="skeleton-shimmer h-4 w-full max-w-md rounded bg-surface-secondary" />
+      <PageHeader title="کسب‌وکار" description="در حال بارگذاری…" />
       <div className="skeleton-shimmer h-72 w-full max-w-2xl rounded-[1.75rem] bg-surface" />
     </main>
   );

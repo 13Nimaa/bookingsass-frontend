@@ -1,8 +1,91 @@
 # Frontend progress
 
-**Last updated:** 2026-10-31  
-**Current task:** Customers CRM — create / edit / detail — **Complete**
-**Prior:** Customers store + list/delete wire — complete
+**Last updated:** 2026-11-02  
+**Current task:** Booking API client (specs 01–11 transport) — **Complete** (types + endpoints only; no UI)
+**Prior:** Dashboard options restored on desktop + profile logout — complete
+
+---
+
+# Booking API client (specs 03–11 + assign)
+
+| Area | Status |
+|------|--------|
+| Types | `features/booking/types.ts` — enums, DTOs, paged results, query params | Done |
+| Transport | `booking.endpoints.ts` — availability, auth/guest create, list, mine, detail, status | Done |
+| Employee↔service | `list/assign/removeEmployeeServiceRequest` on `employee.endpoints.ts` | Done |
+| Store / pages / forms | Deferred — not in this unit | Skipped |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/features/booking/types.ts` | Booking DTOs + enums |
+| `src/lib/api/endpoints/booking.endpoints.ts` | HTTP helpers |
+| `src/features/employee/types.ts` | `AssignServiceInput` |
+| `src/lib/api/endpoints/employee.endpoints.ts` | Assign/list/remove services |
+| `context/api-client-context.md` | Documented module |
+| `context/PROJECT_INVENTORY.md` | Marked partial (no UI) |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+```
+
+## Next
+
+Wire store + screens in suggested order: assign UI → availability → create → owner list/detail/status → `/mine`.
+
+---
+
+# Dashboard UI/UX refinement
+
+| Area | Status |
+|------|--------|
+| Desktop sidebar | Narrower (~232px), refined header/nav/active/hover, user card + logout footer | Done |
+| Desktop home | Welcome + sidebar instruction only — no duplicate nav list | Done |
+| Mobile home grid | Two-column cards for five destinations; fifth card half-width; logout below | Done |
+| Bottom nav | Unchanged | Done |
+| Behavior / routes / APIs | Unchanged | Done |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/components/layout/sidebar.tsx` | Desktop sidebar visual refinement |
+| `src/app/(dashboard)/dashboard/page.tsx` | Desktop welcome + mobile management grid |
+| `context/ui-context.md` | Dashboard layout notes updated |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+```
+
+---
+
+# Mobile dashboard chrome
+
+| Area | Status |
+|------|--------|
+| Dashboard home menu | Replaced شروع سریع / وضعیت حساب with nav links (profile, business, employees, services, customers) + mobile logout | Done (superseded by grid refinement above) |
+| Glass `PageHeader` | Fixed mobile bar: back icon + centered title + `backdrop-blur`; desktop layout unchanged | Done |
+| Sidebar | Hidden on mobile (`md:flex` only) — tab bar + home menu cover nav | Done |
+| Breadcrumbs | Desktop-only on customers / services / employees (glass header covers mobile) | Done |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/app/(dashboard)/dashboard/page.tsx` | Mobile/desktop dashboard home |
+| `src/components/shared/page-header.tsx` | Glass mobile header + desktop header |
+| `src/components/layout/sidebar.tsx` | Desktop-only chrome |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+```
 
 ---
 

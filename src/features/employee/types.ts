@@ -25,3 +25,8 @@ export interface WorkingHourInput {
   startTime: string; // "HH:mm:ss"
   endTime: string; // "HH:mm:ss"
 }
+
+/** Body for POST /api/employees/:employeeId/services */
+export interface AssignServiceInput {
+  serviceId: number;
+}

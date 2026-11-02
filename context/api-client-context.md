@@ -22,13 +22,12 @@ src/lib/api/
     ├── auth.endpoints.ts
     ├── business.endpoints.ts
     ├── business.endpoints.test.ts
+    ├── booking.endpoints.ts
     ├── employee.endpoints.ts
     ├── service.endpoints.ts
     ├── customer.endpoints.ts
     └── profile.endpoints.ts
 ```
-
-Missing (not started): `booking.endpoints.ts`.
 
 ## Signatures
 
@@ -58,9 +57,10 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | `auth.endpoints.ts` | `backendFetch` | login, register, refresh, logout |
 | `business.endpoints.ts` | both | public list, mine, create*, update, register, image |
 | `profile.endpoints.ts` | `apiClient` | get, update, image up/delete |
-| `employee.endpoints.ts` | `apiClient` | employees + working hours |
+| `employee.endpoints.ts` | `apiClient` | employees + working hours + employee↔service assign |
 | `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
 | `customer.endpoints.ts` | `apiClient` | CRM list (paged) / get / create / update / soft-delete |
+| `booking.endpoints.ts` | both | availability + guest create (`backendFetch`); auth create / list / mine / detail / status (`apiClient`) |
 
 Naming: `{domain}.endpoints.ts`, exports like `loginRequest`, `getMineBusiness`, `listEmployeesRequest`.
 
@@ -87,8 +87,17 @@ Colocated under features — not under `src/lib/api`:
 | `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
 | `features/customer/types.ts` | `CustomerDto`, `PagedCustomers`, list/create/update inputs |
+| `features/booking/types.ts` | `BookingStatus`, `BookingDto`, availability, list/mine/detail DTOs, create inputs |
+| `features/employee/types.ts` | (+ `AssignServiceInput` for employee↔service) |
 
 Zod schemas in `features/*/schemas/` map form values → API inputs.
+
+### Booking transport notes
+
+- Anonymous: `getAvailabilityRequest`, `createGuestBookingRequest` → `backendFetch`.
+- Authenticated: `createBookingRequest`, `listBookingsRequest`, `listMyBookingsRequest`, `getBookingRequest`, `updateBookingStatusRequest` → `apiClient`.
+- Employee↔service: `listEmployeeServicesRequest`, `assignEmployeeServiceRequest`, `removeEmployeeServiceRequest` on `employee.endpoints.ts`.
+- Store / UI not wired yet — transport + types only.
 
 ## Store Pattern
 

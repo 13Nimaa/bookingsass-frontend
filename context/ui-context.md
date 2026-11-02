@@ -84,14 +84,18 @@ Primitives live in `src/components/ui/`. Prefer the CLI / existing patterns over
 
 ### Dashboard
 
-- `AuthGuard` → sticky `Sidebar` (`md+`) + main content + `MobileTabBar`
-- Main: `max-w-7xl`, padded (`px-4 py-8 sm:px-10 sm:py-10`)
+- `AuthGuard` → sticky `Sidebar` (`md+` only, ~232px, right in RTL) + main content + `MobileTabBar`
+- Sidebar: refined nav (active `primary-soft`, hover neutral), user card + logout in footer
+- Main: typically `max-w-5xl`–`max-w-7xl`, padded; avoid duplicating sidebar links on desktop
 - Page chrome: `PageHeader` + feature dashboard body
-- Cards: soft border, light indigo-tinted shadow, generous radius
+- Home (`/dashboard`): desktop welcome + sidebar cue; mobile two-column management grid (profile / business / employees / services / customers) + logout; `MobileTabBar` unchanged
+- Cards: soft border, light surfaces, generous radius (grid cards ~16px)
 
 ### Mobile
 
 - Fixed bottom tab bar; content spacer `h-[74px]` where needed
+- Fixed top glass `PageHeader` (back icon + centered title, `backdrop-blur`); content spacer `h-14` inside `PageHeader`
+- Sidebar hidden; dashboard home two-column grid replaces desktop nav shortcuts
 
 ## Icons
 

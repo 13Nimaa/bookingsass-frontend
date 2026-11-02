@@ -51,8 +51,8 @@ Related (not under `layout/`):
 | File | Export | Role |
 | ---- | ------ | ---- |
 | `auth-error.tsx` | `AuthError` | Focusable `role="alert"` error banner. Used beyond auth (forms/dashboards). |
-| `page-header.tsx` | `PageHeader` | Dashboard header: eyebrow, title, description, actions, optional back. |
-| `back-button.tsx` | `BackButton` | RTL-aware back (`router.back` + fallback href). |
+| `page-header.tsx` | `PageHeader` | Dashboard header. Mobile: fixed glass bar (back icon + centered title). Desktop: eyebrow, title, description, actions, optional back. |
+| `back-button.tsx` | `BackButton` | RTL-aware back (`router.back` + fallback href). Desktop PageHeader uses this. |
 
 App Router: `src/app/error.tsx` — global error boundary with Persian copy + retry.
 

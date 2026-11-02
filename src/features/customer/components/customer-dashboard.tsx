@@ -121,7 +121,7 @@ function toPersianDigits(value: string | number): string {
 
 function CustomersBreadcrumb() {
   return (
-    <nav aria-label="مسیر صفحه" className="mb-4">
+    <nav aria-label="مسیر صفحه" className="mb-4 hidden md:block">
       <ol className="flex flex-wrap items-center gap-1.5 text-[13px] font-semibold text-slate-500">
         <li>
           <Link
@@ -933,7 +933,7 @@ export function CustomerDashboard() {
         aria-busy="true"
       >
         <CustomersBreadcrumb />
-        <div className="skeleton-shimmer h-10 w-56 rounded-xl bg-surface-secondary" />
+        <PageHeader title="مشتریان" description="در حال بارگذاری…" />
         <div className="skeleton-shimmer h-28 rounded-2xl bg-surface" />
         <ListSkeleton />
       </main>
@@ -945,7 +945,6 @@ export function CustomerDashboard() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-10 sm:py-10">
         <CustomersBreadcrumb />
         <PageHeader
-          hideBack
           title="مشتریان"
           description="برای مدیریت مشتریان، ابتدا باید اطلاعات کسب‌وکار شما دریافت شود."
         />
@@ -964,7 +963,6 @@ export function CustomerDashboard() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-10 sm:py-10">
         <CustomersBreadcrumb />
         <PageHeader
-          hideBack
           title="مشتریان"
           description="مدیریت و مشاهده اطلاعات مشتریان سالن"
         />
@@ -997,7 +995,6 @@ export function CustomerDashboard() {
       <CustomersBreadcrumb />
 
       <PageHeader
-        hideBack
         title="مشتریان"
         badge={
           status === "loaded" || totalCount > 0 ? (

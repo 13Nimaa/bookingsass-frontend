@@ -1,5 +1,9 @@
 import { apiClient } from "@/lib/api/client";
-import type { CreateEmployeeInput, WorkingHourInput } from "@/features/employee/types";
+import type {
+  AssignServiceInput,
+  CreateEmployeeInput,
+  WorkingHourInput,
+} from "@/features/employee/types";
 
 // Employee + working-hours endpoints. All require the authenticated
 // business owner (or, for working hours, the employee themselves).
@@ -86,4 +90,35 @@ export function deleteWorkingHourRequest(
     `/api/business/${businessId}/employees/${employeeId}/working-hours/${id}`,
     { method: "DELETE" }
   );
+}
+
+// --- Employee ↔ service assignment (BusinessOwner of employee's business) ---
+
+// GET /api/employees/:employeeId/services → ServiceDto[]
+export function listEmployeeServicesRequest(
+  employeeId: number
+): Promise<Response> {
+  return apiClient(`/api/employees/${employeeId}/services`);
+}
+
+// POST /api/employees/:employeeId/services → 201 ServiceDto
+export function assignEmployeeServiceRequest(
+  employeeId: number,
+  input: AssignServiceInput
+): Promise<Response> {
+  return apiClient(`/api/employees/${employeeId}/services`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+}
+
+// DELETE /api/employees/:employeeId/services/:serviceId
+export function removeEmployeeServiceRequest(
+  employeeId: number,
+  serviceId: number
+): Promise<Response> {
+  return apiClient(`/api/employees/${employeeId}/services/${serviceId}`, {
+    method: "DELETE",
+  });
 }

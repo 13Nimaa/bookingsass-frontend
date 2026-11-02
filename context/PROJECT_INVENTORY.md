@@ -21,9 +21,8 @@
 | `features/service` | `/dashboard/services` | `service.endpoints.ts` | `service-store` |
 | `features/landing` | `/` (marketing only, mock data) | — | — |
 
-**Missing feature modules (no folder, no endpoints, no pages):**
-- `customers` — `/dashboard/customers` list wired (create/edit forms deferred)
-- `bookings` / appointments — landing mockups only
+**Missing / partial feature modules:**
+- `booking` — types + endpoints done; no store/UI yet
 - Public business detail + booking flow
 - Admin UI
 - Employee self-service dashboard (beyond owner managing employees)
@@ -129,17 +128,20 @@ Types: `src/features/customer/types.ts`. Transport: `customer.endpoints.ts`. Sto
 
 BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid` until BE is fixed.
 
-### 3.8 Bookings
+### 3.8 Bookings — `api/bookings` (+ employee services)
 
-| Capability | Backend | Frontend |
-|------------|---------|----------|
-| Create user booking | Service only, **no controller** | **Missing** |
-| Create guest booking | Service only | **Missing** |
-| List mine / business calendar | Missing BE | **Missing** |
-| Status patch | Missing BE | **Missing** |
-| Availability / slots | Missing BE | **Missing** |
+| Method | Path | Frontend | Notes |
+|--------|------|----------|-------|
+| GET | `/availability` | **Partial** | `getAvailabilityRequest` — no UI |
+| POST | `/` | **Partial** | `createBookingRequest` — no UI |
+| POST | `/guest` | **Partial** | `createGuestBookingRequest` — no UI |
+| GET | `/` | **Partial** | `listBookingsRequest` — no UI |
+| GET | `/mine` | **Partial** | `listMyBookingsRequest` — no UI |
+| GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no UI |
+| PATCH | `/{bookingId}/status` | **Partial** | `updateBookingStatusRequest` — no UI |
+| GET/POST/DELETE | `/api/employees/{id}/services…` | **Partial** | assign helpers on `employee.endpoints` — no UI |
 
-Landing/dashboard mockups show appointments; **zero real booking API usage**.
+Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No store / pages yet.**
 
 ---
 
@@ -161,6 +163,8 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | Services management UI | Done (`/dashboard/services`) |
 | CRM customers API (types + endpoints) | Done |
 | CRM customers UI | Done (list + create/edit/detail + soft-delete/reactivate) |
+| Bookings API (types + endpoints) | Done (no store/UI) |
+| Employee↔service assign API | Done (endpoints only; no UI) |
 | Business detail page | **Not started** |
 | Public / customer booking flow | **Not started** |
 | Owner booking calendar | **Not started** |
@@ -254,7 +258,7 @@ src/lib/api/
     employee.endpoints.ts — employees CRUD-ish + working hours
     service.endpoints.ts  — public list + owner CRUD
     customer.endpoints.ts
-    (missing) booking.endpoints.ts
+    booking.endpoints.ts  — availability, create, guest, list, mine, detail, status
 ```
 
 ---
@@ -270,8 +274,8 @@ src/lib/api/
 | Working hours | Done | Mostly | FE update UI; public read (BE) |
 | Services | CRUD ready (per feature-spec) | Owner dashboard Done | Assign + public detail catalog |
 | Customers CRM | Partial (Admin bug) | **None** | BE role fix + FE P1 |
-| Bookings | **Not wired** | **None** | BE P0 then FE P0 |
-| Availability | Missing | Missing | BE then FE |
+| Bookings | Ready (per FE guide) | Types + endpoints; no UI | FE store + screens |
+| Availability | Ready | Endpoint only | FE slot picker |
 | Payments / notifs / reviews | Missing | Missing | Later |
 
 ---

@@ -1,128 +1,108 @@
-import Link from "next/link";
-import { ArrowLeft, Store, UserRound, UserRoundCog, Activity } from "lucide-react";
-import { PageHeader } from "@/components/shared/page-header";
+"use client";
 
-const QUICK_ACTIONS = [
+import Link from "next/link";
+import {
+  LogOut,
+  Sparkles,
+  Store,
+  UserRound,
+  UserRoundCog,
+  Users,
+} from "lucide-react";
+import { PageHeader } from "@/components/shared/page-header";
+import { useAuthStore } from "@/features/auth/store/auth-store";
+
+const MENU_OPTIONS = [
   {
     href: "/dashboard/profile",
     icon: UserRound,
-    title: "تکمیل پروفایل",
-    description: "نام، ایمیل و تصویر پروفایل خود را به‌روز نگه دارید تا مشتریان به شما اعتماد کنند.",
-    cta: "مدیریت پروفایل",
+    title: "پروفایل",
+    description: "اطلاعات حساب و تصویر پروفایل",
   },
   {
     href: "/dashboard/business",
     icon: Store,
-    title: "مدیریت کسب‌وکار",
-    description: "مشخصات سالن، شهر و نشانی را ثبت کنید و حساب خود را به مدیر آرایشگاه ارتقا دهید.",
-    cta: "مدیریت کسب‌وکار",
+    title: "کسب‌وکار",
+    description: "مشخصات سالن و نشانی",
   },
   {
     href: "/dashboard/employees",
     icon: UserRoundCog,
-    title: "مدیریت کارمندان",
-    description: "کارمندان مجموعه را اضافه کنید و برنامهٔ کاری هفتگی هرکدام را مدیریت کنید.",
-    cta: "مدیریت کارمندان",
+    title: "کارمندان",
+    description: "مدیریت کارکنان و برنامهٔ کاری",
+  },
+  {
+    href: "/dashboard/services",
+    icon: Sparkles,
+    title: "خدمات",
+    description: "فهرست خدمات، قیمت و مدت زمان",
+  },
+  {
+    href: "/dashboard/customers",
+    icon: Users,
+    title: "مشتریان",
+    description: "مدیریت اطلاعات مشتریان سالن",
   },
 ] as const;
 
 export default function DashboardPage() {
+  const logout = useAuthStore((s) => s.logout);
+
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-10 sm:py-10">
-      <PageHeader
-        hideBack
-        eyebrow="نمای کلی"
-        title="داشبورد"
-        description="از اینجا پروفایل و کسب‌وکار خود را مدیریت کنید. هر بخش را باز کنید و مرحله‌به‌مرحله جلو بروید."
-      />
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-6 pt-5 sm:px-8 sm:pb-8 md:px-10 md:pb-10 md:pt-9">
+      <div className="hidden md:block">
+        <PageHeader
+          hideBack
+          title="داشبورد"
+          description="بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید."
+        />
+      </div>
 
-      {/* Asymmetric 2fr / 1fr — no centered hero, no 3-card row */}
-      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:gap-6">
-        {/* ── Quick actions ── */}
-        <section
-          aria-label="شروع سریع"
-          className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-[0_20px_40px_-24px_rgba(79,70,229,0.28)] sm:p-8"
-        >
-          <h2 className="text-[17px] font-extrabold tracking-tight text-[#1e1b4b]">
-            شروع سریع
+      <div className="md:hidden">
+        <PageHeader hideBack title="داشبورد" />
+        <div className="mb-5">
+          <h2 className="text-[20px] font-bold leading-snug tracking-tight text-[#221F1C]">
+            داشبورد
           </h2>
-          <p className="mt-1.5 text-sm leading-6 font-medium text-slate-600">
-            کارهای پرتکرار مدیران — هر بخش را باز کنید و مرحله‌به‌مرحله جلو بروید.
+          <p className="mt-1.5 text-[12.5px] leading-5 font-normal text-[#6B7280]">
+            بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
           </p>
+        </div>
+      </div>
 
-          <div className="mt-6 flex flex-col divide-y divide-border-subtle border-y border-border-subtle">
-            {QUICK_ACTIONS.map(({ href, icon: Icon, title, description, cta }, i) => (
+      <nav aria-label="منوی داشبورد" className="mt-6 w-full md:mt-8">
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+          {MENU_OPTIONS.map(({ href, icon: Icon, title, description }) => (
+            <li key={href} className="min-w-0">
               <Link
-                key={href}
                 href={href}
-                className={`group flex items-start gap-4 py-5 transition-colors first:pt-1 last:pb-1 hover:bg-surface-subtle/60 ${
-                  i === 0 ? "" : ""
-                }`}
+                className="flex h-[112px] flex-col gap-2.5 rounded-2xl border border-[#E4E7EC] bg-surface p-3.5 transition-colors duration-150 hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary-soft/50 motion-reduce:transition-none sm:h-[118px] sm:gap-3 sm:p-4 md:h-[128px]"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-primary-subtle bg-primary-soft text-primary transition-transform duration-300 group-hover:scale-105 group-active:scale-[0.97]">
-                  <Icon className="h-5 w-5" aria-hidden="true" />
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                  <Icon className="h-[21px] w-[21px]" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-center justify-between gap-3">
-                    <span className="text-[15px] font-bold text-[#1e1b4b]">{title}</span>
-                    <ArrowLeft
-                      className="h-4 w-4 shrink-0 text-slate-400 transition-all duration-200 group-hover:-translate-x-1 group-hover:text-primary"
-                      aria-hidden="true"
-                    />
+                  <span className="block text-[13.5px] font-semibold leading-snug text-[#221F1C] md:text-[14px]">
+                    {title}
                   </span>
-                  <span className="mt-1 block text-sm leading-6 font-medium text-slate-600">
+                  <span className="mt-0.5 line-clamp-2 text-[11.5px] leading-4 font-normal text-[#6B7280] md:text-[12px]">
                     {description}
-                  </span>
-                  <span className="mt-2 inline-block text-[13px] font-bold text-primary group-hover:text-primary-hover">
-                    {cta}
                   </span>
                 </span>
               </Link>
-            ))}
-          </div>
-        </section>
+            </li>
+          ))}
+        </ul>
 
-        {/* ── Account status ── */}
-        <aside
-          aria-label="وضعیت حساب"
-          className="flex flex-col rounded-[1.75rem] bg-primary p-6 text-white shadow-[0_20px_40px_-20px_rgba(79,70,229,0.55)] ring-1 ring-white/15 ring-inset sm:p-7"
+        <button
+          type="button"
+          onClick={() => void logout()}
+          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-[12px] border border-border bg-surface text-[13.5px] font-medium text-[#4B5563] transition-colors duration-150 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:hidden"
         >
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:animate-none" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
-            </span>
-            <h2 className="text-[15px] font-extrabold tracking-tight text-white">
-              وضعیت حساب
-            </h2>
-          </div>
-          <p className="mt-2 text-sm leading-6 font-medium text-indigo-100">
-            حساب شما فعال است. برای باز شدن کامل پنل مدیریت، هر دو مرحله زیر را کامل کنید.
-          </p>
-
-          <ul className="mt-5 flex flex-col gap-3">
-            {[
-              { label: "پروفایل کاربری", href: "/dashboard/profile" },
-              { label: "اطلاعات کسب‌وکار", href: "/dashboard/business" },
-            ].map(({ label, href }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-white/20 bg-white/10 px-4 py-3.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-all duration-200 hover:border-white/30 hover:bg-white/15 active:scale-[0.98]"
-                >
-                  {label}
-                  <ArrowLeft className="h-4 w-4 text-indigo-100" aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-auto flex items-center gap-1.5 pt-6 text-[12px] leading-5 font-medium text-indigo-100">
-            <Activity className="h-3.5 w-3.5" aria-hidden="true" />
-            ورود شما ذخیره شده و نشست فعال است.
-          </p>
-        </aside>
-      </div>
+          <LogOut className="h-4 w-4" aria-hidden="true" />
+          خروج از حساب
+        </button>
+      </nav>
     </main>
   );
 }
