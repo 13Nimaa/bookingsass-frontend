@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  CalendarDays,
   LogOut,
   Sparkles,
   Store,
@@ -22,8 +23,14 @@ const MENU_OPTIONS = [
   {
     href: "/dashboard/business",
     icon: Store,
-    title: "کسب‌وکار",
+    title: "سالن",
     description: "مشخصات سالن و نشانی",
+  },
+  {
+    href: "/dashboard/bookings",
+    icon: CalendarDays,
+    title: "رزروها",
+    description: "مشاهده و مدیریت رزروهای سالن",
   },
   {
     href: "/dashboard/employees",

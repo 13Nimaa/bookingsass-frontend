@@ -467,7 +467,7 @@ export function AddEmployeeServiceDialog({
                     هنوز خدمتی ثبت نشده است
                   </p>
                   <p className="mt-1 text-[12.5px] leading-6 font-medium text-muted">
-                    ابتدا از بخش مدیریت خدمات، خدمت‌های کسب‌وکار را ثبت کنید.
+                    ابتدا از بخش مدیریت خدمات، خدمت‌های سالن را ثبت کنید.
                   </p>
                 </div>
               </div>
@@ -481,7 +481,7 @@ export function AddEmployeeServiceDialog({
                     همهٔ خدمات اختصاص داده شده‌اند
                   </p>
                   <p className="mt-1 text-[12.5px] leading-6 font-medium text-muted">
-                    تمام خدمت‌های کسب‌وکار در حال حاضر به این کارمند تعلق دارند.
+                    تمام خدمت‌های سالن در حال حاضر به این کارمند تعلق دارند.
                   </p>
                 </div>
               </div>

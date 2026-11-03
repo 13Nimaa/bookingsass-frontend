@@ -299,7 +299,7 @@ export function EmployeeDashboard() {
       <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <PageHeader
           title="کارکنان"
-          description="برای مدیریت کارکنان، ابتدا باید اطلاعات کسب‌وکار شما دریافت شود."
+          description="برای مدیریت کارکنان، ابتدا باید اطلاعات سالن شما دریافت شود."
         />
         {businessError && <AuthError message={businessError} />}
         <div>
@@ -327,10 +327,10 @@ export function EmployeeDashboard() {
           </span>
           <div>
             <h2 className="text-[17px] font-extrabold text-text-primary">
-              ابتدا کسب‌وکار خود را ثبت کنید
+              ابتدا سالن خود را ثبت کنید
             </h2>
             <p className="mx-auto mt-1.5 max-w-md text-sm leading-6 font-medium text-muted">
-              پس از ثبت کسب‌وکار می‌توانید کارکنان و برنامهٔ کاری آن‌ها را
+              پس از ثبت سالن می‌توانید کارکنان و برنامهٔ کاری آن‌ها را
               مدیریت کنید.
             </p>
           </div>
@@ -339,7 +339,7 @@ export function EmployeeDashboard() {
             className="h-11 px-6 font-bold"
             onClick={() => router.push("/dashboard/business")}
           >
-            ثبت کسب‌وکار
+            ثبت سالن
           </Button>
         </div>
       </main>

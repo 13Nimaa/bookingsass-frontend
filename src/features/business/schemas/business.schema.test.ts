@@ -12,7 +12,7 @@ describe("businessSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map((i) => i.message);
-      expect(messages).toContain("نام کسب‌وکار الزامی است.");
+      expect(messages).toContain("نام سالن الزامی است.");
       expect(messages).toContain("شهر الزامی است.");
       expect(messages).toContain("نشانی الزامی است.");
     }

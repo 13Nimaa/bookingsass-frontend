@@ -15,7 +15,8 @@ import { useAuthStore } from "@/features/auth/store/auth-store";
 
 const NAV = [
   { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
-  { href: "/dashboard/business", label: "کسب‌وکار", icon: Store },
+  { href: "/dashboard/business", label: "سالن", icon: Store },
+  { href: "/dashboard/bookings", label: "رزروها", icon: CalendarCheck },
   { href: "/dashboard/employees", label: "کارمندان", icon: UserRoundCog },
   { href: "/dashboard/services", label: "خدمات", icon: Sparkles },
   { href: "/dashboard/customers", label: "مشتریان", icon: Users },

@@ -1,8 +1,65 @@
 # Frontend progress
 
 **Last updated:** 2026-11-03  
-**Current task:** Dashboard UI refinement (approved audit UI-001 / UI-002 / UI-008) — **Complete**  
-**Prior:** Remove Employee Service Assignment (Phase 5) — complete
+**Current task:** Bookings Management Page Phase 1 (`07-bookings-ui.md`) — **Complete**  
+**Prior:** Dashboard UI refinement (approved audit UI-001 / UI-002 / UI-008) — complete
+
+---
+
+# Bookings Management Page (Phase 1 — `07`)
+
+| Area | Status |
+|------|--------|
+| Route | `/dashboard/bookings` thin page → `BookingDashboard` |
+| Nav | Sidebar + dashboard hub card for رزروها |
+| Store | `useBookingStore.fetchBookings` → `listBookingsRequest`; paged parse; missing `price` → `null` |
+| Filters | Debounced search (customer name/phone), status select (backend enums only), Jalali date range → `fromDate`/`toDate` UTC ISO |
+| Desktop cards | Horizontal RTL card: customer, service, employee, date/time, price, status |
+| Mobile cards | Vertical layout: name+status, service/employee, date/time, price |
+| States | Skeleton cards; empty «رزروی یافت نشد» + clear-filters; error + retry |
+| Pagination | Server pages from API (`page` / `pageSize` / totals) |
+| Out of scope | Detail, status mutations, action menu items, create flow, stats |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/features/booking/types.ts` | `price` on `BookingDto` / list / details service |
+| `src/features/booking/lib/status.ts` | Persian labels + badge classes |
+| `src/features/booking/lib/format.ts` | Price / Jalali-Tehran date-time / day UTC bounds |
+| `src/features/booking/store/booking-store.ts` | List store |
+| `src/features/booking/components/booking-card.tsx` | Desktop/mobile cards + skeleton |
+| `src/features/booking/components/booking-dashboard.tsx` | Page UI |
+| `src/app/(dashboard)/dashboard/bookings/page.tsx` | Thin route |
+| `src/components/layout/sidebar.tsx` | Nav link |
+| `src/app/(dashboard)/dashboard/page.tsx` | Hub card |
+| `context/api-client-context.md` | Store + list wiring |
+| `context/PROJECT_INVENTORY.md` | List marked wired |
+
+## Tests
+
+| File | Covers |
+|------|--------|
+| `src/features/booking/store/booking-store.test.ts` | List parse + missing price → null; 403 Persian error |
+
+## Known gap
+
+BE `BookingListItemDto` does not expose `price` yet. UI shows `—` for null/missing (never a fake zero). Detail/create DTOs already carry the snapshot.
+
+## Verify
+
+```bash
+npx tsc --noEmit
+npx eslint src/features/booking src/components/layout/sidebar.tsx "src/app/(dashboard)/dashboard/page.tsx" "src/app/(dashboard)/dashboard/bookings"
+npx vitest run
+npm run build
+```
+
+Result: TypeScript + ESLint clean; Vitest 17 files / 96 tests pass; production build succeeds (`/dashboard/bookings` listed).
+
+## Next
+
+Booking detail / status actions (still out of this phase). Optional BE: add `price` to list DTO.
 
 ---
 

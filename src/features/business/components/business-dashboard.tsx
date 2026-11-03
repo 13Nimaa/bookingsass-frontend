@@ -25,7 +25,7 @@ const fadeUp = {
 function LoadingState() {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-10 sm:py-10" aria-busy="true">
-      <PageHeader title="کسب‌وکار" description="در حال بارگذاری…" />
+      <PageHeader title="سالن" description="در حال بارگذاری…" />
       <div className="skeleton-shimmer h-72 w-full max-w-2xl rounded-[1.75rem] bg-surface" />
     </main>
   );
@@ -58,12 +58,12 @@ export function BusinessDashboard() {
       const res = await registerBusinessRequest(input);
 
       if (res.status === 409) {
-        setUpgradeError("شما قبلاً یک کسب‌وکار ثبت کرده‌اید.");
+        setUpgradeError("شما قبلاً یک سالن ثبت کرده‌اید.");
         return false;
       }
       if (!res.ok) {
         await res.text().catch(() => "");
-        setUpgradeError("ایجاد کسب‌وکار انجام نشد. اطلاعات را بررسی کنید.");
+        setUpgradeError("ایجاد سالن انجام نشد. اطلاعات را بررسی کنید.");
         return false;
       }
       const data: AuthResponse = await res.json();
@@ -84,9 +84,9 @@ export function BusinessDashboard() {
     return (
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-10 sm:py-10">
         <PageHeader
-          eyebrow="کسب‌وکار"
+          eyebrow="سالن"
           title="خطایی رخ داد"
-          description="دریافت اطلاعات کسب‌وکار ممکن نشد. اتصال را بررسی کنید و دوباره تلاش کنید."
+          description="دریافت اطلاعات سالن ممکن نشد. اتصال را بررسی کنید و دوباره تلاش کنید."
         />
         {error && <AuthError message={error} />}
         <div>
@@ -102,7 +102,7 @@ export function BusinessDashboard() {
     return (
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-10 sm:py-10">
         <PageHeader
-          eyebrow="کسب‌وکار"
+          eyebrow="سالن"
           title="ارتقا به مدیر سالن"
           description="اطلاعات سالن خود را ثبت کنید تا حساب شما به مدیر سالن ارتقا پیدا کند و به پنل مدیریت خدمات، مشتریان و نوبت‌ها دسترسی پیدا کنید."
         />
@@ -136,7 +136,7 @@ export function BusinessDashboard() {
             <ul className="mt-4 flex flex-col gap-3.5">
               {[
                 "حساب شما به مدیر سالن ارتقا می‌یابد",
-                "صفحه کسب‌وکار شما در فهرست عمومی نمایش داده می‌شود",
+                "صفحه سالن شما در فهرست عمومی نمایش داده می‌شود",
                 "به مدیریت خدمات، مشتریان و نوبت‌ها دسترسی پیدا می‌کنید",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm leading-6 font-semibold text-[#312e81]">
@@ -165,8 +165,8 @@ export function BusinessDashboard() {
       {editing ? (
         <motion.div variants={fadeUp} initial="hidden" animate="visible" className="w-full max-w-2xl">
           <PageHeader
-            eyebrow="کسب‌وکار"
-            title="ویرایش کسب‌وکار"
+            eyebrow="سالن"
+            title="ویرایش سالن"
             description="تغییرات را اعمال کنید و ذخیره کنید. این اطلاعات در فهرست عمومی نمایش داده می‌شود."
           />
           <div className="mt-8 rounded-[1.75rem] border border-border bg-surface p-6 shadow-[0_20px_40px_-24px_rgba(79,70,229,0.28)] sm:p-8">
@@ -181,7 +181,7 @@ export function BusinessDashboard() {
       ) : (
         <motion.div variants={fadeUp} initial="hidden" animate="visible" className="w-full">
           <PageHeader
-            eyebrow="کسب‌وکار من"
+            eyebrow="سالن من"
             title={business.name}
             description="مشخصات ثبت‌شده سالن شما. برای به‌روزرسانی، ویرایش را بزنید."
             actions={

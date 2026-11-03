@@ -45,6 +45,8 @@ export type BookingDto = {
   creatorType: BookingCreatorType;
   createdByUserId: string | null;
   createdAt: string; // ISO UTC
+  /** Snapshot at create; null on legacy rows. */
+  price: number | null;
 };
 
 export type CreateBookingInput = {
@@ -90,6 +92,11 @@ export type BookingListItem = {
   serviceDurationMinutes: number;
   employeeName: string;
   businessId: number;
+  /**
+   * Snapshot at create when the list API exposes it.
+   * Current BE list DTO omits this — treat missing as null (do not invent zero).
+   */
+  price: number | null;
 };
 
 export type ListBookingsParams = {
@@ -120,7 +127,8 @@ export type BookingDetails = {
     id: number;
     name: string;
     durationMinutes: number;
-    price: number;
+    /** Booking.Price snapshot (null on legacy rows). */
+    price: number | null;
   };
   employee: {
     id: number;

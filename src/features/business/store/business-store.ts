@@ -28,14 +28,14 @@ interface BusinessState {
 }
 
 const FA_MESSAGES = {
-  fetchFailed: "دریافت اطلاعات کسب‌وکار ممکن نشد.",
-  createFailed: "ایجاد کسب‌وکار انجام نشد.",
+  fetchFailed: "دریافت اطلاعات سالن ممکن نشد.",
+  createFailed: "ایجاد سالن انجام نشد.",
   updateFailed: "ذخیره تغییرات انجام نشد.",
   uploadFailed: "آپلود تصویر انجام نشد.",
   deleteFailed: "حذف تصویر انجام نشد.",
   network: "اتصال به سرور ممکن نیست. لطفاً دوباره تلاش کنید.",
-  imageUpdated: "تصویر کسب‌وکار با موفقیت به‌روزرسانی شد.",
-  imageDeleted: "تصویر کسب‌وکار حذف شد.",
+  imageUpdated: "تصویر سالن با موفقیت به‌روزرسانی شد.",
+  imageDeleted: "تصویر سالن حذف شد.",
 } as const;
 
 async function readError(res: Response, fallback: string): Promise<string> {
@@ -116,7 +116,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     try {
       const res = await updateBusinessRequest(current.id, input);
       if (res.status === 403) {
-        set({ error: "شما به این کسب‌وکار دسترسی ندارید." });
+        set({ error: "شما به این سالن دسترسی ندارید." });
         return false;
       }
       if (!res.ok) {

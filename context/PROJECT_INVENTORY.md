@@ -19,10 +19,11 @@
 | `features/business` | `/dashboard/business`, `/businesses` (public list) | `business.endpoints.ts` | `business-store` |
 | `features/employee` | `/dashboard/employees` | `employee.endpoints.ts` | `employee-store` |
 | `features/service` | `/dashboard/services` | `service.endpoints.ts` | `service-store` |
+| `features/booking` | `/dashboard/bookings` (owner/employee list) | `booking.endpoints.ts` | `booking-store` |
 | `features/landing` | `/` (marketing only, mock data) | — | — |
 
 **Missing / partial feature modules:**
-- `booking` — types + endpoints done; no store/UI yet
+- `booking` — list UI done; create / availability / detail / status / mine still missing
 - Public business detail + booking flow
 - Admin UI
 - Employee self-service dashboard (beyond owner managing employees)
@@ -43,8 +44,10 @@
 | `/dashboard/business` | Auth | Mine / update / image / register |
 | `/dashboard/employees` | Auth | Employees + working hours |
 | `/dashboard/services` | Auth | Services CRUD for owned business |
+| `/dashboard/bookings` | Auth | Owner/employee booking list (`GET /api/bookings`) |
+| `/dashboard/customers` | Auth | Customer CRM |
 
-**Nav links without pages:** none currently (customers list exists).
+**Nav links without pages:** none currently.
 
 ---
 
@@ -135,7 +138,7 @@ BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid
 | GET | `/availability` | **Partial** | `getAvailabilityRequest` — no UI |
 | POST | `/` | **Partial** | `createBookingRequest` — no UI |
 | POST | `/guest` | **Partial** | `createGuestBookingRequest` — no UI |
-| GET | `/` | **Partial** | `listBookingsRequest` — no UI |
+| GET | `/` | **Wired** | `listBookingsRequest` + `/dashboard/bookings` list UI (no detail/status yet) |
 | GET | `/mine` | **Partial** | `listMyBookingsRequest` — no UI |
 | GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no UI |
 | PATCH | `/{bookingId}/status` | **Partial** | `updateBookingStatusRequest` — no UI |
@@ -144,7 +147,7 @@ BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid
 | PUT | `/api/employees/{id}/services/{serviceId}` | **Wired** | Edit Service modal: sparse override patch; explicit `null` resets; per-employee cache refresh |
 | DELETE | `/api/employees/{id}/services/{serviceId}` | **Wired** | Drawer confirm dialog; filters selected employee cache only |
 
-Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No store / pages yet.**
+Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. Store: `booking-store.ts` (list only). List UI: `/dashboard/bookings`. **Gap:** BE `BookingListItemDto` does not yet return `price` snapshot — FE treats missing price as `null`.
 
 ---
 
@@ -166,14 +169,15 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No 
 | Services management UI | Done (`/dashboard/services`) |
 | CRM customers API (types + endpoints) | Done |
 | CRM customers UI | Done (list + create/edit/detail + soft-delete/reactivate) |
-| Bookings API (types + endpoints) | Done (no store/UI) |
+| Bookings API (types + endpoints) | Done |
+| Owner/employee booking list UI | Done (`/dashboard/bookings`; filters + pagination; no detail/status) |
 | Employee assigned-services list | Done (Employee Services Drawer, per-employee cache) |
 | Employee service assignment | Done (Add Service modal; multi-select + optional independent overrides) |
 | Employee service edit | Done (Edit Service modal; independent price/duration override patch + reset) |
 | Employee service remove | Done (Drawer confirm + DELETE; assignment-only, not salon-wide service delete) |
 | Business detail page | **Not started** |
 | Public / customer booking flow | **Not started** |
-| Owner booking calendar | **Not started** |
+| Owner booking calendar / detail / status actions | **Not started** (list page exists) |
 | Employee self portal | **Not started** |
 | Admin panel | **Not started** |
 | Role-aware nav (hide owner-only items for Customer) | **Not started** |
@@ -280,7 +284,7 @@ src/lib/api/
 | Working hours | Done | Mostly | FE update UI; public read (BE) |
 | Services | CRUD ready (per feature-spec) | Owner dashboard Done | Assign + public detail catalog |
 | Customers CRM | Partial (Admin bug) | **None** | BE role fix + FE P1 |
-| Bookings | Ready (per FE guide) | Types + endpoints; no UI | FE store + screens |
+| Bookings | Ready (per FE guide) | List UI wired; create/detail/status/mine pending | Remaining booking screens |
 | Availability | Ready | Endpoint only | FE slot picker |
 | Payments / notifs / reviews | Missing | Missing | Later |
 

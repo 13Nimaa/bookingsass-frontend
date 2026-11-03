@@ -97,6 +97,7 @@ Zod schemas in `features/*/schemas/` map form values → API inputs.
 - Anonymous: `getAvailabilityRequest`, `createGuestBookingRequest` → `backendFetch`.
 - Authenticated: `createBookingRequest`, `listBookingsRequest`, `listMyBookingsRequest`, `getBookingRequest`, `updateBookingStatusRequest` → `apiClient`.
 - Employee↔service: `listEmployeeServicesRequest`, `assignEmployeeServiceRequest`, `removeEmployeeServiceRequest` on `employee.endpoints.ts`.
+- `listBookingsRequest` is wired through `useBookingStore.fetchBookings` and the owner/employee Bookings management page (`/dashboard/bookings`). Filters: `status`, `fromDate`/`toDate` (UTC ISO day bounds), `search` (customer name/phone), pagination. List items normalize missing `price` to `null` (current BE list DTO omits price snapshot).
 - `listEmployeeServicesRequest` is wired to the Employee Services Drawer through `useEmployeeStore.loadEmployeeServices` (per-employee cache + loading/error state).
 - `assignEmployeeServiceRequest` is wired through `useEmployeeStore.assignServices` and the Add Service modal (one POST per selected service, optional independent overrides omitted when empty). After success it force-refreshes only the selected employee's cached list.
 - `updateEmployeeServiceRequest` is wired through `useEmployeeStore.updateEmployeeService` and the Edit Service modal (`PUT`; only changed override fields; explicit `null` resets). After success it force-refreshes only the selected employee's cached list.
@@ -123,6 +124,7 @@ UI → Zustand store → *.endpoints.ts → backendFetch | apiClient → fetch
 | `useEmployeeStore` | `features/employee/store/employee-store.ts` |
 | `useServiceStore` | `features/service/store/service-store.ts` |
 | `useCustomerStore` | `features/customer/store/customer-store.ts` |
+| `useBookingStore` | `features/booking/store/booking-store.ts` |
 
 Some flows bypass the store intentionally (e.g. register-business content calls `registerBusinessRequest` then `applySession`).
 

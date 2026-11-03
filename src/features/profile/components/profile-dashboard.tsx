@@ -291,15 +291,15 @@ export function ProfileDashboard() {
               <Store className="h-[18px] w-[18px]" aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-bold text-[#1e1b4b]">کسب‌وکار</p>
+              <p className="text-[15px] font-bold text-[#1e1b4b]">سالن</p>
               <p className="mt-0.5 text-[13px] leading-6 font-medium text-slate-600">
-                {hasBusiness ? "شما یک کسب‌وکار ثبت کرده‌اید." : "هنوز کسب‌وکاری ثبت نکرده‌اید."}
+                {hasBusiness ? "شما یک سالن ثبت کرده‌اید." : "هنوز سالنی ثبت نکرده‌اید."}
               </p>
               <Link
                 href="/dashboard/business"
                 className="mt-1.5 inline-block text-[13px] font-bold text-primary transition hover:text-primary-hover"
               >
-                {hasBusiness ? "مدیریت کسب‌وکار ←" : "ثبت کسب‌وکار ←"}
+                {hasBusiness ? "مدیریت سالن ←" : "ثبت سالن ←"}
               </Link>
             </div>
           </div>
@@ -337,7 +337,7 @@ export function ProfileDashboard() {
       <button
         type="button"
         onClick={() => void logout()}
-        className="flex h-11 w-full items-center justify-center gap-2 rounded-[12px] border border-border bg-surface text-[13.5px] font-medium text-[#4B5563] transition-colors duration-150 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:max-w-xs"
+        className="flex h-11 w-full items-center justify-center gap-2 rounded-[12px] border border-error-border bg-error-soft text-[13.5px] font-medium text-error transition-colors duration-150 hover:bg-error-soft/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error motion-reduce:transition-none md:hidden"
       >
         <LogOut className="h-4 w-4" aria-hidden="true" />
         خروج از حساب

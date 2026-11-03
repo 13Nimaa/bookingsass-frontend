@@ -231,7 +231,7 @@ export function ServiceDashboard() {
         <ServicesBreadcrumb />
         <PageHeader
           title="مدیریت خدمات"
-          description="برای مدیریت خدمات، ابتدا باید اطلاعات کسب‌وکار شما دریافت شود."
+          description="برای مدیریت خدمات، ابتدا باید اطلاعات سالن شما دریافت شود."
         />
         {businessError && <AuthError message={businessError} />}
         <div>
@@ -262,10 +262,10 @@ export function ServiceDashboard() {
           </span>
           <div>
             <h2 className="text-[17px] font-extrabold text-[#1e1b4b]">
-              ابتدا کسب‌وکار خود را ثبت کنید
+              ابتدا سالن خود را ثبت کنید
             </h2>
             <p className="mx-auto mt-1.5 max-w-md text-sm leading-6 font-medium text-slate-600">
-              برای افزودن و مدیریت خدمات، ابتدا باید اطلاعات کسب‌وکار شما تکمیل شده
+              برای افزودن و مدیریت خدمات، ابتدا باید اطلاعات سالن شما تکمیل شده
               باشد.
             </p>
           </div>
@@ -274,7 +274,7 @@ export function ServiceDashboard() {
             className="h-11 px-6 font-bold"
             onClick={() => router.push("/dashboard/business")}
           >
-            ثبت کسب‌وکار
+            ثبت سالن
           </Button>
         </motion.div>
       </main>

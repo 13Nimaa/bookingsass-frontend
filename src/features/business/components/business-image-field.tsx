@@ -68,7 +68,7 @@ export function BusinessImageField({
   return (
     <div className="flex flex-col gap-2">
       <span className="block text-sm font-bold text-[#1e1b4b]">
-        تصویر کسب‌وکار <span className="font-medium text-slate-400">(اختیاری)</span>
+        تصویر سالن <span className="font-medium text-slate-400">(اختیاری)</span>
       </span>
 
       <div className="flex items-center gap-4">
@@ -79,7 +79,7 @@ export function BusinessImageField({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={imageUrl}
-                  alt={`تصویر ${name || "کسب‌وکار"}`}
+                  alt={`تصویر ${name || "سالن"}`}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -103,8 +103,8 @@ export function BusinessImageField({
             type="button"
             onClick={pickFile}
             disabled={busy}
-            aria-label="تغییر تصویر کسب‌وکار"
-            title="تغییر تصویر کسب‌وکار"
+            aria-label="تغییر تصویر سالن"
+            title="تغییر تصویر سالن"
             className="absolute -bottom-1 -left-1 flex h-9 w-9 items-center justify-center rounded-full border-2 border-surface bg-primary text-primary-foreground shadow-md transition hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
           >
             {uploading ? (

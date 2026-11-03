@@ -104,7 +104,7 @@ describe("useBusinessStore", () => {
 
     expect(useBusinessStore.getState()).toMatchObject({
       status: "error",
-      error: "دریافت اطلاعات کسب‌وکار ممکن نشد.",
+      error: "دریافت اطلاعات سالن ممکن نشد.",
       business: null,
     });
   });
@@ -159,7 +159,7 @@ describe("useBusinessStore", () => {
     expect(useBusinessStore.getState()).toMatchObject({
       business: sampleBusiness,
       status: "loaded",
-      error: "ایجاد کسب‌وکار انجام نشد.",
+      error: "ایجاد سالن انجام نشد.",
     });
   });
 
@@ -187,7 +187,7 @@ describe("useBusinessStore", () => {
       description: null,
     });
     expect(denied).toBe(false);
-    expect(useBusinessStore.getState().error).toBe("شما به این کسب‌وکار دسترسی ندارید.");
+    expect(useBusinessStore.getState().error).toBe("شما به این سالن دسترسی ندارید.");
     expect(useBusinessStore.getState().business?.name).toBe("سالن جدید");
   });
 
@@ -214,7 +214,7 @@ describe("useBusinessStore", () => {
     expect(uploaded).toBe(true);
     expect(useBusinessStore.getState()).toMatchObject({
       business: { ...sampleBusiness, profileImageUrl: "https://cdn.test/b.jpg" },
-      notice: "تصویر کسب‌وکار با موفقیت به‌روزرسانی شد.",
+      notice: "تصویر سالن با موفقیت به‌روزرسانی شد.",
       uploading: false,
     });
 
@@ -222,7 +222,7 @@ describe("useBusinessStore", () => {
     const deleted = await useBusinessStore.getState().deleteImage();
     expect(deleted).toBe(true);
     expect(useBusinessStore.getState().business?.profileImageUrl).toBeNull();
-    expect(useBusinessStore.getState().notice).toBe("تصویر کسب‌وکار حذف شد.");
+    expect(useBusinessStore.getState().notice).toBe("تصویر سالن حذف شد.");
   });
 
   it("network errors surface a Persian message without clearing loaded business", async () => {

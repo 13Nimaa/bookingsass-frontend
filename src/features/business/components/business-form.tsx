@@ -133,7 +133,7 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
 
       <Input
         id="business-name"
-        label="نام کسب‌وکار"
+        label="نام سالن"
         aria-invalid={!!errors.name}
         autoComplete="organization"
         placeholder="مثلاً سالن زیبایی آرتا"
@@ -187,7 +187,7 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
                 : "border-border bg-surface text-[#1e1b4b] placeholder:text-slate-400 hover:border-border-strong focus:border-primary focus:bg-surface focus:ring-4 focus:ring-primary-soft"
             }
           `}
-          placeholder="چند خط درباره‌ی کسب‌وکار، خدمات و فضای آن..."
+          placeholder="چند خط درباره‌ی سالن، خدمات و فضای آن..."
           {...register("description")}
         />
         {errors.description && (
@@ -200,7 +200,7 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
           {isSubmitting
             ? "در حال ذخیره..."
             : mode === "create"
-              ? "ایجاد کسب‌وکار"
+              ? "ایجاد سالن"
               : "ذخیره تغییرات"}
         </Button>
         {onCancel && (
