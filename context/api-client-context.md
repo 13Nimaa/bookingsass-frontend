@@ -84,7 +84,7 @@ Colocated under features — not under `src/lib/api`:
 | `features/auth/types.ts` | `User`, `AuthResponse`, `LoginRequest`, `RegisterRequest` |
 | `features/business/types.ts` | `BusinessDto`, `MyBusinessResponse`, `BusinessInput`, image rules |
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
-| `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs |
+| `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs, `AssignServiceInput` (`serviceId` + optional independent `priceOverride` / `durationMinutesOverride`), `UpdateEmployeeServiceInput` (sparse PUT; `null` clears an override), `AssignServicesResult`, `EmployeeServiceDto` (`id`, `businessId`, default/override/effective price + duration) |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
 | `features/customer/types.ts` | `CustomerDto`, `PagedCustomers`, list/create/update inputs |
 | `features/booking/types.ts` | `BookingStatus`, `BookingDto`, availability, list/mine/detail DTOs, create inputs |
@@ -97,7 +97,9 @@ Zod schemas in `features/*/schemas/` map form values → API inputs.
 - Anonymous: `getAvailabilityRequest`, `createGuestBookingRequest` → `backendFetch`.
 - Authenticated: `createBookingRequest`, `listBookingsRequest`, `listMyBookingsRequest`, `getBookingRequest`, `updateBookingStatusRequest` → `apiClient`.
 - Employee↔service: `listEmployeeServicesRequest`, `assignEmployeeServiceRequest`, `removeEmployeeServiceRequest` on `employee.endpoints.ts`.
-- Store / UI not wired yet — transport + types only.
+- `listEmployeeServicesRequest` is wired to the Employee Services Drawer through `useEmployeeStore.loadEmployeeServices` (per-employee cache + loading/error state).
+- `assignEmployeeServiceRequest` is wired through `useEmployeeStore.assignServices` and the Add Service modal (one POST per selected service, optional independent overrides omitted when empty). After success it force-refreshes only the selected employee's cached list.
+- `updateEmployeeServiceRequest` is wired through `useEmployeeStore.updateEmployeeService` and the Edit Service modal (`PUT`; only changed override fields; explicit `null` resets). After success it force-refreshes only the selected employee's cached list. `removeEmployeeServiceRequest` remains transport-only (Remove out of Phase 4 scope).
 
 ## Store Pattern
 

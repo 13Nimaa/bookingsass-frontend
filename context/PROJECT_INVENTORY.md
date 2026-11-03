@@ -139,7 +139,10 @@ BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid
 | GET | `/mine` | **Partial** | `listMyBookingsRequest` — no UI |
 | GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no UI |
 | PATCH | `/{bookingId}/status` | **Partial** | `updateBookingStatusRequest` — no UI |
-| GET/POST/DELETE | `/api/employees/{id}/services…` | **Partial** | assign helpers on `employee.endpoints` — no UI |
+| GET | `/api/employees/{id}/services` | **Wired** | Employee Services Drawer (per-employee cache, loading/error/retry) |
+| POST | `/api/employees/{id}/services` | **Wired** | Add Service modal: one request per selected service; optional price/duration overrides; per-employee cache refresh |
+| PUT | `/api/employees/{id}/services/{serviceId}` | **Wired** | Edit Service modal: sparse override patch; explicit `null` resets; per-employee cache refresh |
+| DELETE | `/api/employees/{id}/services/{serviceId}` | **Partial** | `removeEmployeeServiceRequest` — no UI (out of Phase 4 scope) |
 
 Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No store / pages yet.**
 
@@ -164,7 +167,10 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No 
 | CRM customers API (types + endpoints) | Done |
 | CRM customers UI | Done (list + create/edit/detail + soft-delete/reactivate) |
 | Bookings API (types + endpoints) | Done (no store/UI) |
-| Employee↔service assign API | Done (endpoints only; no UI) |
+| Employee assigned-services list | Done (Employee Services Drawer, per-employee cache) |
+| Employee service assignment | Done (Add Service modal; multi-select + optional independent overrides) |
+| Employee service edit | Done (Edit Service modal; independent price/duration override patch + reset) |
+| Employee service remove | Not started (out of Phase 4 scope) |
 | Business detail page | **Not started** |
 | Public / customer booking flow | **Not started** |
 | Owner booking calendar | **Not started** |
@@ -226,7 +232,7 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No 
 | No roles in auth user | `AuthResponse.user` has no roles; roles only on Profile — nav cannot gate by role until profile/session loaded |
 | Bookings marketing vs reality | Landing shows appointment UI; product has no booking surface |
 | CRM role bug on BE | Even after FE customers page, owners need BE role fix |
-| Employee↔service assign | Not in owner services UI yet (needs BE contract if not ready) |
+| Employee↔service assign/remove | Read-only list is wired in the Employee Services Drawer; assign/edit/remove UI is still missing |
 | Token in localStorage | Documented XSS tradeoff; matches current SPA setup |
 
 ---

@@ -2,6 +2,7 @@ import { apiClient } from "@/lib/api/client";
 import type {
   AssignServiceInput,
   CreateEmployeeInput,
+  UpdateEmployeeServiceInput,
   WorkingHourInput,
 } from "@/features/employee/types";
 
@@ -94,7 +95,7 @@ export function deleteWorkingHourRequest(
 
 // --- Employee ↔ service assignment (BusinessOwner of employee's business) ---
 
-// GET /api/employees/:employeeId/services → ServiceDto[]
+// GET /api/employees/:employeeId/services → EmployeeServiceDto[]
 export function listEmployeeServicesRequest(
   employeeId: number
 ): Promise<Response> {
@@ -102,12 +103,30 @@ export function listEmployeeServicesRequest(
 }
 
 // POST /api/employees/:employeeId/services → 201 ServiceDto
+// Body: { serviceId, priceOverride?, durationMinutesOverride? }. Omitted
+// overrides fall back to the service defaults on the backend.
 export function assignEmployeeServiceRequest(
   employeeId: number,
   input: AssignServiceInput
 ): Promise<Response> {
   return apiClient(`/api/employees/${employeeId}/services`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+}
+
+// PUT /api/employees/:employeeId/services/:serviceId
+// Body: { priceOverride?, durationMinutesOverride? }. Include only fields
+// the caller intentionally changed. Explicit `null` clears an override;
+// omitted fields are left untouched on the backend.
+export function updateEmployeeServiceRequest(
+  employeeId: number,
+  serviceId: number,
+  input: UpdateEmployeeServiceInput
+): Promise<Response> {
+  return apiClient(`/api/employees/${employeeId}/services/${serviceId}`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   });

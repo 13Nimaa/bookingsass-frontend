@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   Loader2,
   Phone,
+  Sparkles,
   Store,
   Trash2,
   UserPlus,
@@ -26,6 +27,7 @@ import { AuthError } from "@/components/shared/auth-error";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { AddEmployeeDialog } from "@/features/employee/components/add-employee-dialog";
 import { WeeklyScheduleDialog } from "@/features/employee/components/weekly-schedule-dialog";
+import { EmployeeServicesDrawer } from "@/features/employee/components/employee-services-drawer";
 import type { EmployeeDto, WorkingHourDto } from "@/features/employee/types";
 
 const fadeUp = {
@@ -125,6 +127,7 @@ function EmployeeCard({
   removing,
   onSchedule,
   onRemove,
+  onServices,
 }: {
   employee: EmployeeDto;
   hours: WorkingHourDto[];
@@ -132,6 +135,7 @@ function EmployeeCard({
   removing: boolean;
   onSchedule: () => void;
   onRemove: () => void;
+  onServices: () => void;
 }) {
   const summary = scheduleSummary(hours);
   const configured = Boolean(summary);
@@ -206,15 +210,28 @@ function EmployeeCard({
           {summary ?? "ساعات کاری این کارمند هنوز تعیین نشده است."}
         </p>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          className="mt-3 h-10 w-full gap-2 rounded-xl border-border bg-surface text-[13px] font-bold text-text-primary transition-colors hover:border-primary/40 hover:bg-primary-soft hover:text-primary focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20"
-          onClick={onSchedule}
-        >
-          <CalendarClock className="h-4 w-4" aria-hidden="true" /> برنامهٔ کاری
-        </Button>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            title="مدیریت خدمات کارمند"
+            className="h-10 w-full gap-2 rounded-xl border-border bg-surface text-[13px] font-bold text-text-primary transition-colors hover:border-primary/40 hover:bg-primary-soft hover:text-primary focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20"
+            onClick={onServices}
+          >
+            <Sparkles className="h-4 w-4" aria-hidden="true" /> خدمات
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            title="برنامهٔ کاری کارمند"
+            className="h-10 w-full gap-2 rounded-xl border-border bg-surface text-[13px] font-bold text-text-primary transition-colors hover:border-primary/40 hover:bg-primary-soft hover:text-primary focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20"
+            onClick={onSchedule}
+          >
+            <CalendarClock className="h-4 w-4" aria-hidden="true" /> برنامهٔ کاری
+          </Button>
+        </div>
       </div>
     </li>
   );
@@ -241,6 +258,9 @@ export function EmployeeDashboard() {
   const fetchProfile = useProfileStore((s) => s.fetchProfile);
   const [addOpen, setAddOpen] = useState(false);
   const [scheduleEmployee, setScheduleEmployee] = useState<EmployeeDto | null>(
+    null,
+  );
+  const [servicesEmployee, setServicesEmployee] = useState<EmployeeDto | null>(
     null,
   );
   const [confirmEmployee, setConfirmEmployee] = useState<EmployeeDto | null>(
@@ -434,6 +454,7 @@ export function EmployeeDashboard() {
                 removing={removingId === employee.id}
                 onSchedule={() => setScheduleEmployee(employee)}
                 onRemove={() => setConfirmEmployee(employee)}
+                onServices={() => setServicesEmployee(employee)}
               />
             ))}
           </ul>
@@ -451,6 +472,13 @@ export function EmployeeDashboard() {
         }}
         businessId={business.id}
         employee={scheduleEmployee}
+      />
+      <EmployeeServicesDrawer
+        open={servicesEmployee !== null}
+        onOpenChange={(next) => {
+          if (!next) setServicesEmployee(null);
+        }}
+        employee={servicesEmployee}
       />
       <ConfirmDialog
         open={confirmEmployee !== null}
