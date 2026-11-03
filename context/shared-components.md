@@ -21,7 +21,7 @@ Alias: `@/*` → `src/*`. Prefer these before inventing new banners, headers, di
 | `input.tsx` | `Input` | Labeled RTL fields with `error`, `hint`, start/end icons. |
 | `checkbox.tsx` | `Checkbox` | Base UI checkbox. Present; little/no app usage yet — preferred when adding checkboxes. |
 | `dialog.tsx` | `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` | Modal shell. Compose feature dialogs from this. |
-| `confirm-dialog.tsx` | `ConfirmDialog` | Confirm/cancel (`tone`: `danger` \| `primary`, supports `loading`). |
+| `confirm-dialog.tsx` | `ConfirmDialog` | Confirm/cancel (`tone`: `danger` \| `primary`, supports `loading` + optional inline `error` for retry-in-place). |
 | `password-strength.tsx` | `PasswordStrength` | Auth signup password meter (Persian labels). |
 | `select.tsx` | `SelectField`, `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectLabel`, `SelectGroup`, `SelectSeparator` | Custom dropdown (Base UI). Prefer `SelectField` for labeled single-select forms; compose parts for groups / custom item UI. Portal z-index sits above dialogs; `modal` defaults `false` on `SelectField` for nested modals. |
 

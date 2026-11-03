@@ -142,7 +142,7 @@ BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid
 | GET | `/api/employees/{id}/services` | **Wired** | Employee Services Drawer (per-employee cache, loading/error/retry) |
 | POST | `/api/employees/{id}/services` | **Wired** | Add Service modal: one request per selected service; optional price/duration overrides; per-employee cache refresh |
 | PUT | `/api/employees/{id}/services/{serviceId}` | **Wired** | Edit Service modal: sparse override patch; explicit `null` resets; per-employee cache refresh |
-| DELETE | `/api/employees/{id}/services/{serviceId}` | **Partial** | `removeEmployeeServiceRequest` — no UI (out of Phase 4 scope) |
+| DELETE | `/api/employees/{id}/services/{serviceId}` | **Wired** | Drawer confirm dialog; filters selected employee cache only |
 
 Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No store / pages yet.**
 
@@ -170,7 +170,7 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. **No 
 | Employee assigned-services list | Done (Employee Services Drawer, per-employee cache) |
 | Employee service assignment | Done (Add Service modal; multi-select + optional independent overrides) |
 | Employee service edit | Done (Edit Service modal; independent price/duration override patch + reset) |
-| Employee service remove | Not started (out of Phase 4 scope) |
+| Employee service remove | Done (Drawer confirm + DELETE; assignment-only, not salon-wide service delete) |
 | Business detail page | **Not started** |
 | Public / customer booking flow | **Not started** |
 | Owner booking calendar | **Not started** |

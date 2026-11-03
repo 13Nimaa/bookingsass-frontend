@@ -60,18 +60,13 @@ export default function DashboardPage() {
 
       <div className="md:hidden">
         <PageHeader hideBack title="داشبورد" />
-        <div className="mb-5">
-          <h2 className="text-[20px] font-bold leading-snug tracking-tight text-[#221F1C]">
-            داشبورد
-          </h2>
-          <p className="mt-1.5 text-[12.5px] leading-5 font-normal text-[#6B7280]">
-            بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
-          </p>
-        </div>
+        <p className="mb-4 text-[12.5px] leading-5 font-normal text-muted">
+          بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
+        </p>
       </div>
 
-      <nav aria-label="منوی داشبورد" className="mt-6 w-full md:mt-8">
-        <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+      <nav aria-label="منوی داشبورد" className="mt-4 w-full md:mt-8">
+        <ul className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3">
           {MENU_OPTIONS.map(({ href, icon: Icon, title, description }) => (
             <li key={href} className="min-w-0">
               <Link
@@ -82,10 +77,10 @@ export default function DashboardPage() {
                   <Icon className="h-[21px] w-[21px]" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[13.5px] font-semibold leading-snug text-[#221F1C] md:text-[14px]">
+                  <span className="block text-[13.5px] font-semibold leading-snug text-text-primary md:text-[14px]">
                     {title}
                   </span>
-                  <span className="mt-0.5 line-clamp-2 text-[11.5px] leading-4 font-normal text-[#6B7280] md:text-[12px]">
+                  <span className="mt-0.5 line-clamp-2 text-[11.5px] leading-4 font-normal text-muted md:text-[12px]">
                     {description}
                   </span>
                 </span>

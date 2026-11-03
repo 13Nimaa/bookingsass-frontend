@@ -6,6 +6,7 @@ import { Plus, RefreshCw, Sparkles, X } from "lucide-react";
 import { AppToast } from "@/components/shared/app-toast";
 import { AuthError } from "@/components/shared/auth-error";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { AddEmployeeServiceDialog } from "@/features/employee/components/add-employee-service-dialog";
 import { EditEmployeeServiceDialog } from "@/features/employee/components/edit-employee-service-dialog";
 import { EmployeeServiceCard } from "@/features/employee/components/employee-service-card";
@@ -42,8 +43,6 @@ interface EmployeeServicesDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   employee: EmployeeDto | null;
-  /** Remove remains out of scope for Phase 4. */
-  onRemoveService?: (service: EmployeeServiceDto) => void;
 }
 
 /**
@@ -56,7 +55,6 @@ export function EmployeeServicesDrawer({
   open,
   onOpenChange,
   employee,
-  onRemoveService,
 }: EmployeeServicesDrawerProps) {
   const employeeId = employee?.id ?? null;
   const entry = useEmployeeStore((state) =>
@@ -65,8 +63,17 @@ export function EmployeeServicesDrawer({
   const loadEmployeeServices = useEmployeeStore(
     (state) => state.loadEmployeeServices
   );
+  const removingServiceId = useEmployeeStore(
+    (state) => state.removingServiceId
+  );
+  const removeEmployeeService = useEmployeeStore(
+    (state) => state.removeEmployeeService
+  );
   const [addOpen, setAddOpen] = useState(false);
   const [editingServiceId, setEditingServiceId] = useState<number | null>(null);
+  const [removingService, setRemovingService] =
+    useState<EmployeeServiceDto | null>(null);
+  const [removeError, setRemoveError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -80,6 +87,8 @@ export function EmployeeServicesDrawer({
     if (!next) {
       setAddOpen(false);
       setEditingServiceId(null);
+      setRemovingService(null);
+      setRemoveError(null);
       setToast(null);
     }
     onOpenChange(next);
@@ -249,7 +258,10 @@ export function EmployeeServicesDrawer({
                     key={service.id}
                     service={service}
                     onEdit={(item) => setEditingServiceId(item.id)}
-                    onRemove={onRemoveService}
+                    onRemove={(item) => {
+                      setRemoveError(null);
+                      setRemovingService(item);
+                    }}
                   />
                 ))}
               </ul>
@@ -295,6 +307,52 @@ export function EmployeeServicesDrawer({
           onUpdated={() =>
             setToast("تنظیمات خدمت با موفقیت به‌روز شد.")
           }
+        />
+      ) : null}
+
+      {employee ? (
+        <ConfirmDialog
+          open={removingService !== null}
+          onOpenChange={(next) => {
+            if (removingServiceId !== null) return;
+            if (!next) {
+              setRemovingService(null);
+              setRemoveError(null);
+            }
+          }}
+          title="حذف خدمت از کارمند"
+          description={
+            removingService
+              ? `آیا از حذف «${removingService.title}» از خدمات «${employee.fullName}» مطمئن هستید؟ این کار فقط اختصاص خدمت به این کارمند را برمی‌دارد و خدمت سالن حذف نمی‌شود.`
+              : ""
+          }
+          confirmLabel="حذف از خدمات کارمند"
+          cancelLabel="انصراف"
+          loading={removingServiceId !== null}
+          error={removeError}
+          onConfirm={() => {
+            if (!removingService) return;
+            void (async () => {
+              setRemoveError(null);
+              const result = await removeEmployeeService(
+                employee.id,
+                removingService.id
+              );
+              if (!result) return;
+              if (!result.ok) {
+                setRemoveError(result.message);
+                return;
+              }
+              if (editingServiceId === removingService.id) {
+                setEditingServiceId(null);
+              }
+              setRemovingService(null);
+              setRemoveError(null);
+              setToast(
+                `«${removingService.title}» از خدمات کارمند حذف شد.`
+              );
+            })();
+          }}
         />
       ) : null}
 

@@ -1,8 +1,79 @@
 # Frontend progress
 
 **Last updated:** 2026-11-03  
-**Current task:** Edit Employee Service Overrides (`Phase 4`) — **Complete**  
-**Prior:** Assign Services to an Employee (Phase 3) — complete
+**Current task:** Dashboard UI refinement (approved audit UI-001 / UI-002 / UI-008) — **Complete**  
+**Prior:** Remove Employee Service Assignment (Phase 5) — complete
+
+---
+
+# Dashboard UI refinement (approved audit findings)
+
+| Area | Status |
+|------|--------|
+| UI-001 Tablet hub density | Hub grid `grid-cols-2` through `md`; `lg:grid-cols-3` when cards stay ~200px+; sidebar unchanged |
+| UI-002 Mobile duplicate title | Removed in-body H2; glass `PageHeader` title kept; supporting sentence retained |
+| UI-008 Token consistency | Mobile subtitle + card title/description use `text-text-primary` / `text-muted` |
+| Explicitly not done | UI-003 fill, UI-004 filler, UI-005 sidebar home, UI-006 hub removal, UI-007 Profile reorder, UI-009 rename |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/app/(dashboard)/dashboard/page.tsx` | Grid breakpoints, mobile header, text tokens |
+| `context/ui-context.md` | Dashboard hub column rule |
+
+## Verify
+
+- Desktop 1440×900: 3 columns, cards ~304px, sidebar visible, menu order unchanged
+- Tablet 768×1024: 2 columns, cards ~220px, sidebar still 232px
+- Mobile 390×844: single «داشبورد» H1, subtitle present with muted token
+
+---
+
+# Remove Employee Service Assignment (Phase 5)
+
+| Area | Status |
+|------|--------|
+| Entry point | Drawer card Remove opens `ConfirmDialog` with the service name and assignment-only wording |
+| Confirmation | Cancel / Confirm; no DELETE until explicit confirm; loading disables repeat confirm |
+| Transport | `DELETE /api/employees/{employeeId}/services/{serviceId}` via `removeEmployeeServiceRequest` |
+| Cache | On success, filters only the selected employee's `servicesByEmployee` entry; awaits in-flight list first to avoid stale restore; other employees untouched |
+| Failure | Service stays in the list; confirm stays open with Persian inline error; retry/cancel allowed |
+| Empty state | Existing dashed empty block + Add actions when the last assignment is removed |
+| Duplicate submits | Store-level `removingServiceId` guard |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/features/employee/components/employee-services-drawer.tsx` | Confirm + remove wiring, success toast |
+| `src/features/employee/store/employee-store.ts` | `removeEmployeeService`, `removingServiceId` |
+| `src/components/ui/confirm-dialog.tsx` | Optional `error` for retry-in-place |
+| `context/api-client-context.md` | Wiring notes |
+| `context/PROJECT_INVENTORY.md` | DELETE marked wired |
+| `context/shared-components.md` | ConfirmDialog `error` note |
+
+## Tests
+
+| File | Covers |
+|------|--------|
+| `src/features/employee/store/employee-store.test.ts` | Cache isolation, failure preserves row, duplicate guard |
+| `src/features/employee/components/employee-services-drawer.test.tsx` | Confirm-before-delete, correct ids, failed delete stays open |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+npx eslint src/features/employee src/components/ui/confirm-dialog.tsx src/lib/api/endpoints/employee.endpoints.ts
+npx vitest run
+npm run build
+```
+
+Result: TypeScript + ESLint clean; Vitest 16 files / 94 tests pass; production build succeeds.
+
+## Remaining / out of scope
+
+No salon-wide service deletion. Add/Edit flows and the business Services page were not changed. E2E against a real backend was not run (no `E2E_TEST_*` credentials in this task).
 
 ---
 

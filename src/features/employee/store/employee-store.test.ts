@@ -17,6 +17,7 @@ vi.mock("@/lib/api/endpoints/employee.endpoints", () => ({
 import {
   assignEmployeeServiceRequest,
   listEmployeeServicesRequest,
+  removeEmployeeServiceRequest,
   updateEmployeeServiceRequest,
 } from "@/lib/api/endpoints/employee.endpoints";
 import { useEmployeeStore } from "@/features/employee/store/employee-store";
@@ -24,6 +25,7 @@ import { useEmployeeStore } from "@/features/employee/store/employee-store";
 const assignMock = vi.mocked(assignEmployeeServiceRequest);
 const listServicesMock = vi.mocked(listEmployeeServicesRequest);
 const updateMock = vi.mocked(updateEmployeeServiceRequest);
+const removeServiceMock = vi.mocked(removeEmployeeServiceRequest);
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -284,5 +286,75 @@ describe("useEmployeeStore.updateEmployeeService", () => {
     resolveFirst(jsonResponse({ ok: true }));
     await first;
     expect(useEmployeeStore.getState().updatingService).toBe(false);
+  });
+});
+
+describe("useEmployeeStore.removeEmployeeService", () => {
+  it("removes only the selected employee's assignment from cache", async () => {
+    useEmployeeStore.setState({
+      servicesByEmployee: {
+        1: {
+          items: [assignedService, { ...assignedService, id: 2, title: "اصلاح" }],
+          status: "loaded",
+          error: null,
+        },
+        2: otherEntry,
+      },
+    });
+    removeServiceMock.mockResolvedValue(new Response(null, { status: 204 }));
+
+    const result = await useEmployeeStore
+      .getState()
+      .removeEmployeeService(1, 1);
+
+    expect(removeServiceMock).toHaveBeenCalledWith(1, 1);
+    expect(result).toEqual({ ok: true });
+    expect(useEmployeeStore.getState().servicesByEmployee[1]).toMatchObject({
+      status: "loaded",
+      items: [{ id: 2, title: "اصلاح" }],
+      error: null,
+    });
+    expect(useEmployeeStore.getState().servicesByEmployee[2]).toBe(otherEntry);
+    expect(listServicesMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps the service in cache when deletion fails", async () => {
+    const entry = {
+      items: [assignedService],
+      status: "loaded" as const,
+      error: null,
+    };
+    useEmployeeStore.setState({ servicesByEmployee: { 1: entry } });
+    removeServiceMock.mockResolvedValue(new Response("boom", { status: 500 }));
+
+    const result = await useEmployeeStore
+      .getState()
+      .removeEmployeeService(1, 1);
+
+    expect(result).toEqual({ ok: false, message: "boom" });
+    expect(useEmployeeStore.getState().servicesByEmployee[1]).toBe(entry);
+  });
+
+  it("ignores a duplicate deletion while one is in flight", async () => {
+    let resolveFirst!: (value: Response) => void;
+    removeServiceMock.mockReturnValue(
+      new Promise<Response>((resolve) => {
+        resolveFirst = resolve;
+      })
+    );
+
+    const first = useEmployeeStore.getState().removeEmployeeService(1, 1);
+    expect(useEmployeeStore.getState().removingServiceId).toBe(1);
+
+    const second = await useEmployeeStore
+      .getState()
+      .removeEmployeeService(1, 2);
+
+    expect(second).toBeNull();
+    expect(removeServiceMock).toHaveBeenCalledTimes(1);
+
+    resolveFirst(new Response(null, { status: 204 }));
+    await first;
+    expect(useEmployeeStore.getState().removingServiceId).toBeNull();
   });
 });

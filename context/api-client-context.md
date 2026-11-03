@@ -99,7 +99,8 @@ Zod schemas in `features/*/schemas/` map form values → API inputs.
 - Employee↔service: `listEmployeeServicesRequest`, `assignEmployeeServiceRequest`, `removeEmployeeServiceRequest` on `employee.endpoints.ts`.
 - `listEmployeeServicesRequest` is wired to the Employee Services Drawer through `useEmployeeStore.loadEmployeeServices` (per-employee cache + loading/error state).
 - `assignEmployeeServiceRequest` is wired through `useEmployeeStore.assignServices` and the Add Service modal (one POST per selected service, optional independent overrides omitted when empty). After success it force-refreshes only the selected employee's cached list.
-- `updateEmployeeServiceRequest` is wired through `useEmployeeStore.updateEmployeeService` and the Edit Service modal (`PUT`; only changed override fields; explicit `null` resets). After success it force-refreshes only the selected employee's cached list. `removeEmployeeServiceRequest` remains transport-only (Remove out of Phase 4 scope).
+- `updateEmployeeServiceRequest` is wired through `useEmployeeStore.updateEmployeeService` and the Edit Service modal (`PUT`; only changed override fields; explicit `null` resets). After success it force-refreshes only the selected employee's cached list.
+- `removeEmployeeServiceRequest` is wired through `useEmployeeStore.removeEmployeeService` and the Drawer confirm dialog (`DELETE`). On success it filters only the selected employee's cached list (no optimistic remove; failures keep the row and the dialog open).
 
 ## Store Pattern
 

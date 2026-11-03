@@ -11,6 +11,7 @@ import {
   listEmployeeServicesRequest,
   assignEmployeeServiceRequest,
   updateEmployeeServiceRequest,
+  removeEmployeeServiceRequest,
 } from "@/lib/api/endpoints/employee.endpoints";
 import { compareWorkingHours } from "@/features/employee/lib/schedule";
 import type {
@@ -71,6 +72,18 @@ interface EmployeeState {
     serviceId: number,
     input: UpdateEmployeeServiceInput
   ) => Promise<{ ok: true } | { ok: false; message: string } | null>;
+  /** Service id currently being unassigned, or null when idle. */
+  removingServiceId: number | null;
+  /**
+   * Unassigns one service from an employee. Returns `{ ok: true }` on
+   * success (cache filtered for that employee only), `{ ok: false, message }`
+   * on failure without mutating the list, and `null` when ignored as a
+   * duplicate in-flight delete.
+   */
+  removeEmployeeService: (
+    employeeId: number,
+    serviceId: number
+  ) => Promise<{ ok: true } | { ok: false; message: string } | null>;
 
   fetchEmployees: (businessId: number) => Promise<void>;
   addEmployee: (businessId: number, input: CreateEmployeeInput) => Promise<boolean>;
@@ -114,6 +127,8 @@ const FA_MESSAGES = {
   alreadyAssigned: "این خدمت قبلاً به این کارمند اختصاص داده شده است.",
   updateFailed: "به‌روزرسانی تنظیمات خدمت انجام نشد.",
   updateNotFound: "کارمند یا خدمت مورد نظر یافت نشد.",
+  unassignFailed: "حذف خدمت از کارمند انجام نشد.",
+  unassignNotFound: "کارمند یا خدمت مورد نظر یافت نشد.",
   network: "اتصال به سرور ممکن نیست. لطفاً دوباره تلاش کنید.",
 } as const;
 
@@ -149,6 +164,15 @@ async function readUpdateError(
   return readError(res, fallback);
 }
 
+async function readUnassignError(
+  res: Response,
+  fallback = FA_MESSAGES.unassignFailed
+): Promise<string> {
+  if (res.status === 403) return FA_MESSAGES.servicesForbidden;
+  if (res.status === 404) return FA_MESSAGES.unassignNotFound;
+  return readError(res, fallback);
+}
+
 // Deduplicates concurrent loads for the same employee (e.g. StrictMode
 // re-runs or a fast close/reopen) without blocking a different employee.
 const inFlightServices = new Map<number, Promise<void>>();
@@ -167,6 +191,7 @@ const initial = {
   servicesByEmployee: {} as Record<number, EmployeeServicesEntry>,
   assigningServices: false,
   updatingService: false,
+  removingServiceId: null as number | null,
 };
 
 export const useEmployeeStore = create<EmployeeState>((set, get) => ({
@@ -432,6 +457,49 @@ export const useEmployeeStore = create<EmployeeState>((set, get) => ({
       return { ok: false, message: FA_MESSAGES.network };
     } finally {
       set({ updatingService: false });
+    }
+  },
+
+  removeEmployeeService: async (employeeId, serviceId) => {
+    // Store-level guard: never start a second unassign while one is in flight.
+    if (get().removingServiceId !== null) return null;
+
+    set({ removingServiceId: serviceId });
+    try {
+      // Let any in-flight list settle first so an older GET cannot restore
+      // the deleted assignment after we filter the cache.
+      const pending = inFlightServices.get(employeeId);
+      if (pending) {
+        await pending;
+        if (inFlightServices.get(employeeId) === pending)
+          inFlightServices.delete(employeeId);
+      }
+
+      const res = await removeEmployeeServiceRequest(employeeId, serviceId);
+      if (!res.ok) {
+        return { ok: false, message: await readUnassignError(res) };
+      }
+
+      set((state) => {
+        const previous = state.servicesByEmployee[employeeId];
+        if (!previous) return state;
+        return {
+          servicesByEmployee: {
+            ...state.servicesByEmployee,
+            [employeeId]: {
+              ...previous,
+              items: previous.items.filter((item) => item.id !== serviceId),
+              status: "loaded",
+              error: null,
+            },
+          },
+        };
+      });
+      return { ok: true };
+    } catch {
+      return { ok: false, message: FA_MESSAGES.network };
+    } finally {
+      set({ removingServiceId: null });
     }
   },
 
