@@ -110,17 +110,17 @@ export function ProfileDashboard() {
       <PageHeader
         eyebrow="حساب کاربری"
         title="پروفایل"
-        description="اطلاعات حساب، تصویر پروفایل و نقش‌های خود را مدیریت کنید."
         actions={
           !editing ? (
             <Button
               variant="secondary"
-              size="lg"
+              size="icon"
               onClick={openEdit}
-              className="max-sm:h-10 max-sm:px-4 max-sm:text-sm"
+              aria-label="ویرایش پروفایل"
+              title="ویرایش پروفایل"
+              className="h-10 w-10"
             >
               <Pencil className="h-4 w-4" aria-hidden="true" />
-              ویرایش پروفایل
             </Button>
           ) : undefined
         }

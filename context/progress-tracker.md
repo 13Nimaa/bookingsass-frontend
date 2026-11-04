@@ -1,8 +1,32 @@
 # Frontend progress
 
 **Last updated:** 2026-11-03  
-**Current task:** Bookings Management Page Phase 1 (`07-bookings-ui.md`) — **Complete**  
-**Prior:** Dashboard UI refinement (approved audit UI-001 / UI-002 / UI-008) — complete
+**Current task:** Mobile chrome polish (hub grid, headers, customer modal) — **Complete**  
+**Prior:** Bookings Management Page Phase 1 (`07-bookings-ui.md`) — complete
+
+---
+
+# Mobile chrome polish
+
+| Area | Status |
+|------|--------|
+| Dashboard hub | Mobile `grid-cols-1`; logout removed from hub |
+| PageHeader | Mobile actions sit in the fixed glass bar (end) |
+| Profile / Business | Description removed; edit is icon-only in header |
+| Bookings | Description removed from header |
+| Add customer modal | `max-h` + scrollable body so it fits mobile viewports |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/app/(dashboard)/dashboard/page.tsx` | 1-col mobile grid; no logout |
+| `src/components/shared/page-header.tsx` | Actions in mobile top bar |
+| `src/features/profile/components/profile-dashboard.tsx` | Icon edit, no description |
+| `src/features/business/components/business-dashboard.tsx` | Icon edit, no description |
+| `src/features/booking/components/booking-dashboard.tsx` | No description |
+| `src/features/customer/components/customer-form-dialog.tsx` | Mobile height / scroll |
+| `context/ui-context.md` | Hub + PageHeader mobile notes |
 
 ---
 
@@ -67,7 +91,7 @@ Booking detail / status actions (still out of this phase). Optional BE: add `pri
 
 | Area | Status |
 |------|--------|
-| UI-001 Tablet hub density | Hub grid `grid-cols-2` through `md`; `lg:grid-cols-3` when cards stay ~200px+; sidebar unchanged |
+| UI-001 Tablet hub density | Hub grid 1 col mobile → 2 from `sm` → 3 from `lg`; sidebar unchanged |
 | UI-002 Mobile duplicate title | Removed in-body H2; glass `PageHeader` title kept; supporting sentence retained |
 | UI-008 Token consistency | Mobile subtitle + card title/description use `text-text-primary` / `text-muted` |
 | Explicitly not done | UI-003 fill, UI-004 filler, UI-005 sidebar home, UI-006 hub removal, UI-007 Profile reorder, UI-009 rename |
@@ -81,9 +105,9 @@ Booking detail / status actions (still out of this phase). Optional BE: add `pri
 
 ## Verify
 
-- Desktop 1440×900: 3 columns, cards ~304px, sidebar visible, menu order unchanged
-- Tablet 768×1024: 2 columns, cards ~220px, sidebar still 232px
-- Mobile 390×844: single «داشبورد» H1, subtitle present with muted token
+- Desktop 1440×900: 3 columns, sidebar visible, menu order unchanged
+- Tablet / `sm+`: 2 columns
+- Mobile: 1 column, no logout on hub
 
 ---
 

@@ -126,8 +126,11 @@ export function CustomerFormDialog({
           onOpenChange(next);
         }}
       >
-        <DialogContent showClose>
-          <DialogHeader>
+        <DialogContent
+          showClose
+          className="flex max-h-[calc(100dvh-2rem)] max-w-md flex-col overflow-hidden"
+        >
+          <DialogHeader className="shrink-0">
             <DialogTitle>
               {isEdit ? "ویرایش مشتری" : "افزودن مشتری"}
             </DialogTitle>
@@ -141,110 +144,112 @@ export function CustomerFormDialog({
           <form
             onSubmit={handleSubmit(onSubmit)}
             noValidate
-            className="mt-5 flex flex-col gap-4"
+            className="mt-4 flex min-h-0 flex-1 flex-col"
           >
-            {error && <AuthError message={error} />}
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pe-1">
+              {error && <AuthError message={error} />}
 
-            <Input
-              id="customer-name"
-              label="نام مشتری"
-              requiredMark
-              autoComplete="name"
-              autoFocus
-              placeholder="مثلاً سارا محمدی"
-              error={errors.name?.message}
-              {...register("name")}
-            />
-
-            <Controller
-              name="phoneNumber"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  id="customer-phone"
-                  label="شماره موبایل"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="0912 345 6789"
-                  className="tnum text-start"
-                  dir="ltr"
-                  hint="اختیاری"
-                  error={errors.phoneNumber?.message}
-                  name={field.name}
-                  ref={field.ref}
-                  onBlur={field.onBlur}
-                  value={field.value}
-                  onChange={(e) =>
-                    field.onChange(formatPhoneDisplay(e.target.value))
-                  }
-                />
-              )}
-            />
-
-            <Input
-              id="customer-email"
-              label="ایمیل"
-              type="email"
-              autoComplete="email"
-              placeholder="name@example.com"
-              className="text-start"
-              dir="ltr"
-              hint="اختیاری"
-              error={errors.email?.message}
-              {...register("email")}
-            />
-
-            <div className="flex flex-col gap-2">
-              <label
-                htmlFor="customer-notes"
-                className="block text-sm font-bold text-[#1e1b4b]"
-              >
-                یادداشت{" "}
-                <span className="font-medium text-slate-400">(اختیاری)</span>
-              </label>
-              <textarea
-                id="customer-notes"
-                rows={3}
-                aria-invalid={!!errors.notes}
-                className={`w-full rounded-xl border px-4 py-3 text-[15px] font-medium outline-none transition-all duration-200 ${
-                  errors.notes
-                    ? "border-error focus:border-error focus:ring-4 focus:ring-error-soft"
-                    : "border-border hover:border-border-strong focus:border-primary focus:ring-4 focus:ring-primary-soft"
-                }`}
-                placeholder="یادداشت داخلی دربارهٔ مشتری..."
-                {...register("notes")}
+              <Input
+                id="customer-name"
+                label="نام مشتری"
+                requiredMark
+                autoComplete="name"
+                autoFocus
+                placeholder="مثلاً سارا محمدی"
+                error={errors.name?.message}
+                {...register("name")}
               />
-              {errors.notes && (
-                <p className="text-[13px] leading-5 font-bold text-error-text">
-                  {errors.notes.message}
-                </p>
-              )}
-            </div>
 
-            {isEdit ? (
               <Controller
-                name="isActive"
+                name="phoneNumber"
                 control={control}
                 render={({ field }) => (
-                  <label
-                    htmlFor="customer-active"
-                    className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-border bg-surface-subtle px-3 py-3"
-                  >
-                    <Checkbox
-                      id="customer-active"
-                      checked={field.value}
-                      onCheckedChange={(checked) => field.onChange(checked)}
-                    />
-                    <span className="text-sm font-bold text-[#1e1b4b]">
-                      مشتری فعال است
-                    </span>
-                  </label>
+                  <Input
+                    id="customer-phone"
+                    label="شماره موبایل"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="0912 345 6789"
+                    className="tnum text-start"
+                    dir="ltr"
+                    hint="اختیاری"
+                    error={errors.phoneNumber?.message}
+                    name={field.name}
+                    ref={field.ref}
+                    onBlur={field.onBlur}
+                    value={field.value}
+                    onChange={(e) =>
+                      field.onChange(formatPhoneDisplay(e.target.value))
+                    }
+                  />
                 )}
               />
-            ) : null}
 
-            <DialogFooter className="sm:justify-start">
+              <Input
+                id="customer-email"
+                label="ایمیل"
+                type="email"
+                autoComplete="email"
+                placeholder="name@example.com"
+                className="text-start"
+                dir="ltr"
+                hint="اختیاری"
+                error={errors.email?.message}
+                {...register("email")}
+              />
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="customer-notes"
+                  className="block text-sm font-bold text-[#1e1b4b]"
+                >
+                  یادداشت{" "}
+                  <span className="font-medium text-slate-400">(اختیاری)</span>
+                </label>
+                <textarea
+                  id="customer-notes"
+                  rows={3}
+                  aria-invalid={!!errors.notes}
+                  className={`w-full rounded-xl border px-4 py-3 text-[15px] font-medium outline-none transition-all duration-200 ${
+                    errors.notes
+                      ? "border-error focus:border-error focus:ring-4 focus:ring-error-soft"
+                      : "border-border hover:border-border-strong focus:border-primary focus:ring-4 focus:ring-primary-soft"
+                  }`}
+                  placeholder="یادداشت داخلی دربارهٔ مشتری..."
+                  {...register("notes")}
+                />
+                {errors.notes && (
+                  <p className="text-[13px] leading-5 font-bold text-error-text">
+                    {errors.notes.message}
+                  </p>
+                )}
+              </div>
+
+              {isEdit ? (
+                <Controller
+                  name="isActive"
+                  control={control}
+                  render={({ field }) => (
+                    <label
+                      htmlFor="customer-active"
+                      className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-border bg-surface-subtle px-3 py-3"
+                    >
+                      <Checkbox
+                        id="customer-active"
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(checked)}
+                      />
+                      <span className="text-sm font-bold text-[#1e1b4b]">
+                        مشتری فعال است
+                      </span>
+                    </label>
+                  )}
+                />
+              ) : null}
+            </div>
+
+            <DialogFooter className="shrink-0 sm:justify-start">
               <Button
                 type="submit"
                 size="lg"

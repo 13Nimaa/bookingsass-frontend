@@ -399,7 +399,6 @@ export function BookingDashboard() {
       <BookingsBreadcrumb />
       <PageHeader
         title="مدیریت رزروها"
-        description="مشاهده و مدیریت رزروهای سالن"
         badge={
           <CalendarDays
             className="h-5 w-5 text-primary"

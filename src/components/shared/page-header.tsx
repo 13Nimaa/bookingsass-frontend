@@ -65,16 +65,18 @@ export function PageHeader({
           <h1 className="truncate text-center text-[17px] font-extrabold tracking-tight text-text-primary">
             {title}
           </h1>
+          {actions && (
+            <div className="absolute end-2 flex items-center gap-1.5">
+              {actions}
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Mobile: description + actions under the glass bar */}
-      {(description || actions) && (
-        <div className="mb-4 flex flex-col gap-3 md:hidden">
-          {description && (
-            <p className="text-sm leading-6 font-medium text-slate-600">{description}</p>
-          )}
-          {actions && <div className="flex shrink-0 items-center gap-2.5">{actions}</div>}
+      {/* Mobile: description under the glass bar (actions live in the bar) */}
+      {description && (
+        <div className="mb-4 md:hidden">
+          <p className="text-sm leading-6 font-medium text-slate-600">{description}</p>
         </div>
       )}
 

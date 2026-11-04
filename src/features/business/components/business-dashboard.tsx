@@ -183,11 +183,16 @@ export function BusinessDashboard() {
           <PageHeader
             eyebrow="سالن من"
             title={business.name}
-            description="مشخصات ثبت‌شده سالن شما. برای به‌روزرسانی، ویرایش را بزنید."
             actions={
-              <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={() => setEditing(true)}
+                aria-label="ویرایش سالن"
+                title="ویرایش سالن"
+                className="h-10 w-10"
+              >
                 <Pencil className="h-4 w-4" aria-hidden="true" />
-                ویرایش
               </Button>
             }
           />

@@ -88,14 +88,14 @@ Primitives live in `src/components/ui/`. Prefer the CLI / existing patterns over
 - Sidebar: refined nav (active `primary-soft`, hover neutral), user card + logout in footer
 - Main: typically `max-w-5xl`–`max-w-7xl`, padded; avoid duplicating sidebar links on desktop
 - Page chrome: `PageHeader` + feature dashboard body
-- Home (`/dashboard`): desktop welcome + sidebar cue; hub management grid is 2 columns by default / through `md` (sidebar-visible tablet), 3 columns from `lg` so cards stay ~200px+; mobile keeps 2 columns + logout; `MobileTabBar` unchanged
+- Home (`/dashboard`): desktop welcome + sidebar cue; hub management grid is 1 column on mobile, 2 from `sm`, 3 from `lg`; no logout on the hub (sidebar / profile handle it); `MobileTabBar` unchanged
 - Cards: soft border, light surfaces, generous radius (grid cards ~16px)
 
 ### Mobile
 
 - Fixed bottom tab bar; content spacer `h-[74px]` where needed
-- Fixed top glass `PageHeader` (back icon + centered title, `backdrop-blur`); content spacer `h-14` inside `PageHeader`
-- Sidebar hidden; dashboard home two-column grid replaces desktop nav shortcuts
+- Fixed top glass `PageHeader` (back icon + centered title + optional end-side actions, `backdrop-blur`); content spacer `h-14` inside `PageHeader`
+- Sidebar hidden; dashboard home single-column grid on narrow phones
 
 ## Icons
 
