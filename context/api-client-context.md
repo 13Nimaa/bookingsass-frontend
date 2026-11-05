@@ -64,7 +64,7 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 
 Naming: `{domain}.endpoints.ts`, exports like `loginRequest`, `getMineBusiness`, `listEmployeesRequest`.
 
-**Return rule:** return raw `Promise<Response>` unless there is a documented exception (`listBusinesses` returns `{ data, failed }` for the server page).
+**Return rule:** return raw `Promise<Response>` unless there is a documented exception (`listBusinesses(query?)` returns `{ data: PagedBusinesses, failed }` for the public discovery page).
 
 ### Owner register vs create (landmine)
 
@@ -82,7 +82,7 @@ Colocated under features — not under `src/lib/api`:
 | Path | Types |
 | ---- | ----- |
 | `features/auth/types.ts` | `User`, `AuthResponse`, `LoginRequest`, `RegisterRequest` |
-| `features/business/types.ts` | `BusinessDto`, `MyBusinessResponse`, `BusinessInput`, image rules |
+| `features/business/types.ts` | `BusinessDto`, `PagedBusinesses`, `BusinessListQuery`, `MyBusinessResponse`, `BusinessInput`, image rules |
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
 | `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs, `AssignServiceInput` (`serviceId` + optional independent `priceOverride` / `durationMinutesOverride`), `UpdateEmployeeServiceInput` (sparse PUT; `null` clears an override), `AssignServicesResult`, `EmployeeServiceDto` (`id`, `businessId`, default/override/effective price + duration) |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |

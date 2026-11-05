@@ -2,35 +2,35 @@
 
 ## Theme
 
-Light only. No dark mode / `next-themes`. Visual language: clean indigo SaaS, soft surfaces, blue-tinted ink, RTL Persian default.
+Light only. No dark mode / `next-themes`. Visual language: warm cream surfaces, terracotta accent, brown-gray ink, RTL Persian default.
 
 All brand/surface colors are CSS custom properties in `src/app/globals.css`, mapped into Tailwind v4 via `@theme inline`. Prefer these tokens over raw `zinc-*` / hardcoded hex for product UI.
 
 | Role | CSS Variable | Hex |
 | ---- | ------------ | --- |
-| Page background | `--background` | `#f5f6f8` |
-| Foreground | `--foreground` | `#1e1b4b` |
-| Primary | `--primary` | `#4f46e5` |
-| Primary hover | `--primary-hover` | `#4338ca` |
-| Primary pressed | `--primary-pressed` | `#3730a3` |
-| Primary soft | `--primary-soft` | `#eef2ff` |
-| Primary subtle | `--primary-subtle` | `#e0e7ff` |
+| Page background | `--background` | `#fbf8f3` |
+| Foreground | `--foreground` | `#221f1c` |
+| Primary | `--primary` | `#a8492e` |
+| Primary hover | `--primary-hover` | `#944028` |
+| Primary pressed | `--primary-pressed` | `#7a3521` |
+| Primary soft | `--primary-soft` | `#f5ebe6` |
+| Primary subtle | `--primary-subtle` | `#edd9d0` |
 | Surface | `--surface` | `#ffffff` |
-| Surface hover | `--surface-hover` | `#fcfcfd` |
-| Surface secondary | `--surface-secondary` | `#f3f4f6` |
-| Surface subtle | `--surface-subtle` | `#fafafa` |
-| Border | `--border` | `#dfe2e7` |
-| Border strong | `--border-strong` | `#cbd0d8` |
-| Border subtle | `--border-subtle` | `#eceef2` |
-| Text primary | `--text-primary` | `#1E1B4B` |
-| Text secondary | `--text-secondary` | `#3730a3` |
-| Muted | `--muted` | `#475569` |
-| Text disabled | `--text-disabled` | `#94a3b8` |
+| Surface hover | `--surface-hover` | `#fcfaf7` |
+| Surface secondary | `--surface-secondary` | `#f5f0ea` |
+| Surface subtle | `--surface-subtle` | `#faf7f2` |
+| Border | `--border` | `#e9e1d8` |
+| Border strong | `--border-strong` | `#d9cfc4` |
+| Border subtle | `--border-subtle` | `#f0e9e1` |
+| Text primary | `--text-primary` | `#221f1c` |
+| Text secondary | `--text-secondary` | `#6b7a5e` |
+| Muted | `--muted` | `#6b635b` |
+| Text disabled | `--text-disabled` | `#9c948c` |
 | Success | `--success` | `#16a34a` |
 | Warning | `--warning` | `#d97706` |
 | Error | `--error` | `#dc2626` |
 | Info | `--info` | `#2563eb` |
-| Premium | `--premium` | `#5b21b6` |
+| Premium | `--premium` | `#6b7a5e` |
 
 Semantic soft/border/text variants exist for success, warning, error, and info (see `globals.css`).
 
@@ -76,6 +76,7 @@ Primitives live in `src/components/ui/`. Prefer the CLI / existing patterns over
 
 - Sticky `Navbar` (desktop) + `MobileTabBar` (mobile)
 - Landing sections composed from `features/landing`
+- Public salon discovery (`/businesses`) reuses marketing `Navbar` (with `/businesses` link + active states) + hero + card grid
 
 ### Auth
 

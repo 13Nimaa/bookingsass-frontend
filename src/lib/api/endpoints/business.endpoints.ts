@@ -1,23 +1,75 @@
 import { apiClient } from "@/lib/api/client";
 import { backendFetch } from "@/lib/api/http";
-import type { BusinessDto, BusinessInput } from "@/features/business/types";
+import type {
+  BusinessInput,
+  BusinessListQuery,
+  PagedBusinesses,
+} from "@/features/business/types";
 
 // Direct backend calls — no Next.js BFF in between.
 // listBusinesses is server-safe (public, no token). The authenticated calls
 // go through apiClient, which attaches the in-memory access token and
 // retries once after a single-flight token refresh on 401.
 
-// GET /api/business — public list, fresh on every request.
-export async function listBusinesses(): Promise<{
-  data: BusinessDto[];
+function toQuery(
+  params: Record<string, string | number | boolean | undefined | null>,
+): string {
+  const q = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === "") continue;
+    q.set(key, String(value));
+  }
+  const s = q.toString();
+  return s ? `?${s}` : "";
+}
+
+export const EMPTY_BUSINESS_PAGE: PagedBusinesses = {
+  items: [],
+  page: 1,
+  pageSize: 20,
+  totalCount: 0,
+  totalPages: 0,
+  hasPreviousPage: false,
+  hasNextPage: false,
+};
+
+// GET /api/business — public paged list (search / city / sort / page).
+// Documented exception: returns `{ data, failed }` instead of raw Response
+// so the server page can render without try/catch at the call site.
+export async function listBusinesses(
+  query: BusinessListQuery = {},
+): Promise<{
+  data: PagedBusinesses;
   failed: boolean;
 }> {
   try {
-    const res = await backendFetch("/api/business", { cache: "no-store" });
-    if (!res.ok) return { data: [], failed: true };
-    return { data: (await res.json()) as BusinessDto[], failed: false };
+    const res = await backendFetch(
+      `/api/business${toQuery({
+        search: query.search,
+        city: query.city,
+        sortBy: query.sortBy,
+        sortOrder: query.sortOrder,
+        page: query.page,
+        pageSize: query.pageSize,
+      })}`,
+      { cache: "no-store" },
+    );
+    if (!res.ok) return { data: EMPTY_BUSINESS_PAGE, failed: true };
+    const body = (await res.json()) as PagedBusinesses;
+    return {
+      data: {
+        items: Array.isArray(body.items) ? body.items : [],
+        page: body.page ?? query.page ?? 1,
+        pageSize: body.pageSize ?? query.pageSize ?? 20,
+        totalCount: body.totalCount ?? 0,
+        totalPages: body.totalPages ?? 0,
+        hasPreviousPage: Boolean(body.hasPreviousPage),
+        hasNextPage: Boolean(body.hasNextPage),
+      },
+      failed: false,
+    };
   } catch {
-    return { data: [], failed: true };
+    return { data: EMPTY_BUSINESS_PAGE, failed: true };
   }
 }
 
@@ -38,7 +90,7 @@ export function createBusinessRequest(input: BusinessInput): Promise<Response> {
 // PUT /api/business/:id — update an owned business.
 export function updateBusinessRequest(
   id: number,
-  input: BusinessInput
+  input: BusinessInput,
 ): Promise<Response> {
   return apiClient(`/api/business/${id}`, {
     method: "PUT",
@@ -52,7 +104,7 @@ export function updateBusinessRequest(
 // backend casing). The response carries the new session — the caller must
 // apply it to the auth store because the old tokens are rotated out.
 export function registerBusinessRequest(
-  input: BusinessInput
+  input: BusinessInput,
 ): Promise<Response> {
   return apiClient("/api/Business/register", {
     method: "POST",

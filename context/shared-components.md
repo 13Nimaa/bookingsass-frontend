@@ -71,6 +71,8 @@ Still live under `features/` (domain-owned), but reused across routes:
 | `BusinessForm` | `features/business/components/business-form.tsx` | Dashboard + register-business |
 | `BusinessImageField` | `features/business/components/business-image-field.tsx` | Inside `BusinessForm` |
 | `RegisterBusinessContent` | `features/business/components/register-business-content.tsx` | `/register/business` |
+| `SalonDiscoveryPage` | `features/business/components/salon-discovery-page.tsx` | Public `/businesses` (uses shared `Navbar`) |
+| `SalonCard` | `features/business/components/salon-card.tsx` | Public salon listing cards |
 | `*Dashboard` | `features/*/components/*-dashboard.tsx` | Thin dashboard pages |
 
 Landing components under `features/landing/` are marketing-only — do not reuse as product shell.

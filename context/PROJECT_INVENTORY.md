@@ -38,7 +38,7 @@
 | `/login` | Public | `POST /api/auth/login` |
 | `/register` | Public | `POST /api/auth/register` |
 | `/register/business` | Auth | `POST /api/Business/register` |
-| `/businesses` | Public | `GET /api/business` |
+| `/businesses` | Public | `GET /api/business` (paged: search/city/sort/page) |
 | `/dashboard` | Auth | None (static quick links) |
 | `/dashboard/profile` | Auth | Profile CRUD + image |
 | `/dashboard/business` | Auth | Mine / update / image / register |
@@ -78,7 +78,7 @@ Legend: **Wired** = FE calls it · **Partial** = endpoint helper or UI incomplet
 
 | Method | Path | Frontend | Notes |
 |--------|------|----------|-------|
-| GET | `/` | **Wired** | Public `/businesses` page |
+| GET | `/` | **Wired** | Public `/businesses` — `PagedResult` + search/city/sort/page |
 | GET | `/mine` | **Wired** | |
 | GET | `/{id}` | **Missing FE** | No business detail / booking page |
 | PUT | `/{id}` | **Wired** | Owner update |
@@ -160,7 +160,7 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. Store
 | Logout | Done |
 | Session restore from localStorage | Done (not `/session`) |
 | Profile get/update + image upload/delete | Done |
-| Public business list | Done |
+| Public business list | Done (discovery UI + server search/city/sort/pagination; detail/booking not started) |
 | My business + update + image | Done |
 | Self-service business register → BusinessOwner | Done |
 | Employee add/list/remove | Done |
@@ -216,7 +216,7 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. Store
 
 10. Optional: call `GET /api/auth/session` after restore (roles without profile fetch)
 11. `GET /api/business/{id}` detail page even before booking (description, image, city)
-12. City filter/search on `/businesses` (BE index exists; filter may need query param)
+12. ~~City filter/search on `/businesses`~~ — Done (paged `search` / `city` / sort / page)
 13. Employee self view of own schedule (reuse working-hours APIs with `employeeId` from profile)
 14. Align refresh strategy with BE cookie (today FE correctly uses body tokens)
 

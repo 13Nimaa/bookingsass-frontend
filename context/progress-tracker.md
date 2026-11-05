@@ -1,8 +1,134 @@
 # Frontend progress
 
-**Last updated:** 2026-11-03  
-**Current task:** Mobile chrome polish (hub grid, headers, customer modal) — **Complete**  
-**Prior:** Bookings Management Page Phase 1 (`07-bookings-ui.md`) — complete
+**Last updated:** 2026-11-05  
+**Current task:** Salon Discovery UI polish — **Complete**  
+**Prior:** Businesses infinite scroll — complete
+
+---
+
+# Salon Discovery UI polish
+
+| Area | Status |
+|------|--------|
+| Tokens | Warm BookingSaaS palette in `globals.css` (terracotta primary, cream bg, warm borders) |
+| Navbar | ~76px desktop height; stronger brand weight; active link = soft warm fill + thin bottom indicator |
+| Hero | Warm cream surface, restrained botanical décor, integrated flower icon, tighter type hierarchy |
+| Search / sort | Matched 58px controls, 14px radius, warm borders, restrained terracotta focus |
+| Salon card | White surface, warm border, quieter shadow, refined type/spacing, balanced action buttons |
+| Scope held | No mock-data / filter / API / routing changes |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/app/globals.css` | Warm design tokens |
+| `src/components/layout/navbar.tsx` | Public nav polish |
+| `src/features/business/components/salon-discovery-page.tsx` | Hero + toolbar polish |
+| `src/features/business/components/salon-card.tsx` | Card + actions polish |
+| `src/components/ui/input.tsx` | Tokenized text + softer focus |
+| `src/components/ui/select.tsx` | Matching focus / shadow |
+| `context/ui-context.md` | Token table updated |
+| `design-audit/screenshots/salon-discovery-desktop-1440x900.png` | Desktop verification shot |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+npx eslint src/features/business/components/salon-discovery-page.tsx src/features/business/components/salon-card.tsx src/components/layout/navbar.tsx src/components/ui/input.tsx src/components/ui/select.tsx
+```
+
+---
+
+# Businesses infinite scroll
+
+| Area | Status |
+|------|--------|
+| Removed | Numbered pagination controls |
+| Load more | IntersectionObserver sentinel; appends `page+1` via `listBusinesses` |
+| Reset | Search/sort URL change remounts list from SSR page 1 |
+| Feedback | Bottom spinner; count «X از Y سالن»; retry on load-more error |
+
+---
+
+# Unify Navbar + simplify discovery filters
+
+| Area | Status |
+|------|--------|
+| Navbar | Single shared `Navbar` on landing + `/businesses`; link «سالن‌ها» → `/businesses`; active states (path + hash) |
+| Removed | `SalonDiscoveryHeader`; city filter; name/city sort options |
+| Sort UI | Only جدیدترین / قدیمی‌ترین (`id` desc/asc); default newest |
+| Search | Kept (debounced); pagination unchanged |
+
+---
+
+---
+
+# Public business list API wiring (paged)
+
+| Area | Status |
+|------|--------|
+| Contract | `GET /api/business` → `PagedBusinesses` (`items` + paging flags); query: `search`, `city`, `sortBy`, `sortOrder`, `page`, `pageSize` |
+| Transport | `listBusinesses(query)` builds query string; returns `{ data, failed }` |
+| Types | `BusinessListQuery`, `PagedBusinesses` in `features/business/types.ts` |
+| URL state | `/businesses?search&city&sortBy&sortOrder&page` drives RSC fetch |
+| Search | Debounced ~300ms; resets `page` to 1 |
+| City | Exact-match text filter (debounced); empty = all cities |
+| Sort | `name` / `city` / `id` × `asc` / `desc` |
+| Pagination | Circular controls + «نمایش X تا Y از Z سالن»; `pageSize` 9 |
+| States | Pending skeletons on navigation; empty catalog vs no-match; error + refresh |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/features/business/types.ts` | Paged + query types |
+| `src/lib/api/endpoints/business.endpoints.ts` | Query serialization + paged parse |
+| `src/features/business/lib/list-query.ts` | URL parse/build + sort helpers |
+| `src/features/business/components/salon-discovery-page.tsx` | Toolbar + pagination wired to URL |
+| `src/app/businesses/page.tsx` | Reads `searchParams` → `listBusinesses` |
+| `src/lib/api/endpoints/business.endpoints.test.ts` | Paged + query param tests |
+| `src/features/business/lib/list-query.test.ts` | Parse/serialize helpers |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+npx eslint src/features/business/components/salon-discovery-page.tsx src/features/business/lib/list-query.ts src/lib/api/endpoints/business.endpoints.ts src/app/businesses/page.tsx
+npx vitest run src/lib/api/endpoints/business.endpoints.test.ts src/features/business/lib/list-query.test.ts
+npm run build
+```
+
+Result: ESLint clean; 10 focused tests pass; production build succeeds.
+
+## Next
+
+Public salon detail `/businesses/[id]` + booking entry.
+
+---
+
+# Public Salon Discovery Page (Phase 1 — `08`)
+
+| Area | Status |
+|------|--------|
+| Route | `/businesses` thin RSC + Suspense → `SalonDiscoveryPage` |
+| Header | Public RTL nav (خانه / سالن‌ها / درباره ما / تماس) + ورود/ثبت‌نام; mobile menu |
+| Hero | «سالن‌های زیبایی» + supporting copy; primary-soft decorative backdrop |
+| Cards | 3-col desktop / 2 tablet / 1 mobile; image, location, description, actions |
+| Navigation | Card / «مشاهده سالن» / «رزرو نوبت» → `/businesses/{id}` (detail not in this phase) |
+| Out of scope then | Client-only filters (superseded by paged API wiring above); bookmark persistence; detail/booking |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/app/businesses/page.tsx` | Thin route + Suspense |
+| `src/features/business/components/salon-discovery-page.tsx` | Page UI |
+| `src/features/business/components/salon-discovery-header.tsx` | Public discovery header |
+| `src/features/business/components/salon-card.tsx` | Salon card + skeleton |
+
+## Next
+
+Phase 2: public salon detail `/businesses/[id]` + booking entry (still out of this phase).
 
 ---
 

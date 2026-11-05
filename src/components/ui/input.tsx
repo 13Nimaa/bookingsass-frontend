@@ -27,14 +27,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
-    const inputId = id ?? React.useId();
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
 
     return (
       <div className="w-full space-y-2" dir="rtl">
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-bold text-[#1e1b4b]"
+            className="block text-sm font-bold text-text-primary"
           >
             {label}
             {requiredMark && (
@@ -49,10 +50,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {startIcon && (
             <span
               className="
-                absolute right-3 top-1/2
+                absolute right-3.5 top-1/2
                 -translate-y-1/2
                 text-[var(--muted)]
-                transition-colors duration-200
+                transition-colors duration-150
                 group-focus-within:text-[var(--primary)]
               "
             >
@@ -73,25 +74,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
               text-[15px]
               font-medium
-              text-[#1e1b4b]
+              text-[var(--text-primary)]
               outline-none
 
               placeholder:text-[var(--text-disabled)]
 
-              transition-all duration-200
+              transition-all duration-150
 
               hover:border-[var(--border-strong)]
 
               focus:border-[var(--primary)]
-              focus:ring-4
-              focus:ring-[var(--primary-soft)]
+              focus:ring-2
+              focus:ring-[color-mix(in_srgb,var(--primary)_15%,transparent)]
 
               disabled:cursor-not-allowed
               disabled:bg-[var(--surface-secondary)]
               disabled:text-[var(--text-disabled)]
               disabled:opacity-60
               `,
-              startIcon && "pr-11",
+              startIcon && "pr-12",
               endIcon && "pl-11",
               error &&
                 `
@@ -110,7 +111,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 absolute left-3 top-1/2
                 -translate-y-1/2
                 text-[var(--muted)]
-                transition-colors duration-200
+                transition-colors duration-150
                 group-focus-within:text-[var(--primary)]
               "
             >
@@ -124,7 +125,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {error}
           </p>
         ) : hint ? (
-          <p className="text-[13px] leading-5 font-medium text-slate-600">
+          <p className="text-[13px] leading-5 font-medium text-muted">
             {hint}
           </p>
         ) : null}

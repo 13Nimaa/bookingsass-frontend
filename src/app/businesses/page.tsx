@@ -1,66 +1,49 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CalendarCheck, MapPin } from "lucide-react";
+import { Suspense } from "react";
 import { listBusinesses } from "@/lib/api/endpoints/business.endpoints";
-import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
+import { parseBusinessListSearchParams } from "@/features/business/lib/list-query";
+import {
+  SalonDiscoveryPage,
+  SalonDiscoverySkeleton,
+} from "@/features/business/components/salon-discovery-page";
 
 export const metadata: Metadata = {
-  title: "کسب‌وکارها - BarberCRM",
+  title: "سالن‌های زیبایی - BookingSaaS",
+  description: "سالن موردنظرت رو پیدا کن و نوبتت رو آنلاین رزرو کن",
 };
 
-// Fresh on every request — new businesses appear immediately.
+// Fresh on every request — search/sort stay in sync with the backend.
 export const dynamic = "force-dynamic";
 
-export default async function BusinessesPage() {
-  const { data: businesses, failed } = await listBusinesses();
+type BusinessesPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
+async function SalonDiscoveryLoader({ searchParams }: BusinessesPageProps) {
+  const raw = await searchParams;
+  const query = parseBusinessListSearchParams(raw);
+  const { data, failed } = await listBusinesses(query);
+  // Remount when search/sort changes so the infinite list resets from page 1.
+  const filterKey = [
+    query.search ?? "",
+    query.city ?? "",
+    query.sortBy ?? "id",
+    query.sortOrder ?? "desc",
+  ].join("|");
   return (
-    <main className="flex min-h-full flex-1 flex-col">
-      <header className="border-b border-border">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
-          <div className="flex items-center gap-2 text-lg font-semibold">
-            <CalendarCheck size={22} className="text-primary" />
-            BookFlow
-          </div>
-          <Link href="/login" className="text-sm text-primary hover:underline">
-            ورود
-          </Link>
-        </div>
-      </header>
+    <SalonDiscoveryPage
+      key={filterKey}
+      query={query}
+      result={data}
+      failed={failed}
+    />
+  );
+}
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
-        <h1 className="font-display text-3xl font-bold">کسب‌وکارها</h1>
-        <p className="mt-2 text-sm text-muted">
-          سالن‌ها و کسب‌وکارهای ثبت‌شده را ببینید و نوبت رزرو کنید.
-        </p>
-
-        {failed ? (
-          <p className="mt-10 text-sm text-error">
-            دریافت فهرست کسب‌وکارها ممکن نشد. لطفاً بعداً دوباره تلاش کنید.
-          </p>
-        ) : businesses.length === 0 ? (
-          <p className="mt-10 text-sm text-muted">
-            هنوز کسب‌وکاری ثبت نشده است.
-          </p>
-        ) : (
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {businesses.map((b) => (
-              <li
-                key={b.id}
-                className="rounded-lg border border-border bg-surface p-5 transition-colors hover:border-primary/40"
-              >
-                <h2 className="font-display text-lg font-semibold">{b.name}</h2>
-                <p className="mt-1 text-xs text-muted">{b.city}</p>
-                <p className="mt-3 flex items-start gap-1.5 text-sm text-muted">
-                  <MapPin size={15} className="mt-0.5 shrink-0" />
-                  <span>{b.address}</span>
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      <MobileTabBar />
-    </main>
+export default function BusinessesPage(props: BusinessesPageProps) {
+  return (
+    <Suspense fallback={<SalonDiscoverySkeleton />}>
+      <SalonDiscoveryLoader searchParams={props.searchParams} />
+    </Suspense>
   );
 }
