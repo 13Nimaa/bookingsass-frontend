@@ -4,6 +4,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   addJalaliMonths,
+  compareJalali,
   formatJalaliDate,
   jalaliMonthLength,
   jalaliToGregorianIso,
@@ -17,6 +18,8 @@ interface JalaliDatePickerProps {
   value: JalaliDate;
   onChange: (value: JalaliDate) => void;
   disabled?: boolean;
+  /** Dates strictly before this day cannot be selected. */
+  minDate?: JalaliDate;
 }
 
 function sameDate(first: JalaliDate, second: JalaliDate) {
@@ -28,7 +31,12 @@ function monthStartOffset(year: number, month: number) {
   return (new Date(gregorianYear, gregorianMonth - 1, gregorianDay).getDay() + 1) % 7;
 }
 
-export function JalaliDatePicker({ value, onChange, disabled = false }: JalaliDatePickerProps) {
+export function JalaliDatePicker({
+  value,
+  onChange,
+  disabled = false,
+  minDate,
+}: JalaliDatePickerProps) {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState({ year: value.year, month: value.month });
   const rootRef = useRef<HTMLDivElement>(null);
@@ -85,9 +93,48 @@ export function JalaliDatePicker({ value, onChange, disabled = false }: JalaliDa
           </div>
           <div className="grid grid-cols-7 gap-1 text-center" dir="rtl">
             {JALALI_WEEKDAY_LABELS.map((label) => <span key={label} className="flex h-9 items-center justify-center text-xs font-extrabold text-muted">{label}</span>)}
-            {days.map((date, index) => date ? <button key={jalaliToGregorianIso(date)} type="button" onClick={() => { onChange(date); setOpen(false); }} aria-pressed={sameDate(date, value)} aria-label={formatJalaliDate(date, { includeWeekday: true })} className={`flex h-9 items-center justify-center rounded-lg text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary ${sameDate(date, value) ? "bg-primary text-primary-foreground" : sameDate(date, today) ? "bg-primary-soft text-text-secondary ring-1 ring-primary-subtle ring-inset hover:bg-primary-subtle" : "text-text-primary hover:bg-surface-secondary"}`}>{date.day.toLocaleString("fa-IR")}</button> : <span key={`empty-${index}`} aria-hidden="true" className="h-9" />)}
+            {days.map((date, index) => {
+              if (!date) {
+                return <span key={`empty-${index}`} aria-hidden="true" className="h-9" />;
+              }
+              const beforeMin = minDate ? compareJalali(date, minDate) < 0 : false;
+              return (
+                <button
+                  key={jalaliToGregorianIso(date)}
+                  type="button"
+                  disabled={beforeMin}
+                  onClick={() => {
+                    if (beforeMin) return;
+                    onChange(date);
+                    setOpen(false);
+                  }}
+                  aria-pressed={sameDate(date, value)}
+                  aria-label={formatJalaliDate(date, { includeWeekday: true })}
+                  className={`flex h-9 items-center justify-center rounded-lg text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent ${
+                    sameDate(date, value)
+                      ? "bg-primary text-primary-foreground"
+                      : sameDate(date, today)
+                        ? "bg-primary-soft text-text-secondary ring-1 ring-primary-subtle ring-inset hover:bg-primary-subtle"
+                        : "text-text-primary hover:bg-surface-secondary"
+                  }`}
+                >
+                  {date.day.toLocaleString("fa-IR")}
+                </button>
+              );
+            })}
           </div>
-          <button type="button" onClick={() => { onChange(today); setOpen(false); }} className="mt-3 min-h-10 w-full rounded-xl bg-primary-soft px-3 text-sm font-bold text-text-secondary transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">امروز</button>
+          <button
+            type="button"
+            disabled={minDate ? compareJalali(today, minDate) < 0 : false}
+            onClick={() => {
+              if (minDate && compareJalali(today, minDate) < 0) return;
+              onChange(today);
+              setOpen(false);
+            }}
+            className="mt-3 min-h-10 w-full rounded-xl bg-primary-soft px-3 text-sm font-bold text-text-secondary transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            امروز
+          </button>
         </div>
       )}
     </div>

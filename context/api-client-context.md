@@ -55,7 +55,7 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | File | Transport | Covers |
 | ---- | --------- | ------ |
 | `auth.endpoints.ts` | `backendFetch` | login, register, refresh, logout |
-| `business.endpoints.ts` | both | public list, mine, create*, update, register, image |
+| `business.endpoints.ts` | both | public list, public get by id, mine, create*, update, register, image |
 | `profile.endpoints.ts` | `apiClient` | get, update, image up/delete |
 | `employee.endpoints.ts` | `apiClient` | employees + working hours + employee↔service assign |
 | `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
@@ -64,7 +64,9 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 
 Naming: `{domain}.endpoints.ts`, exports like `loginRequest`, `getMineBusiness`, `listEmployeesRequest`.
 
-**Return rule:** return raw `Promise<Response>` unless there is a documented exception (`listBusinesses(query?)` returns `{ data: PagedBusinesses, failed }` for the public discovery page).
+**Return rule:** return raw `Promise<Response>` unless there is a documented exception:
+- `listBusinesses(query?)` → `{ data: PagedBusinesses, failed }` (public discovery)
+- `getBusinessById(id)` → `{ data: BusinessDto | null, notFound, failed }` (public detail)
 
 ### Owner register vs create (landmine)
 

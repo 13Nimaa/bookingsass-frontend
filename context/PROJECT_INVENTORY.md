@@ -16,15 +16,15 @@
 |----------------|------------|------------|-------|
 | `features/auth` | `/login`, `/register`, `/register/business` | `auth.endpoints.ts` | `auth-store` |
 | `features/profile` | `/dashboard/profile` | `profile.endpoints.ts` | `profile-store` |
-| `features/business` | `/dashboard/business`, `/businesses` (public list) | `business.endpoints.ts` | `business-store` |
+| `features/business` | `/dashboard/business`, `/businesses`, `/businesses/[id]` | `business.endpoints.ts` | `business-store` |
 | `features/employee` | `/dashboard/employees` | `employee.endpoints.ts` | `employee-store` |
 | `features/service` | `/dashboard/services` | `service.endpoints.ts` | `service-store` |
 | `features/booking` | `/dashboard/bookings` (owner/employee list) | `booking.endpoints.ts` | `booking-store` |
 | `features/landing` | `/` (marketing only, mock data) | — | — |
 
 **Missing / partial feature modules:**
-- `booking` — list UI done; create / availability / detail / status / mine still missing
-- Public business detail + booking flow
+- `booking` — list UI done; public create/availability wired in salon detail (blocked on public staff API); detail / status / mine still missing
+- Public business detail — page live; staff/hours/complete booking blocked on public BE contracts
 - Admin UI
 - Employee self-service dashboard (beyond owner managing employees)
 
@@ -39,6 +39,7 @@
 | `/register` | Public | `POST /api/auth/register` |
 | `/register/business` | Auth | `POST /api/Business/register` |
 | `/businesses` | Public | `GET /api/business` (paged: search/city/sort/page) |
+| `/businesses/[id]` | Public | `GET /api/business/{id}` + public services; booking UI blocked on public staff |
 | `/dashboard` | Auth | None (static quick links) |
 | `/dashboard/profile` | Auth | Profile CRUD + image |
 | `/dashboard/business` | Auth | Mine / update / image / register |
@@ -80,7 +81,7 @@ Legend: **Wired** = FE calls it · **Partial** = endpoint helper or UI incomplet
 |--------|------|----------|-------|
 | GET | `/` | **Wired** | Public `/businesses` — `PagedResult` + search/city/sort/page |
 | GET | `/mine` | **Wired** | |
-| GET | `/{id}` | **Missing FE** | No business detail / booking page |
+| GET | `/{id}` | **Wired** | Public `/businesses/[id]` via `getBusinessById` |
 | PUT | `/{id}` | **Wired** | Owner update |
 | POST | `/image` | **Wired** | |
 | DELETE | `/image` | **Wired** | |
@@ -135,9 +136,9 @@ BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid
 
 | Method | Path | Frontend | Notes |
 |--------|------|----------|-------|
-| GET | `/availability` | **Partial** | `getAvailabilityRequest` — no UI |
-| POST | `/` | **Partial** | `createBookingRequest` — no UI |
-| POST | `/guest` | **Partial** | `createGuestBookingRequest` — no UI |
+| GET | `/availability` | **Partial** | Wired in public booking panel; needs public employee id to run |
+| POST | `/` | **Partial** | Wired in public booking panel (authenticated path) |
+| POST | `/guest` | **Partial** | Wired in public booking panel (guest path) |
 | GET | `/` | **Wired** | `listBookingsRequest` + `/dashboard/bookings` list UI (no detail/status yet) |
 | GET | `/mine` | **Partial** | `listMyBookingsRequest` — no UI |
 | GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no UI |
@@ -175,8 +176,8 @@ Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. Store
 | Employee service assignment | Done (Add Service modal; multi-select + optional independent overrides) |
 | Employee service edit | Done (Edit Service modal; independent price/duration override patch + reset) |
 | Employee service remove | Done (Drawer confirm + DELETE; assignment-only, not salon-wide service delete) |
-| Business detail page | **Not started** |
-| Public / customer booking flow | **Not started** |
+| Business detail page | **Partial** — layout + public business/services; staff/hours/booking blocked on public APIs |
+| Public / customer booking flow | **Partial** — panel wired; blocked without public employee list |
 | Owner booking calendar / detail / status actions | **Not started** (list page exists) |
 | Employee self portal | **Not started** |
 | Admin panel | **Not started** |

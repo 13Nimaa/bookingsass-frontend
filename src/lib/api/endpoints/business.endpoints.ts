@@ -1,9 +1,14 @@
 import { apiClient } from "@/lib/api/client";
 import { backendFetch } from "@/lib/api/http";
 import type {
+  BusinessDetailsDto,
+  BusinessDto,
   BusinessInput,
   BusinessListQuery,
   PagedBusinesses,
+  PublicEmployeeDto,
+  PublicEmployeeServiceDto,
+  PublicWorkingHourDto,
 } from "@/features/business/types";
 
 // Direct backend calls — no Next.js BFF in between.
@@ -70,6 +75,127 @@ export async function listBusinesses(
     };
   } catch {
     return { data: EMPTY_BUSINESS_PAGE, failed: true };
+  }
+}
+
+function parsePublicEmployeeService(
+  raw: unknown,
+): PublicEmployeeServiceDto | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const item = raw as Record<string, unknown>;
+  if (typeof item.id !== "number") return null;
+  if (typeof item.title !== "string") return null;
+  if (typeof item.effectivePrice !== "number") return null;
+  if (typeof item.effectiveDurationMinutes !== "number") return null;
+  return {
+    id: item.id,
+    title: item.title,
+    effectivePrice: item.effectivePrice,
+    effectiveDurationMinutes: item.effectiveDurationMinutes,
+  };
+}
+
+function parsePublicWorkingHour(raw: unknown): PublicWorkingHourDto | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const item = raw as Record<string, unknown>;
+  if (typeof item.id !== "number") return null;
+  if (typeof item.employeeId !== "number") return null;
+  if (typeof item.date !== "string") return null;
+  if (typeof item.dayOfWeek !== "number") return null;
+  if (typeof item.startTime !== "string") return null;
+  if (typeof item.endTime !== "string") return null;
+  return {
+    id: item.id,
+    employeeId: item.employeeId,
+    date: item.date,
+    dayOfWeek: item.dayOfWeek,
+    startTime: item.startTime,
+    endTime: item.endTime,
+  };
+}
+
+function parsePublicEmployee(raw: unknown): PublicEmployeeDto | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const item = raw as Record<string, unknown>;
+  if (typeof item.id !== "number") return null;
+  if (typeof item.fullName !== "string") return null;
+  const services = Array.isArray(item.services)
+    ? item.services
+        .map(parsePublicEmployeeService)
+        .filter((s): s is PublicEmployeeServiceDto => s !== null)
+    : [];
+  const workingHours = Array.isArray(item.workingHours)
+    ? item.workingHours
+        .map(parsePublicWorkingHour)
+        .filter((h): h is PublicWorkingHourDto => h !== null)
+    : [];
+  return {
+    id: item.id,
+    fullName: item.fullName,
+    avatarUrl: typeof item.avatarUrl === "string" ? item.avatarUrl : null,
+    services,
+    workingHours,
+  };
+}
+
+// GET /api/business/:id — public salon detail (no auth).
+// Nested employees include services (effective pricing) + working hours.
+// Documented exception: returns `{ data, notFound, failed }` so the server
+// page can branch without try/catch at the call site.
+export async function getBusinessById(id: number): Promise<{
+  data: BusinessDetailsDto | null;
+  notFound: boolean;
+  failed: boolean;
+}> {
+  if (!Number.isFinite(id) || id <= 0) {
+    return { data: null, notFound: true, failed: false };
+  }
+  try {
+    const res = await backendFetch(`/api/business/${id}`, {
+      cache: "no-store",
+    });
+    if (res.status === 404) {
+      return { data: null, notFound: true, failed: false };
+    }
+    if (!res.ok) {
+      return { data: null, notFound: false, failed: true };
+    }
+    const body = (await res.json()) as BusinessDto & {
+      employees?: unknown;
+    };
+    if (typeof body?.id !== "number" || typeof body?.name !== "string") {
+      return { data: null, notFound: false, failed: true };
+    }
+    const employees = Array.isArray(body.employees)
+      ? body.employees
+          .map(parsePublicEmployee)
+          .filter((e): e is PublicEmployeeDto => e !== null)
+      : [];
+    return {
+      data: {
+        id: body.id,
+        name: body.name,
+        city: body.city ?? "",
+        address: body.address ?? "",
+        description: body.description ?? null,
+        profileImageUrl: body.profileImageUrl ?? null,
+        ownerId: body.ownerId ?? "",
+        coverImageUrl: body.coverImageUrl ?? null,
+        ownerAvatarUrl: body.ownerAvatarUrl ?? null,
+        neighborhood: body.neighborhood ?? null,
+        rating: body.rating ?? null,
+        reviewCount: body.reviewCount ?? null,
+        isOpen: body.isOpen ?? null,
+        startingPrice: body.startingPrice ?? null,
+        services: body.services ?? null,
+        genderAudience: body.genderAudience ?? null,
+        employees,
+      },
+      notFound: false,
+      failed: false,
+    };
+  } catch {
+    return { data: null, notFound: false, failed: true };
   }
 }
 

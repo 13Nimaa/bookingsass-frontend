@@ -21,6 +21,38 @@ export interface BusinessDto {
   genderAudience?: "men" | "women" | "unisex" | null;
 }
 
+/** Nested on `GET /api/Business/{id}` — eligible service + effective pricing. */
+export type PublicEmployeeServiceDto = {
+  id: number;
+  title: string;
+  effectivePrice: number;
+  effectiveDurationMinutes: number;
+};
+
+/** Nested public working hour (Gregorian date). */
+export type PublicWorkingHourDto = {
+  id: number;
+  employeeId: number;
+  date: string; // yyyy-MM-dd
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+};
+
+/** Anonymous-safe staff on public business detail (no phone / userId). */
+export type PublicEmployeeDto = {
+  id: number;
+  fullName: string;
+  avatarUrl: string | null;
+  services: PublicEmployeeServiceDto[];
+  workingHours: PublicWorkingHourDto[];
+};
+
+/** `GET /api/Business/{id}` — business fields + nested public staff. */
+export type BusinessDetailsDto = BusinessDto & {
+  employees: PublicEmployeeDto[];
+};
+
 /** Public list paging envelope (`GET /api/business`). */
 export type PagedBusinesses = {
   items: BusinessDto[];

@@ -1,8 +1,66 @@
 # Frontend progress
 
 **Last updated:** 2026-11-05  
-**Current task:** Salon Discovery UI polish — **Complete**  
-**Prior:** Businesses infinite scroll — complete
+**Current task:** Public salon detail + booking entry (Phase 2 — `09`) — **Partial**  
+**Prior:** Salon Discovery UI polish — complete
+
+---
+
+# Public salon detail + booking (`09`)
+
+| Area | Status |
+|------|--------|
+| Route | `/businesses/[id]` thin RSC → `SalonDetailPage` |
+| Public data | `getBusinessById` + public `listServicesRequest` |
+| Layout | RTL hero (info + gallery), section tabs, ~72/28 content + sticky booking panel, mobile sticky CTA |
+| Design tokens | Unchanged — no edits to `globals.css` / theme colors |
+| Services | Catalog cards + booking step 1; salon default price/duration |
+| Booking panel | Service → employee → Jalali date (min=today) → availability slots → guest/auth submit + confirmation |
+| Auth booking | `POST /api/bookings` when session authenticated |
+| Guest booking | Name + phone (`guestBookingSchema`) → `POST /api/bookings/guest` |
+| Reviews tab | Omitted (no API) |
+| Employees / WH | Graceful unavailable UI — **blocked on BE** |
+| Colors / navbar | Not redesigned; existing `Navbar` reused |
+
+## Missing backend contracts (block full booking)
+
+Exact gaps (do not invent FE workarounds):
+
+1. **Public employee list** for a business — e.g. `GET /api/business/{id}/employees` (or dedicated public path) with `AllowAnonymous` and a public-safe DTO (`id`, `fullName`, optional avatar; **no phone**). Today: owner-only.
+2. **Public employee↔service read** — e.g. anonymous `GET /api/employees/{employeeId}/services` (or embed assignments on public employees) so the UI can filter eligible staff and show effective price/duration. Today: BusinessOwner-only.
+3. **Public working-hours read** (optional for display section) — today owner/employee-only. Availability already encodes hours for slot picking once an `employeeId` exists.
+
+Until (1)+(2) ship, the booking panel cannot complete steps 2–4 for anonymous visitors.
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/app/businesses/[id]/page.tsx` | Thin route + metadata |
+| `src/features/business/components/salon-detail-page.tsx` | Page composition |
+| `src/features/business/components/salon-gallery.tsx` | Image gallery (API urls only) |
+| `src/features/business/components/salon-booking-panel.tsx` | Booking flow UI |
+| `src/features/business/lib/public-catalog.ts` | Public services parse |
+| `src/features/booking/lib/public-booking.ts` | Availability + create helpers |
+| `src/features/booking/schemas/guest-booking.schema.ts` | Guest name/phone Zod |
+| `src/lib/api/endpoints/business.endpoints.ts` | `getBusinessById` |
+| `src/features/employee/components/jalali-date-picker.tsx` | Optional `minDate` |
+| `src/features/employee/lib/jalali-date.ts` | `compareJalali` |
+
+## Verify
+
+```bash
+npx tsc --noEmit
+npx eslint src/features/business/components/salon-detail-page.tsx src/features/business/components/salon-booking-panel.tsx src/features/business/components/salon-gallery.tsx src/app/businesses/[id]/page.tsx src/lib/api/endpoints/business.endpoints.ts
+npx vitest run src/lib/api/endpoints/business.endpoints.test.ts
+npm run build
+```
+
+Result: TypeScript + ESLint clean; 8 business endpoint tests pass; production build lists `/businesses/[id]`.
+
+## Next
+
+BE public staff (+ optional public hours / employee-services). Then wire employees into `SalonDetailPage` / booking panel and enable end-to-end public booking.
 
 ---
 

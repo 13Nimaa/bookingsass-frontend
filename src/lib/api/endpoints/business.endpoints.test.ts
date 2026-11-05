@@ -13,6 +13,7 @@ import { backendFetch } from "@/lib/api/http";
 import {
   createBusinessRequest,
   EMPTY_BUSINESS_PAGE,
+  getBusinessById,
   listBusinesses,
   registerBusinessRequest,
   getMineBusiness,
@@ -76,6 +77,115 @@ describe("business endpoints", () => {
     backendFetchMock.mockResolvedValue(new Response("", { status: 500 }));
     await expect(listBusinesses()).resolves.toEqual({
       data: EMPTY_BUSINESS_PAGE,
+      failed: true,
+    });
+  });
+
+  it("getBusinessById returns public detail from GET /api/business/:id", async () => {
+    const dto = {
+      id: 7,
+      name: "سالن",
+      city: "تهران",
+      address: "آدرس",
+      description: null,
+      profileImageUrl: null,
+      ownerId: "u1",
+      employees: [
+        {
+          id: 3,
+          fullName: "Ada",
+          avatarUrl: null,
+          services: [
+            {
+              id: 9,
+              title: "Haircut",
+              effectivePrice: 150000,
+              effectiveDurationMinutes: 45,
+            },
+          ],
+          workingHours: [
+            {
+              id: 41,
+              employeeId: 3,
+              date: "2026-11-06",
+              dayOfWeek: 5,
+              startTime: "09:00:00",
+              endTime: "17:00:00",
+            },
+          ],
+        },
+      ],
+    };
+    backendFetchMock.mockResolvedValue(
+      new Response(JSON.stringify(dto), { status: 200 }),
+    );
+
+    await expect(getBusinessById(7)).resolves.toEqual({
+      data: expect.objectContaining({
+        id: 7,
+        name: "سالن",
+        employees: [
+          expect.objectContaining({
+            id: 3,
+            fullName: "Ada",
+            services: [
+              expect.objectContaining({
+                id: 9,
+                effectivePrice: 150000,
+                effectiveDurationMinutes: 45,
+              }),
+            ],
+            workingHours: [
+              expect.objectContaining({
+                id: 41,
+                date: "2026-11-06",
+              }),
+            ],
+          }),
+        ],
+      }),
+      notFound: false,
+      failed: false,
+    });
+    expect(backendFetchMock).toHaveBeenCalledWith("/api/business/7", {
+      cache: "no-store",
+    });
+  });
+
+  it("getBusinessById defaults missing employees to an empty array", async () => {
+    backendFetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 1,
+          name: "سالن",
+          city: "تهران",
+          address: "آدرس",
+          description: null,
+          profileImageUrl: null,
+          ownerId: "u1",
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const result = await getBusinessById(1);
+    expect(result.data?.employees).toEqual([]);
+  });
+
+  it("getBusinessById marks notFound on 404", async () => {
+    backendFetchMock.mockResolvedValue(new Response("", { status: 404 }));
+    await expect(getBusinessById(99)).resolves.toEqual({
+      data: null,
+      notFound: true,
+      failed: false,
+    });
+  });
+
+  it("getBusinessById marks failed on server error", async () => {
+    backendFetchMock.mockResolvedValue(new Response("", { status: 500 }));
+    await expect(getBusinessById(1)).resolves.toEqual({
+      data: null,
+      notFound: false,
       failed: true,
     });
   });
