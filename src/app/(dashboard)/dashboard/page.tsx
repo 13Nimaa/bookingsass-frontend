@@ -8,6 +8,7 @@ import {
   UserRound,
   UserRoundCog,
   Users,
+  type LucideIcon,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import {
@@ -15,7 +16,12 @@ import {
   useOwnerDashboardStatus,
 } from "@/features/business/components/owner-dashboard";
 
-const MENU_OPTIONS = [
+const MENU_OPTIONS: readonly {
+  href: string;
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}[] = [
   {
     href: "/dashboard/profile",
     icon: UserRound,
@@ -52,34 +58,50 @@ const MENU_OPTIONS = [
     title: "مشتریان",
     description: "مدیریت اطلاعات مشتریان سالن",
   },
-] as const;
+];
 
-function DashboardHub({ showHeader }: { showHeader: boolean }) {
+function DashboardShortcutStrip() {
+  return (
+    <nav aria-label="میانبرهای داشبورد" className="mb-4 md:hidden">
+      <ul className="grid grid-cols-3 gap-2">
+        {MENU_OPTIONS.map(({ href, icon: Icon, title }) => (
+          <li key={href} className="min-w-0">
+            <Link
+              href={href}
+              className="flex flex-col items-center gap-1.5 rounded-xl border border-border bg-surface px-1 py-2.5 text-center transition-colors duration-150 hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+              </span>
+              <span className="truncate text-[11px] font-bold leading-tight text-text-primary">
+                {title}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function DashboardHub() {
   return (
     <>
-      {showHeader ? (
-        <>
-          <div className="hidden md:block">
-            <PageHeader
-              hideBack
-              title="داشبورد"
-              description="بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید."
-            />
-          </div>
-          <div className="md:hidden">
-            <PageHeader hideBack title="داشبورد" />
-            <p className="mb-4 text-[12.5px] leading-5 font-normal text-muted">
-              بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
-            </p>
-          </div>
-        </>
-      ) : (
-        <h2 className="mt-6 mb-3 text-[13px] font-semibold text-text-primary md:mt-8">
-          میانبرها
-        </h2>
-      )}
+      <div className="hidden md:block">
+        <PageHeader
+          hideBack
+          title="داشبورد"
+          description="بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید."
+        />
+      </div>
+      <div className="md:hidden">
+        <PageHeader hideBack title="داشبورد" />
+        <p className="mb-4 text-[12.5px] leading-5 font-normal text-muted">
+          بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
+        </p>
+      </div>
 
-      <nav aria-label="منوی داشبورد" className={showHeader ? "mt-4 w-full md:mt-8" : "w-full"}>
+      <nav aria-label="منوی داشبورد" className="mt-4 w-full md:mt-8">
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {MENU_OPTIONS.map(({ href, icon: Icon, title, description }) => (
             <li key={href} className="min-w-0">
@@ -116,17 +138,13 @@ export default function DashboardPage() {
     status === "notFound" ||
     status === "error";
   const showHubOnly = status === "forbidden";
-  const showHubBelow = status === "loaded";
 
   return (
     <main className="mx-auto flex w-full container mx-auto flex-1 flex-col px-4 pb-6 pt-5 sm:px-8 sm:pb-8 md:px-10 md:pb-10 md:pt-9">
-      {showOwnerAnalytics ? <OwnerDashboard /> : null}
-      {showHubOnly ? <DashboardHub showHeader /> : null}
-      {showHubBelow ? (
-        <div className="md:hidden">
-          <DashboardHub showHeader={false} />
-        </div>
+      {showOwnerAnalytics ? (
+        <OwnerDashboard mobileShortcuts={<DashboardShortcutStrip />} />
       ) : null}
+      {showHubOnly ? <DashboardHub /> : null}
     </main>
   );
 }

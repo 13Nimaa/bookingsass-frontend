@@ -1,8 +1,8 @@
 # Frontend progress
 
 **Last updated:** 2026-11-07  
-**Current task:** Owner dashboard (`12`) — Done  
-**Prior:** Public salon detail polish — gallery width + header hierarchy
+**Current task:** Dashboard mobile shortcuts — sticky 3×2 strip under header; removed buried bottom hub  
+**Prior:** Salon detail layout polish — `container mx-auto`, back header with business title
 
 ---
 

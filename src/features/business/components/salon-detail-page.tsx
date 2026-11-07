@@ -230,24 +230,20 @@ export function SalonDetailPage({
     <div className="flex min-h-full flex-1 flex-col bg-background">
       <Navbar />
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pb-16">
+      <div className="container mx-auto flex-1 px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pb-16">
         <Link
           href="/businesses"
-          className="mb-3 hidden items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-text-primary sm:inline-flex"
+          className="mb-4 inline-flex max-w-full items-center gap-2 text-[17px] font-extrabold tracking-tight text-text-primary transition-colors hover:text-primary sm:mb-3 sm:text-[18px]"
         >
-          <ArrowLeft className="h-3.5 w-3.5 rotate-180" strokeWidth={1.75} />
-          بازگشت به سالن‌ها
+          <ArrowLeft
+            className="h-6 w-6 shrink-0 rotate-180"
+            strokeWidth={2.5}
+            aria-hidden="true"
+          />
+          <span className="truncate">{business.name}</span>
         </Link>
 
         <SalonGallery images={images} salonName={business.name} />
-
-        <Link
-          href="/businesses"
-          className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-text-primary sm:hidden"
-        >
-          <ArrowLeft className="h-3.5 w-3.5 rotate-180" strokeWidth={1.75} />
-          بازگشت به سالن‌ها
-        </Link>
 
         {/* Title / meta row under gallery */}
         <header className="mt-4 flex flex-col gap-4 border-b border-border-subtle pb-6 sm:mt-7 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
@@ -627,7 +623,8 @@ export function SalonDetailSkeleton() {
   return (
     <div className="flex min-h-full flex-1 flex-col bg-background">
       <Navbar />
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="skeleton-shimmer mb-4 h-7 w-48 max-w-full rounded-lg bg-surface-secondary sm:mb-3" />
         <div className="skeleton-shimmer mb-6 h-[280px] w-full rounded-2xl bg-surface-secondary sm:h-[360px] lg:h-[440px]" />
         <div className="mb-8 flex gap-4">
           <div className="skeleton-shimmer h-16 w-16 rounded-2xl bg-surface-secondary sm:h-[4.5rem] sm:w-[4.5rem]" />

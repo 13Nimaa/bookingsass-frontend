@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -541,7 +541,11 @@ function DashboardLoaded({ data }: { data: BusinessDashboardDto }) {
   );
 }
 
-export function OwnerDashboard() {
+export function OwnerDashboard({
+  mobileShortcuts,
+}: {
+  mobileShortcuts?: ReactNode;
+} = {}) {
   const data = useOwnerDashboardStore((s) => s.data);
   const status = useOwnerDashboardStore((s) => s.status);
   const error = useOwnerDashboardStore((s) => s.error);
@@ -560,6 +564,7 @@ export function OwnerDashboard() {
         <div className="md:hidden">
           <PageHeader hideBack title="داشبورد" />
         </div>
+        {mobileShortcuts}
         <DashboardSkeleton />
       </>
     );
@@ -585,6 +590,7 @@ export function OwnerDashboard() {
             برای مشاهدهٔ آمار، ابتدا سالن خود را ثبت کنید.
           </p>
         </div>
+        {mobileShortcuts}
         <div className="rounded-2xl border border-border bg-surface p-6 text-center shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
           <p className="text-[14px] font-medium text-text-primary">
             {error ?? "هنوز سالنی برای حساب شما ثبت نشده است."}
@@ -609,6 +615,7 @@ export function OwnerDashboard() {
         <div className="md:hidden">
           <PageHeader hideBack title="داشبورد" />
         </div>
+        {mobileShortcuts}
         <div className="flex flex-col gap-3">
           <AuthError message={error ?? "دریافت داشبورد ممکن نشد."} />
           <Button
@@ -639,6 +646,7 @@ export function OwnerDashboard() {
           خلاصهٔ وضعیت امروز سالن شما.
         </p>
       </div>
+      {mobileShortcuts}
       <DashboardLoaded data={data} />
     </>
   );
