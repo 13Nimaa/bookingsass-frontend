@@ -7,8 +7,16 @@ import {
   updateBusinessRequest,
   uploadBusinessImageRequest,
   deleteBusinessImageRequest,
+  uploadBusinessGalleryRequest,
+  deleteBusinessGalleryImageRequest,
+  parseBusinessGallery,
 } from "@/lib/api/endpoints/business.endpoints";
-import type { BusinessDto, BusinessInput, MyBusinessResponse } from "@/features/business/types";
+import type {
+  BusinessDto,
+  BusinessGalleryMutationResponse,
+  BusinessInput,
+  MyBusinessResponse,
+} from "@/features/business/types";
 
 export type BusinessStatus = "idle" | "loading" | "loaded" | "notFound" | "error";
 
@@ -17,12 +25,15 @@ interface BusinessState {
   status: BusinessStatus;
   error: string | null;
   uploading: boolean;
+  galleryBusy: boolean;
   notice: string | null;
   fetchMine: () => Promise<void>;
   create: (input: BusinessInput) => Promise<boolean>;
   update: (input: BusinessInput) => Promise<boolean>;
   uploadImage: (file: File) => Promise<boolean>;
   deleteImage: () => Promise<boolean>;
+  uploadGallery: (files: File[]) => Promise<boolean>;
+  deleteGalleryImage: (publicId: string) => Promise<boolean>;
   clearError: () => void;
   clearNotice: () => void;
 }
@@ -33,9 +44,13 @@ const FA_MESSAGES = {
   updateFailed: "ذخیره تغییرات انجام نشد.",
   uploadFailed: "آپلود تصویر انجام نشد.",
   deleteFailed: "حذف تصویر انجام نشد.",
+  galleryUploadFailed: "آپلود تصاویر گالری انجام نشد.",
+  galleryDeleteFailed: "حذف تصویر گالری انجام نشد.",
   network: "اتصال به سرور ممکن نیست. لطفاً دوباره تلاش کنید.",
   imageUpdated: "تصویر سالن با موفقیت به‌روزرسانی شد.",
   imageDeleted: "تصویر سالن حذف شد.",
+  galleryUpdated: "تصاویر گالری با موفقیت به‌روزرسانی شد.",
+  galleryDeleted: "تصویر از گالری حذف شد.",
 } as const;
 
 async function readError(res: Response, fallback: string): Promise<string> {
@@ -52,7 +67,23 @@ function unwrapBusiness(body: unknown): BusinessDto | null {
   const record = body as Record<string, unknown>;
   const candidate = "data" in record ? record.data : record;
   if (!candidate || typeof candidate !== "object") return null;
-  return candidate as BusinessDto;
+  const dto = candidate as BusinessDto;
+  return {
+    ...dto,
+    businessGallery: parseBusinessGallery(dto.businessGallery),
+  };
+}
+
+function applyGalleryResponse(
+  body: BusinessGalleryMutationResponse,
+): boolean {
+  const gallery = parseBusinessGallery(body.businessGallery);
+  const current = useBusinessStore.getState().business;
+  if (!current) return false;
+  useBusinessStore.setState({
+    business: { ...current, businessGallery: gallery },
+  });
+  return true;
 }
 
 export const useBusinessStore = create<BusinessState>((set, get) => ({
@@ -60,6 +91,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
   status: "idle",
   error: null,
   uploading: false,
+  galleryBusy: false,
   notice: null,
 
   clearError: () => set({ error: null }),
@@ -84,7 +116,13 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         set({ business: null, status: "notFound" });
         return;
       }
-      set({ business: data.business, status: "loaded" });
+      set({
+        business: {
+          ...data.business,
+          businessGallery: parseBusinessGallery(data.business.businessGallery),
+        },
+        status: "loaded",
+      });
     } catch {
       set({ status: "error", error: FA_MESSAGES.network });
     }
@@ -179,6 +217,60 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return false;
     } finally {
       set({ uploading: false });
+    }
+  },
+
+  uploadGallery: async (files) => {
+    if (files.length === 0) return true;
+    set({ galleryBusy: true, error: null, notice: null });
+    try {
+      const res = await uploadBusinessGalleryRequest(files);
+      if (!res.ok) {
+        set({
+          error: await readError(res, FA_MESSAGES.galleryUploadFailed),
+        });
+        return false;
+      }
+      const body = (await res.json()) as BusinessGalleryMutationResponse;
+      if (!applyGalleryResponse(body)) {
+        await get().fetchMine();
+      }
+      set({
+        notice: body.message?.trim() || FA_MESSAGES.galleryUpdated,
+      });
+      return true;
+    } catch {
+      set({ error: FA_MESSAGES.network });
+      return false;
+    } finally {
+      set({ galleryBusy: false });
+    }
+  },
+
+  deleteGalleryImage: async (publicId) => {
+    if (!publicId) return false;
+    set({ galleryBusy: true, error: null, notice: null });
+    try {
+      const res = await deleteBusinessGalleryImageRequest(publicId);
+      if (!res.ok) {
+        set({
+          error: await readError(res, FA_MESSAGES.galleryDeleteFailed),
+        });
+        return false;
+      }
+      const body = (await res.json()) as BusinessGalleryMutationResponse;
+      if (!applyGalleryResponse(body)) {
+        await get().fetchMine();
+      }
+      set({
+        notice: body.message?.trim() || FA_MESSAGES.galleryDeleted,
+      });
+      return true;
+    } catch {
+      set({ error: FA_MESSAGES.network });
+      return false;
+    } finally {
+      set({ galleryBusy: false });
     }
   },
 }));

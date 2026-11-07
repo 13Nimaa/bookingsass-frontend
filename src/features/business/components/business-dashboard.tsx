@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useBusinessStore } from "@/features/business/store/business-store";
 import { BusinessForm } from "@/features/business/components/business-form";
+import { BusinessGalleryField } from "@/features/business/components/business-gallery-field";
 import { Button } from "@/components/ui/button";
 import { AuthError } from "@/components/shared/auth-error";
 import { PageHeader } from "@/components/shared/page-header";
@@ -207,6 +208,10 @@ export function BusinessDashboard() {
               />
             </div>
           )}
+
+          <div className="mt-8 w-full max-w-2xl">
+            <BusinessGalleryField />
+          </div>
 
           <dl className="mt-8 w-full max-w-2xl border-t border-border">
             {details.map(({ icon: Icon, label, value }) => (

@@ -9,6 +9,10 @@ vi.mock("@/features/business/components/business-image-field", () => ({
   BusinessImageField: () => <div data-testid="image-field" />,
 }));
 
+vi.mock("@/features/business/components/business-gallery-field", () => ({
+  BusinessGalleryField: () => <div data-testid="gallery-field" />,
+}));
+
 const sample: BusinessDto = {
   id: 3,
   name: "سالن موجود",

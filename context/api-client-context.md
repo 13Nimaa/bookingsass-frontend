@@ -55,7 +55,7 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | File | Transport | Covers |
 | ---- | --------- | ------ |
 | `auth.endpoints.ts` | `backendFetch` | login, register, refresh, logout |
-| `business.endpoints.ts` | both | public list, public get by id, mine, create*, update, register, image |
+| `business.endpoints.ts` | both | public list, public get by id, mine, create*, update, register, image, gallery |
 | `profile.endpoints.ts` | `apiClient` | get, update, image up/delete |
 | `employee.endpoints.ts` | `apiClient` | employees + working hours + employee↔service assign |
 | `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
@@ -84,7 +84,7 @@ Colocated under features — not under `src/lib/api`:
 | Path | Types |
 | ---- | ----- |
 | `features/auth/types.ts` | `User`, `AuthResponse`, `LoginRequest`, `RegisterRequest` |
-| `features/business/types.ts` | `BusinessDto`, `PagedBusinesses`, `BusinessListQuery`, `MyBusinessResponse`, `BusinessInput`, image rules |
+| `features/business/types.ts` | `BusinessDto`, `BusinessGalleryImageDto`, `PagedBusinesses`, `BusinessListQuery`, `MyBusinessResponse`, `BusinessInput`, image/gallery rules |
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
 | `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs, `AssignServiceInput` (`serviceId` + optional independent `priceOverride` / `durationMinutesOverride`), `UpdateEmployeeServiceInput` (sparse PUT; `null` clears an override), `AssignServicesResult`, `EmployeeServiceDto` (`id`, `businessId`, default/override/effective price + duration) |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
@@ -148,8 +148,10 @@ Do **not** set `Content-Type` manually. Rules: jpg/png/webp, ≤5MB.
 | ------ | ---- |
 | `uploadProfileImageRequest` | `POST /api/profile/image` |
 | `uploadBusinessImageRequest` | `POST /api/business/image` |
+| `uploadBusinessGalleryRequest` | `POST /api/business/gallery` (multipart field `files`) |
+| `deleteBusinessGalleryImageRequest` | `DELETE /api/business/gallery?publicId=` |
 
-Matching `DELETE` endpoints clear images.
+Matching `DELETE` endpoints clear images. Gallery is separate from the single profile image; responses return `{ message, businessGallery }`. Cap: 10 images. `useBusinessStore.uploadGallery` / `deleteGalleryImage` keep `business.businessGallery` in sync.
 
 ## Adding a New Domain API
 

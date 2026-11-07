@@ -3,6 +3,7 @@ import { backendFetch } from "@/lib/api/http";
 import type {
   BusinessDetailsDto,
   BusinessDto,
+  BusinessGalleryImageDto,
   BusinessInput,
   BusinessListQuery,
   PagedBusinesses,
@@ -76,6 +77,21 @@ export async function listBusinesses(
   } catch {
     return { data: EMPTY_BUSINESS_PAGE, failed: true };
   }
+}
+
+export function parseBusinessGallery(
+  raw: unknown,
+): BusinessGalleryImageDto[] {
+  if (!Array.isArray(raw)) return [];
+  const out: BusinessGalleryImageDto[] = [];
+  for (const item of raw) {
+    if (typeof item !== "object" || item === null) continue;
+    const row = item as Record<string, unknown>;
+    if (typeof row.url !== "string" || typeof row.publicId !== "string") continue;
+    if (!row.url || !row.publicId) continue;
+    out.push({ url: row.url, publicId: row.publicId });
+  }
+  return out;
 }
 
 function parsePublicEmployeeService(
@@ -180,6 +196,7 @@ export async function getBusinessById(id: number): Promise<{
         description: body.description ?? null,
         profileImageUrl: body.profileImageUrl ?? null,
         ownerId: body.ownerId ?? "",
+        businessGallery: parseBusinessGallery(body.businessGallery),
         coverImageUrl: body.coverImageUrl ?? null,
         ownerAvatarUrl: body.ownerAvatarUrl ?? null,
         neighborhood: body.neighborhood ?? null,
@@ -255,4 +272,24 @@ export function uploadBusinessImageRequest(file: File): Promise<Response> {
 // DELETE /api/business/image — remove the owned business's image.
 export function deleteBusinessImageRequest(): Promise<Response> {
   return apiClient("/api/business/image", { method: "DELETE" });
+}
+
+// POST /api/business/gallery — append one or more images. Form field must be
+// `files` (repeat per file). Cap is 10 total on the business. Do NOT set
+// Content-Type; the browser adds the multipart boundary.
+export function uploadBusinessGalleryRequest(files: File[]): Promise<Response> {
+  const form = new FormData();
+  for (const file of files) form.append("files", file);
+  return apiClient("/api/business/gallery", {
+    method: "POST",
+    body: form,
+  });
+}
+
+// DELETE /api/business/gallery?publicId= — remove one gallery image.
+export function deleteBusinessGalleryImageRequest(
+  publicId: string,
+): Promise<Response> {
+  const qs = new URLSearchParams({ publicId });
+  return apiClient(`/api/business/gallery?${qs}`, { method: "DELETE" });
 }

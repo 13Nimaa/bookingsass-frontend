@@ -12,12 +12,14 @@ import { apiClient } from "@/lib/api/client";
 import { backendFetch } from "@/lib/api/http";
 import {
   createBusinessRequest,
+  deleteBusinessGalleryImageRequest,
   EMPTY_BUSINESS_PAGE,
   getBusinessById,
   listBusinesses,
   registerBusinessRequest,
   getMineBusiness,
   updateBusinessRequest,
+  uploadBusinessGalleryRequest,
 } from "@/lib/api/endpoints/business.endpoints";
 
 const apiClientMock = vi.mocked(apiClient);
@@ -170,6 +172,55 @@ describe("business endpoints", () => {
 
     const result = await getBusinessById(1);
     expect(result.data?.employees).toEqual([]);
+    expect(result.data?.businessGallery).toEqual([]);
+  });
+
+  it("getBusinessById parses businessGallery items", async () => {
+    backendFetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 1,
+          name: "سالن",
+          city: "تهران",
+          address: "آدرس",
+          description: null,
+          profileImageUrl: null,
+          ownerId: "u1",
+          businessGallery: [
+            { url: "https://cdn.test/a.jpg", publicId: "a" },
+            { url: "https://cdn.test/bad.jpg" },
+          ],
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const result = await getBusinessById(1);
+    expect(result.data?.businessGallery).toEqual([
+      { url: "https://cdn.test/a.jpg", publicId: "a" },
+    ]);
+  });
+
+  it("uploadBusinessGalleryRequest posts multipart files field", async () => {
+    apiClientMock.mockResolvedValue(new Response("", { status: 200 }));
+    const file = new File(["x"], "a.jpg", { type: "image/jpeg" });
+    await uploadBusinessGalleryRequest([file]);
+
+    expect(apiClientMock).toHaveBeenCalledWith(
+      "/api/business/gallery",
+      expect.objectContaining({ method: "POST", body: expect.any(FormData) }),
+    );
+    const body = apiClientMock.mock.calls[0][1]?.body as FormData;
+    expect(body.getAll("files")).toHaveLength(1);
+  });
+
+  it("deleteBusinessGalleryImageRequest sends publicId query", async () => {
+    apiClientMock.mockResolvedValue(new Response("", { status: 200 }));
+    await deleteBusinessGalleryImageRequest("booking-saas/g1");
+    expect(apiClientMock).toHaveBeenCalledWith(
+      "/api/business/gallery?publicId=booking-saas%2Fg1",
+      { method: "DELETE" },
+    );
   });
 
   it("getBusinessById marks notFound on 404", async () => {

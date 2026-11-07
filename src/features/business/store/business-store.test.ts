@@ -1,13 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BusinessDto, MyBusinessResponse } from "@/features/business/types";
 
-vi.mock("@/lib/api/endpoints/business.endpoints", () => ({
-  getMineBusiness: vi.fn(),
-  createBusinessRequest: vi.fn(),
-  updateBusinessRequest: vi.fn(),
-  uploadBusinessImageRequest: vi.fn(),
-  deleteBusinessImageRequest: vi.fn(),
-}));
+vi.mock("@/lib/api/endpoints/business.endpoints", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/lib/api/endpoints/business.endpoints")
+  >("@/lib/api/endpoints/business.endpoints");
+  return {
+    ...actual,
+    getMineBusiness: vi.fn(),
+    createBusinessRequest: vi.fn(),
+    updateBusinessRequest: vi.fn(),
+    uploadBusinessImageRequest: vi.fn(),
+    deleteBusinessImageRequest: vi.fn(),
+    uploadBusinessGalleryRequest: vi.fn(),
+    deleteBusinessGalleryImageRequest: vi.fn(),
+  };
+});
 
 import {
   getMineBusiness,
@@ -15,6 +23,8 @@ import {
   updateBusinessRequest,
   uploadBusinessImageRequest,
   deleteBusinessImageRequest,
+  uploadBusinessGalleryRequest,
+  deleteBusinessGalleryImageRequest,
 } from "@/lib/api/endpoints/business.endpoints";
 import { useBusinessStore } from "@/features/business/store/business-store";
 
@@ -23,6 +33,10 @@ const createBusinessRequestMock = vi.mocked(createBusinessRequest);
 const updateBusinessRequestMock = vi.mocked(updateBusinessRequest);
 const uploadBusinessImageRequestMock = vi.mocked(uploadBusinessImageRequest);
 const deleteBusinessImageRequestMock = vi.mocked(deleteBusinessImageRequest);
+const uploadBusinessGalleryRequestMock = vi.mocked(uploadBusinessGalleryRequest);
+const deleteBusinessGalleryImageRequestMock = vi.mocked(
+  deleteBusinessGalleryImageRequest,
+);
 
 const sampleBusiness: BusinessDto = {
   id: 7,
@@ -32,6 +46,7 @@ const sampleBusiness: BusinessDto = {
   description: "توضیح",
   profileImageUrl: null,
   ownerId: "owner-1",
+  businessGallery: [],
 };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -47,6 +62,7 @@ function resetStore() {
     status: "idle",
     error: null,
     uploading: false,
+    galleryBusy: false,
     notice: null,
   });
 }
@@ -223,6 +239,42 @@ describe("useBusinessStore", () => {
     expect(deleted).toBe(true);
     expect(useBusinessStore.getState().business?.profileImageUrl).toBeNull();
     expect(useBusinessStore.getState().notice).toBe("تصویر سالن حذف شد.");
+  });
+
+  it("uploadGallery and deleteGalleryImage replace businessGallery from the response", async () => {
+    useBusinessStore.setState({ business: sampleBusiness, status: "loaded" });
+    const gallery = [
+      { url: "https://cdn.test/g1.jpg", publicId: "booking-saas/g1" },
+    ];
+    uploadBusinessGalleryRequestMock.mockResolvedValue(
+      jsonResponse({
+        message: "تصاویر گالری با موفقیت اضافه شد.",
+        businessGallery: gallery,
+      }),
+    );
+
+    const uploaded = await useBusinessStore.getState().uploadGallery([
+      new File(["x"], "g1.jpg", { type: "image/jpeg" }),
+    ]);
+    expect(uploaded).toBe(true);
+    expect(uploadBusinessGalleryRequestMock).toHaveBeenCalledOnce();
+    expect(useBusinessStore.getState().business?.businessGallery).toEqual(gallery);
+    expect(useBusinessStore.getState().galleryBusy).toBe(false);
+
+    deleteBusinessGalleryImageRequestMock.mockResolvedValue(
+      jsonResponse({
+        message: "حذف شد",
+        businessGallery: [],
+      }),
+    );
+    const deleted = await useBusinessStore
+      .getState()
+      .deleteGalleryImage("booking-saas/g1");
+    expect(deleted).toBe(true);
+    expect(deleteBusinessGalleryImageRequestMock).toHaveBeenCalledWith(
+      "booking-saas/g1",
+    );
+    expect(useBusinessStore.getState().business?.businessGallery).toEqual([]);
   });
 
   it("network errors surface a Persian message without clearing loaded business", async () => {

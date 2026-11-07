@@ -83,8 +83,10 @@ Legend: **Wired** = FE calls it · **Partial** = endpoint helper or UI incomplet
 | GET | `/mine` | **Wired** | |
 | GET | `/{id}` | **Wired** | Public `/businesses/[id]` via `getBusinessById` |
 | PUT | `/{id}` | **Wired** | Owner update |
-| POST | `/image` | **Wired** | |
+| POST | `/image` | **Wired** | Profile/cover image (single) |
 | DELETE | `/image` | **Wired** | |
+| POST | `/gallery` | **Wired** | Multipart `files` (append); max 10 |
+| DELETE | `/gallery` | **Wired** | Query `publicId` |
 | POST | `/register` | **Wired** | Register-business flow + dashboard empty-state |
 | POST | `/` | **Broken mismatch** | `business-store.create` → Admin-only BE endpoint. Owner create should use `/register` (UI paths that matter already do; store `create` is a landmine) |
 | DELETE | `/{id}` | **Missing FE** | Admin-only on BE; no Admin UI |

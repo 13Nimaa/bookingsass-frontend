@@ -1,8 +1,52 @@
 # Frontend progress
 
-**Last updated:** 2026-11-05  
-**Current task:** Public salon detail + booking entry (Phase 2 — `09`) — **Partial**  
-**Prior:** Salon Discovery UI polish — complete
+**Last updated:** 2026-11-07  
+**Current task:** Public salon detail polish — gallery width + header hierarchy  
+**Prior:** Salon gallery API wiring (`11`) — Done
+
+## Latest polish
+
+- Gallery shares the same `max-w-7xl` + horizontal padding as page content (no full-bleed / `container` mismatch); `rounded-2xl`
+- Header title + avatar enlarged (`font-extrabold`, ~28→34px title, 64→72px icon)
+
+---
+
+# Salon gallery API wiring (`11`)
+
+| Area | Status |
+|------|--------|
+| Types | `BusinessGalleryImageDto` + `businessGallery` on `BusinessDto`; max 10 |
+| Transport | `POST /api/business/gallery` (`files`); `DELETE ?publicId=` |
+| Parse | `parseBusinessGallery` on mine + public `getBusinessById` |
+| Store | `uploadGallery` / `deleteGalleryImage` replace `business.businessGallery` |
+| Owner UI | Live upload/delete on view + edit; deferred files on create → upload after save |
+| Public UI | `salon-detail` prefers `businessGallery[].url` (cover/profile fallback) |
+| Profile image | Unchanged (`POST/DELETE /api/business/image`) |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `context/feature-specs/11-business-gallery-logic.md` | BE contract |
+| `src/features/business/types.ts` | Gallery DTO + max |
+| `src/lib/api/endpoints/business.endpoints.ts` | Upload/delete + parse |
+| `src/features/business/store/business-store.ts` | Gallery mutations |
+| `src/features/business/components/business-gallery-field.tsx` | Wired UI |
+| `src/features/business/components/business-form.tsx` | Deferred create flush |
+| `src/features/business/components/salon-detail-page.tsx` | Public gallery urls |
+
+## Verify
+
+```bash
+npx vitest run src/features/business/components/business-gallery-field.test.tsx src/features/business/store/business-store.test.ts src/lib/api/endpoints/business.endpoints.test.ts src/features/business/components/business-form.test.tsx
+npx tsc --noEmit
+```
+
+Result: 28 focused tests pass.
+
+## Next
+
+E2E against a backend with `AddBusinessGallery` migration applied.
 
 ---
 

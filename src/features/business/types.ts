@@ -1,3 +1,10 @@
+/** One image in the multi-image salon gallery (`businessGallery`). */
+export type BusinessGalleryImageDto = {
+  url: string;
+  /** Required for DELETE /api/business/gallery?publicId= */
+  publicId: string;
+};
+
 export interface BusinessDto {
   id: number;
   name: string;
@@ -6,6 +13,8 @@ export interface BusinessDto {
   description: string | null;
   profileImageUrl: string | null;
   ownerId: string;
+  /** Multi-image gallery; always treat as array (normalize missing → []). */
+  businessGallery?: BusinessGalleryImageDto[];
   /**
    * Optional public-list fields. Absent until the backend ships them;
    * UI treats each as optional and simply does not render.
@@ -93,3 +102,11 @@ export const BUSINESS_IMAGE_RULES = {
   maxSize: 5 * 1024 * 1024,
   allowedTypes: ["image/jpeg", "image/png", "image/webp"],
 } as const;
+
+/** Backend cap for `POST /api/business/gallery`. */
+export const BUSINESS_GALLERY_MAX = 10;
+
+export type BusinessGalleryMutationResponse = {
+  message: string;
+  businessGallery: BusinessGalleryImageDto[];
+};
