@@ -1,13 +1,51 @@
 # Frontend progress
 
 **Last updated:** 2026-11-07  
-**Current task:** Public salon detail polish — gallery width + header hierarchy  
-**Prior:** Salon gallery API wiring (`11`) — Done
+**Current task:** Owner dashboard (`12`) — Done  
+**Prior:** Public salon detail polish — gallery width + header hierarchy
 
-## Latest polish
+---
 
-- Gallery shares the same `max-w-7xl` + horizontal padding as page content (no full-bleed / `container` mismatch); `rounded-2xl`
-- Header title + avatar enlarged (`font-extrabold`, ~28→34px title, 64→72px icon)
+# Owner dashboard (`12`)
+
+| Area | Status |
+|------|--------|
+| Transport | `GET /api/Business/dashboard` via `getBusinessDashboardRequest` (`cache: "no-store"`) |
+| Types | `BusinessDashboardDto` + summary / capacity / weekly / today / topServices |
+| Store | `useOwnerDashboardStore` — one fetch, stale-seq guard, 401/403/404/400/error |
+| Summary cards | todayBookingsCount, todayEstimatedRevenue (null→—), customerCount, capacity.utilizationPercent (null→—) |
+| Weekly chart | SVG area, API Sat→Fri order, Persian weekday labels, week sum + peak day (derived only) |
+| Today bookings | ≤5 items; guest name fallback; status 0/1/3 labels; View all → `/dashboard/bookings` + `totalCount` |
+| Top services | Month period labels + progress bars; empty Persian state |
+| Non-owners | 403 → existing hub menu (no owner widgets) |
+| Design | Existing BookingSaaS tokens; Apple skill for hierarchy / press feedback / reduced-motion — no new palette |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `context/feature-specs/12-owner-dashboard.md` | Spec |
+| `src/features/business/types.ts` | Dashboard DTOs |
+| `src/lib/api/endpoints/business.endpoints.ts` | Request + parse |
+| `src/features/business/store/owner-dashboard-store.ts` | Fetch state |
+| `src/features/business/lib/dashboard-labels.ts` | Weekday + status labels |
+| `src/features/business/components/owner-dashboard.tsx` | Widgets + states |
+| `src/app/(dashboard)/dashboard/page.tsx` | Owner UI + hub fallback |
+| `src/lib/api/endpoints/business.dashboard.test.ts` | Parse tests |
+
+## Verify
+
+```bash
+npx vitest run src/lib/api/endpoints/business.dashboard.test.ts
+npx tsc --noEmit
+npx eslint src/features/business/components/owner-dashboard.tsx src/features/business/store/owner-dashboard-store.ts src/app/(dashboard)/dashboard/page.tsx src/lib/api/endpoints/business.endpoints.ts
+```
+
+## Unsupported / not invented
+
+- Growth % vs yesterday/week (screenshot had them; API does not)
+- Confirmed payment totals
+- Business timezone field on DTO (times use existing Asia/Tehran formatter)
 
 ---
 

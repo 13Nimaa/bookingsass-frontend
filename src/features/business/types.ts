@@ -110,3 +110,73 @@ export type BusinessGalleryMutationResponse = {
   message: string;
   businessGallery: BusinessGalleryImageDto[];
 };
+
+/** Weekday keys from `GET /api/Business/dashboard` weeklyRevenue (Sat→Fri). */
+export type DashboardWeekdayKey =
+  | "saturday"
+  | "sunday"
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday";
+
+export type BusinessDashboardSummaryDto = {
+  todayBookingsCount: number;
+  /** Estimated completed-booking value; null when unavailable. */
+  todayEstimatedRevenue: number | null;
+  customerCount: number;
+};
+
+export type BusinessDashboardCapacityDto = {
+  utilizationPercent: number | null;
+  occupiedMinutes: number | null;
+  availableMinutes: number | null;
+};
+
+export type WeeklyRevenuePointDto = {
+  date: string;
+  dayOfWeek: number;
+  weekdayKey: DashboardWeekdayKey | string;
+  estimatedRevenue: number;
+  completedBookingCount: number;
+};
+
+export type DashboardTodayBookingItemDto = {
+  id: number;
+  customerName: string | null;
+  serviceTitle: string;
+  employeeName: string;
+  startTime: string;
+  endTime: string;
+  /** BookingStatus numeric enum. */
+  status: number;
+  price: number | null;
+};
+
+export type DashboardTodayBookingsDto = {
+  totalCount: number;
+  items: DashboardTodayBookingItemDto[];
+};
+
+export type DashboardTopServiceItemDto = {
+  serviceId: number;
+  title: string;
+  bookingCount: number;
+  percentage: number;
+};
+
+export type DashboardTopServicesDto = {
+  periodStart: string;
+  periodEnd: string;
+  items: DashboardTopServiceItemDto[];
+};
+
+/** `GET /api/Business/dashboard` — BusinessOwner only; business from JWT. */
+export type BusinessDashboardDto = {
+  summary: BusinessDashboardSummaryDto;
+  capacity: BusinessDashboardCapacityDto | null;
+  weeklyRevenue: WeeklyRevenuePointDto[];
+  todayBookings: DashboardTodayBookingsDto;
+  topServices: DashboardTopServicesDto;
+};

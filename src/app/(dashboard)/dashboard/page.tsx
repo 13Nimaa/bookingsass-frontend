@@ -10,6 +10,10 @@ import {
   Users,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
+import {
+  OwnerDashboard,
+  useOwnerDashboardStatus,
+} from "@/features/business/components/owner-dashboard";
 
 const MENU_OPTIONS = [
   {
@@ -50,31 +54,38 @@ const MENU_OPTIONS = [
   },
 ] as const;
 
-export default function DashboardPage() {
+function DashboardHub({ showHeader }: { showHeader: boolean }) {
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-6 pt-5 sm:px-8 sm:pb-8 md:px-10 md:pb-10 md:pt-9">
-      <div className="hidden md:block">
-        <PageHeader
-          hideBack
-          title="داشبورد"
-          description="بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید."
-        />
-      </div>
+    <>
+      {showHeader ? (
+        <>
+          <div className="hidden md:block">
+            <PageHeader
+              hideBack
+              title="داشبورد"
+              description="بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید."
+            />
+          </div>
+          <div className="md:hidden">
+            <PageHeader hideBack title="داشبورد" />
+            <p className="mb-4 text-[12.5px] leading-5 font-normal text-muted">
+              بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
+            </p>
+          </div>
+        </>
+      ) : (
+        <h2 className="mt-6 mb-3 text-[13px] font-semibold text-text-primary md:mt-8">
+          میانبرها
+        </h2>
+      )}
 
-      <div className="md:hidden">
-        <PageHeader hideBack title="داشبورد" />
-        <p className="mb-4 text-[12.5px] leading-5 font-normal text-muted">
-          بخش مورد نظر را انتخاب کنید و مدیریت را ادامه دهید.
-        </p>
-      </div>
-
-      <nav aria-label="منوی داشبورد" className="mt-4 w-full md:mt-8">
+      <nav aria-label="منوی داشبورد" className={showHeader ? "mt-4 w-full md:mt-8" : "w-full"}>
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {MENU_OPTIONS.map(({ href, icon: Icon, title, description }) => (
             <li key={href} className="min-w-0">
               <Link
                 href={href}
-                className="flex h-[112px] flex-col gap-2.5 rounded-2xl border border-[#E4E7EC] bg-surface p-3.5 transition-colors duration-150 hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary-soft/50 motion-reduce:transition-none sm:h-[118px] sm:gap-3 sm:p-4 md:h-[128px]"
+                className="flex h-[112px] flex-col gap-2.5 rounded-2xl border border-[#E4E7EC] bg-surface p-3.5 transition-colors duration-150 hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary-soft/50 active:scale-[0.99] motion-reduce:transition-none motion-reduce:active:scale-100 sm:h-[118px] sm:gap-3 sm:p-4 md:h-[128px]"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
                   <Icon className="h-[21px] w-[21px]" aria-hidden="true" />
@@ -92,6 +103,30 @@ export default function DashboardPage() {
           ))}
         </ul>
       </nav>
+    </>
+  );
+}
+
+export default function DashboardPage() {
+  const status = useOwnerDashboardStatus();
+  const showOwnerAnalytics =
+    status === "idle" ||
+    status === "loading" ||
+    status === "loaded" ||
+    status === "notFound" ||
+    status === "error";
+  const showHubOnly = status === "forbidden";
+  const showHubBelow = status === "loaded";
+
+  return (
+    <main className="mx-auto flex w-full container mx-auto flex-1 flex-col px-4 pb-6 pt-5 sm:px-8 sm:pb-8 md:px-10 md:pb-10 md:pt-9">
+      {showOwnerAnalytics ? <OwnerDashboard /> : null}
+      {showHubOnly ? <DashboardHub showHeader /> : null}
+      {showHubBelow ? (
+        <div className="md:hidden">
+          <DashboardHub showHeader={false} />
+        </div>
+      ) : null}
     </main>
   );
 }

@@ -40,7 +40,7 @@
 | `/register/business` | Auth | `POST /api/Business/register` |
 | `/businesses` | Public | `GET /api/business` (paged: search/city/sort/page) |
 | `/businesses/[id]` | Public | `GET /api/business/{id}` + public services; booking UI blocked on public staff |
-| `/dashboard` | Auth | None (static quick links) |
+| `/dashboard` | Auth | Owner analytics (`GET /api/Business/dashboard`); hub shortcuts for non-owners / mobile |
 | `/dashboard/profile` | Auth | Profile CRUD + image |
 | `/dashboard/business` | Auth | Mine / update / image / register |
 | `/dashboard/employees` | Auth | Employees + working hours |
@@ -81,6 +81,7 @@ Legend: **Wired** = FE calls it · **Partial** = endpoint helper or UI incomplet
 |--------|------|----------|-------|
 | GET | `/` | **Wired** | Public `/businesses` — `PagedResult` + search/city/sort/page |
 | GET | `/mine` | **Wired** | |
+| GET | `/dashboard` | **Wired** | Owner home `/dashboard` — `getBusinessDashboardRequest` + `owner-dashboard-store` |
 | GET | `/{id}` | **Wired** | Public `/businesses/[id]` via `getBusinessById` |
 | PUT | `/{id}` | **Wired** | Owner update |
 | POST | `/image` | **Wired** | Profile/cover image (single) |

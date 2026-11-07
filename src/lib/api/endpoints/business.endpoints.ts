@@ -1,15 +1,23 @@
 import { apiClient } from "@/lib/api/client";
 import { backendFetch } from "@/lib/api/http";
 import type {
+  BusinessDashboardCapacityDto,
+  BusinessDashboardDto,
+  BusinessDashboardSummaryDto,
   BusinessDetailsDto,
   BusinessDto,
   BusinessGalleryImageDto,
   BusinessInput,
   BusinessListQuery,
+  DashboardTodayBookingItemDto,
+  DashboardTodayBookingsDto,
+  DashboardTopServiceItemDto,
+  DashboardTopServicesDto,
   PagedBusinesses,
   PublicEmployeeDto,
   PublicEmployeeServiceDto,
   PublicWorkingHourDto,
+  WeeklyRevenuePointDto,
 } from "@/features/business/types";
 
 // Direct backend calls — no Next.js BFF in between.
@@ -292,4 +300,152 @@ export function deleteBusinessGalleryImageRequest(
 ): Promise<Response> {
   const qs = new URLSearchParams({ publicId });
   return apiClient(`/api/business/gallery?${qs}`, { method: "DELETE" });
+}
+
+// GET /api/Business/dashboard — BusinessOwner analytics (business from JWT).
+// Exact backend casing. Always fresh — no cache.
+export function getBusinessDashboardRequest(): Promise<Response> {
+  return apiClient("/api/Business/dashboard", { cache: "no-store" });
+}
+
+function asFiniteNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function parseSummary(raw: unknown): BusinessDashboardSummaryDto {
+  const s = (raw && typeof raw === "object" ? raw : {}) as Record<
+    string,
+    unknown
+  >;
+  return {
+    todayBookingsCount: asFiniteNumber(s.todayBookingsCount) ?? 0,
+    todayEstimatedRevenue: asFiniteNumber(s.todayEstimatedRevenue),
+    customerCount: asFiniteNumber(s.customerCount) ?? 0,
+  };
+}
+
+function parseCapacity(raw: unknown): BusinessDashboardCapacityDto | null {
+  if (raw == null) return null;
+  if (typeof raw !== "object") return null;
+  const c = raw as Record<string, unknown>;
+  return {
+    utilizationPercent: asFiniteNumber(c.utilizationPercent),
+    occupiedMinutes: asFiniteNumber(c.occupiedMinutes),
+    availableMinutes: asFiniteNumber(c.availableMinutes),
+  };
+}
+
+function parseWeeklyPoint(raw: unknown): WeeklyRevenuePointDto | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const p = raw as Record<string, unknown>;
+  const estimatedRevenue = asFiniteNumber(p.estimatedRevenue);
+  const completedBookingCount = asFiniteNumber(p.completedBookingCount);
+  if (estimatedRevenue == null || completedBookingCount == null) return null;
+  if (typeof p.date !== "string" || typeof p.weekdayKey !== "string") return null;
+  return {
+    date: p.date,
+    dayOfWeek: asFiniteNumber(p.dayOfWeek) ?? 0,
+    weekdayKey: p.weekdayKey,
+    estimatedRevenue,
+    completedBookingCount,
+  };
+}
+
+function parseTodayItem(raw: unknown): DashboardTodayBookingItemDto | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const item = raw as Record<string, unknown>;
+  const id = asFiniteNumber(item.id);
+  const status = asFiniteNumber(item.status);
+  if (id == null || status == null) return null;
+  if (typeof item.startTime !== "string" || typeof item.endTime !== "string") {
+    return null;
+  }
+  if (typeof item.serviceTitle !== "string") return null;
+  if (typeof item.employeeName !== "string") return null;
+  return {
+    id,
+    customerName:
+      typeof item.customerName === "string" ? item.customerName : null,
+    serviceTitle: item.serviceTitle,
+    employeeName: item.employeeName,
+    startTime: item.startTime,
+    endTime: item.endTime,
+    status,
+    price: asFiniteNumber(item.price),
+  };
+}
+
+function parseTodayBookings(raw: unknown): DashboardTodayBookingsDto {
+  const t = (raw && typeof raw === "object" ? raw : {}) as Record<
+    string,
+    unknown
+  >;
+  const items = Array.isArray(t.items)
+    ? t.items
+        .map(parseTodayItem)
+        .filter((x): x is DashboardTodayBookingItemDto => x !== null)
+    : [];
+  return {
+    totalCount: asFiniteNumber(t.totalCount) ?? items.length,
+    items,
+  };
+}
+
+function parseTopServiceItem(raw: unknown): DashboardTopServiceItemDto | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const s = raw as Record<string, unknown>;
+  const serviceId = asFiniteNumber(s.serviceId);
+  const bookingCount = asFiniteNumber(s.bookingCount);
+  const percentage = asFiniteNumber(s.percentage);
+  if (serviceId == null || bookingCount == null || percentage == null) {
+    return null;
+  }
+  if (typeof s.title !== "string") return null;
+  return { serviceId, title: s.title, bookingCount, percentage };
+}
+
+function parseTopServices(raw: unknown): DashboardTopServicesDto {
+  const t = (raw && typeof raw === "object" ? raw : {}) as Record<
+    string,
+    unknown
+  >;
+  const items = Array.isArray(t.items)
+    ? t.items
+        .map(parseTopServiceItem)
+        .filter((x): x is DashboardTopServiceItemDto => x !== null)
+    : [];
+  return {
+    periodStart: typeof t.periodStart === "string" ? t.periodStart : "",
+    periodEnd: typeof t.periodEnd === "string" ? t.periodEnd : "",
+    items,
+  };
+}
+
+/** Normalize dashboard JSON; keeps weeklyRevenue API order (do not re-sort). */
+export function parseBusinessDashboard(body: unknown): BusinessDashboardDto {
+  const root =
+    body && typeof body === "object" && "data" in (body as object)
+      ? (body as { data: unknown }).data
+      : body;
+  const r = (root && typeof root === "object" ? root : {}) as Record<
+    string,
+    unknown
+  >;
+  const weekly = Array.isArray(r.weeklyRevenue)
+    ? r.weeklyRevenue
+        .map(parseWeeklyPoint)
+        .filter((x): x is WeeklyRevenuePointDto => x !== null)
+    : [];
+  return {
+    summary: parseSummary(r.summary),
+    capacity: parseCapacity(r.capacity),
+    weeklyRevenue: weekly,
+    todayBookings: parseTodayBookings(r.todayBookings),
+    topServices: parseTopServices(r.topServices),
+  };
 }

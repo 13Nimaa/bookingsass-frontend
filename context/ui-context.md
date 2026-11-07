@@ -89,7 +89,7 @@ Primitives live in `src/components/ui/`. Prefer the CLI / existing patterns over
 - Sidebar: refined nav (active `primary-soft`, hover neutral), user card + logout in footer
 - Main: typically `max-w-5xl`–`max-w-7xl`, padded; avoid duplicating sidebar links on desktop
 - Page chrome: `PageHeader` + feature dashboard body
-- Home (`/dashboard`): desktop welcome + sidebar cue; hub management grid is 1 column on mobile, 2 from `sm`, 3 from `lg`; no logout on the hub (sidebar / profile handle it); `MobileTabBar` unchanged
+- Home (`/dashboard`): BusinessOwner sees live analytics (KPI cards, today bookings, weekly estimated-value chart, top services) from `GET /api/Business/dashboard`; non-owners keep the hub management grid; owners also get the hub as mobile-only shortcuts under analytics; hub grid is 1 column on mobile, 2 from `sm`, 3 from `lg`; no logout on the hub; `MobileTabBar` unchanged
 - Cards: soft border, light surfaces, generous radius (grid cards ~16px)
 
 ### Mobile

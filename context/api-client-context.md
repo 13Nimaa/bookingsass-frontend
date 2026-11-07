@@ -55,7 +55,7 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | File | Transport | Covers |
 | ---- | --------- | ------ |
 | `auth.endpoints.ts` | `backendFetch` | login, register, refresh, logout |
-| `business.endpoints.ts` | both | public list, public get by id, mine, create*, update, register, image, gallery |
+| `business.endpoints.ts` | both | public list, public get by id, mine, dashboard, create*, update, register, image, gallery |
 | `profile.endpoints.ts` | `apiClient` | get, update, image up/delete |
 | `employee.endpoints.ts` | `apiClient` | employees + working hours + employee↔service assign |
 | `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
@@ -84,7 +84,7 @@ Colocated under features — not under `src/lib/api`:
 | Path | Types |
 | ---- | ----- |
 | `features/auth/types.ts` | `User`, `AuthResponse`, `LoginRequest`, `RegisterRequest` |
-| `features/business/types.ts` | `BusinessDto`, `BusinessGalleryImageDto`, `PagedBusinesses`, `BusinessListQuery`, `MyBusinessResponse`, `BusinessInput`, image/gallery rules |
+| `features/business/types.ts` | `BusinessDto`, `BusinessGalleryImageDto`, `PagedBusinesses`, `BusinessListQuery`, `MyBusinessResponse`, `BusinessInput`, `BusinessDashboardDto` (+ summary/capacity/weekly/today/topServices), image/gallery rules |
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
 | `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs, `AssignServiceInput` (`serviceId` + optional independent `priceOverride` / `durationMinutesOverride`), `UpdateEmployeeServiceInput` (sparse PUT; `null` clears an override), `AssignServicesResult`, `EmployeeServiceDto` (`id`, `businessId`, default/override/effective price + duration) |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
@@ -104,6 +104,7 @@ Zod schemas in `features/*/schemas/` map form values → API inputs.
 - `assignEmployeeServiceRequest` is wired through `useEmployeeStore.assignServices` and the Add Service modal (one POST per selected service, optional independent overrides omitted when empty). After success it force-refreshes only the selected employee's cached list.
 - `updateEmployeeServiceRequest` is wired through `useEmployeeStore.updateEmployeeService` and the Edit Service modal (`PUT`; only changed override fields; explicit `null` resets). After success it force-refreshes only the selected employee's cached list.
 - `removeEmployeeServiceRequest` is wired through `useEmployeeStore.removeEmployeeService` and the Drawer confirm dialog (`DELETE`). On success it filters only the selected employee's cached list (no optimistic remove; failures keep the row and the dialog open).
+- `getBusinessDashboardRequest` → `GET /api/Business/dashboard` (`cache: "no-store"`). Wired through `useOwnerDashboardStore.fetchDashboard` and `/dashboard` owner home. Single payload: summary, capacity, weeklyRevenue (Sat→Fri order), todayBookings, topServices. 403 falls back to the static hub; 404 prompts business setup.
 
 ## Store Pattern
 
@@ -122,6 +123,7 @@ UI → Zustand store → *.endpoints.ts → backendFetch | apiClient → fetch
 | ----- | ---- |
 | `useAuthStore` | `features/auth/store/auth-store.ts` |
 | `useBusinessStore` | `features/business/store/business-store.ts` |
+| `useOwnerDashboardStore` | `features/business/store/owner-dashboard-store.ts` |
 | `useProfileStore` | `features/profile/store/profile-store.ts` |
 | `useEmployeeStore` | `features/employee/store/employee-store.ts` |
 | `useServiceStore` | `features/service/store/service-store.ts` |
