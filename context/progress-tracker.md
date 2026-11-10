@@ -1,8 +1,16 @@
 # Frontend progress
 
-**Last updated:** 2026-11-08  
-**Current task:** Customer dashboard API wiring (`13`)  
-**Prior:** Customer sidebar nav + mock customer home
+**Last updated:** 2026-11-10
+**Current task:** Netlify Linux dependency installation fix
+**Prior:** Customer dashboard API wiring (`13`)
+
+---
+
+# Netlify Linux dependency installation
+
+Removed the Windows-only `@rolldown/binding-win32-x64-msvc` direct development dependency, which caused `EBADPLATFORM` on Linux. Refreshed `package-lock.json` with npm on Linux while preserving existing package versions. Rolldown still declares its platform bindings as optional dependencies, allowing npm to select the correct native binary on each platform.
+
+Verified with a clean `npm ci --no-audit --no-fund`, a successful Rolldown import and Linux native binding load, and `git diff --check`. The application build is left to automatic deploy validation.
 
 ---
 

@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",
-    "@rolldown/binding-win32-x64-msvc": "^1.2.15",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
