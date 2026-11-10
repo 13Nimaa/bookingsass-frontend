@@ -148,6 +148,13 @@ export function todayJalali(): JalaliDate {
   return gregorianIsoToJalali(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`);
 }
 
+/** Negative when `a` is before `b`; 0 when equal; positive when after. */
+export function compareJalali(a: JalaliDate, b: JalaliDate): number {
+  if (a.year !== b.year) return a.year - b.year;
+  if (a.month !== b.month) return a.month - b.month;
+  return a.day - b.day;
+}
+
 export function formatJalaliDate(date: JalaliDate, options?: { includeWeekday?: boolean }) {
   const isoDate = jalaliToGregorianIso(date);
   const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {

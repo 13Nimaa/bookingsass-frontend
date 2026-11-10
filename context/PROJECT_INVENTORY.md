@@ -16,15 +16,15 @@
 |----------------|------------|------------|-------|
 | `features/auth` | `/login`, `/register`, `/register/business` | `auth.endpoints.ts` | `auth-store` |
 | `features/profile` | `/dashboard/profile` | `profile.endpoints.ts` | `profile-store` |
-| `features/business` | `/dashboard/business`, `/businesses` (public list) | `business.endpoints.ts` | `business-store` |
+| `features/business` | `/dashboard/business`, `/businesses`, `/businesses/[id]` | `business.endpoints.ts` | `business-store` |
 | `features/employee` | `/dashboard/employees` | `employee.endpoints.ts` | `employee-store` |
 | `features/service` | `/dashboard/services` | `service.endpoints.ts` | `service-store` |
+| `features/booking` | `/dashboard/bookings` (owner/employee list) | `booking.endpoints.ts` | `booking-store` |
 | `features/landing` | `/` (marketing only, mock data) | — | — |
 
-**Missing feature modules (no folder, no endpoints, no pages):**
-- `customers` — `/dashboard/customers` list wired (create/edit forms deferred)
-- `bookings` / appointments — landing mockups only
-- Public business detail + booking flow
+**Missing / partial feature modules:**
+- `booking` — list UI done; public create/availability wired in salon detail (blocked on public staff API); detail / status / mine still missing
+- Public business detail — page live; staff/hours/complete booking blocked on public BE contracts
 - Admin UI
 - Employee self-service dashboard (beyond owner managing employees)
 
@@ -38,14 +38,17 @@
 | `/login` | Public | `POST /api/auth/login` |
 | `/register` | Public | `POST /api/auth/register` |
 | `/register/business` | Auth | `POST /api/Business/register` |
-| `/businesses` | Public | `GET /api/business` |
-| `/dashboard` | Auth | None (static quick links) |
+| `/businesses` | Public | `GET /api/business` (paged: search/city/sort/page) |
+| `/businesses/[id]` | Public | `GET /api/business/{id}` + public services; booking UI blocked on public staff |
+| `/dashboard` | Auth | Owner analytics (`GET /api/Business/dashboard`); hub shortcuts for non-owners / mobile |
 | `/dashboard/profile` | Auth | Profile CRUD + image |
 | `/dashboard/business` | Auth | Mine / update / image / register |
 | `/dashboard/employees` | Auth | Employees + working hours |
 | `/dashboard/services` | Auth | Services CRUD for owned business |
+| `/dashboard/bookings` | Auth | Owner/employee booking list (`GET /api/bookings`) |
+| `/dashboard/customers` | Auth | Customer CRM |
 
-**Nav links without pages:** none currently (customers list exists).
+**Nav links without pages:** none currently.
 
 ---
 
@@ -76,12 +79,15 @@ Legend: **Wired** = FE calls it · **Partial** = endpoint helper or UI incomplet
 
 | Method | Path | Frontend | Notes |
 |--------|------|----------|-------|
-| GET | `/` | **Wired** | Public `/businesses` page |
+| GET | `/` | **Wired** | Public `/businesses` — `PagedResult` + search/city/sort/page |
 | GET | `/mine` | **Wired** | |
-| GET | `/{id}` | **Missing FE** | No business detail / booking page |
+| GET | `/dashboard` | **Wired** | Owner home `/dashboard` — `getBusinessDashboardRequest` + `owner-dashboard-store` |
+| GET | `/{id}` | **Wired** | Public `/businesses/[id]` via `getBusinessById` |
 | PUT | `/{id}` | **Wired** | Owner update |
-| POST | `/image` | **Wired** | |
+| POST | `/image` | **Wired** | Profile/cover image (single) |
 | DELETE | `/image` | **Wired** | |
+| POST | `/gallery` | **Wired** | Multipart `files` (append); max 10 |
+| DELETE | `/gallery` | **Wired** | Query `publicId` |
 | POST | `/register` | **Wired** | Register-business flow + dashboard empty-state |
 | POST | `/` | **Broken mismatch** | `business-store.create` → Admin-only BE endpoint. Owner create should use `/register` (UI paths that matter already do; store `create` is a landmine) |
 | DELETE | `/{id}` | **Missing FE** | Admin-only on BE; no Admin UI |
@@ -129,17 +135,35 @@ Types: `src/features/customer/types.ts`. Transport: `customer.endpoints.ts`. Sto
 
 BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid` until BE is fixed.
 
-### 3.8 Bookings
+### 3.7b Customer home — `api/customer`
 
-| Capability | Backend | Frontend |
-|------------|---------|----------|
-| Create user booking | Service only, **no controller** | **Missing** |
-| Create guest booking | Service only | **Missing** |
-| List mine / business calendar | Missing BE | **Missing** |
-| Status patch | Missing BE | **Missing** |
-| Availability / slots | Missing BE | **Missing** |
+| Method | Path | Frontend | Notes |
+|--------|------|----------|-------|
+| GET | `/dashboard` | **Wired** | `getCustomerDashboardRequest` + customer `/dashboard` home |
+| GET | `/favorites` | **Partial** | `listCustomerFavoritesRequest` — page still stub |
+| POST | `/favorites` | **Partial** | `addCustomerFavoriteRequest` — no UI |
+| DELETE | `/favorites/{businessId}` | **Partial** | `removeCustomerFavoriteRequest` — no UI |
 
-Landing/dashboard mockups show appointments; **zero real booking API usage**.
+Types: `CustomerDashboardDto`, `BusinessFavoriteDto` in `features/customer/types.ts`. Transport: `customer-dashboard.endpoints.ts`. Store: `customer-dashboard-store.ts` (home + cancel).
+
+### 3.8 Bookings — `api/bookings` (+ employee services)
+
+| Method | Path | Frontend | Notes |
+|--------|------|----------|-------|
+| GET | `/availability` | **Partial** | Wired in public booking panel; needs public employee id to run |
+| POST | `/` | **Partial** | Wired in public booking panel (authenticated path) |
+| POST | `/guest` | **Partial** | Wired in public booking panel (guest path) |
+| GET | `/` | **Wired** | `listBookingsRequest` + `/dashboard/bookings` list UI (no detail/status yet) |
+| GET | `/mine` | **Partial** | `listMyBookingsRequest` — link from customer home; full list page still stub |
+| GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no dedicated detail UI |
+| POST | `/{bookingId}/cancel` | **Wired** | `cancelBookingRequest` + customer home confirm |
+| PATCH | `/{bookingId}/status` | **Partial** | `updateBookingStatusRequest` — no UI |
+| GET | `/api/employees/{id}/services` | **Wired** | Employee Services Drawer (per-employee cache, loading/error/retry) |
+| POST | `/api/employees/{id}/services` | **Wired** | Add Service modal: one request per selected service; optional price/duration overrides; per-employee cache refresh |
+| PUT | `/api/employees/{id}/services/{serviceId}` | **Wired** | Edit Service modal: sparse override patch; explicit `null` resets; per-employee cache refresh |
+| DELETE | `/api/employees/{id}/services/{serviceId}` | **Wired** | Drawer confirm dialog; filters selected employee cache only |
+
+Types: `src/features/booking/types.ts`. Transport: `booking.endpoints.ts`. Store: `booking-store.ts` (list only). List UI: `/dashboard/bookings`. **Gap:** BE `BookingListItemDto` does not yet return `price` snapshot — FE treats missing price as `null`.
 
 ---
 
@@ -152,7 +176,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | Logout | Done |
 | Session restore from localStorage | Done (not `/session`) |
 | Profile get/update + image upload/delete | Done |
-| Public business list | Done |
+| Public business list | Done (discovery UI + server search/city/sort/pagination; detail/booking not started) |
 | My business + update + image | Done |
 | Self-service business register → BusinessOwner | Done |
 | Employee add/list/remove | Done |
@@ -161,9 +185,15 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | Services management UI | Done (`/dashboard/services`) |
 | CRM customers API (types + endpoints) | Done |
 | CRM customers UI | Done (list + create/edit/detail + soft-delete/reactivate) |
-| Business detail page | **Not started** |
-| Public / customer booking flow | **Not started** |
-| Owner booking calendar | **Not started** |
+| Bookings API (types + endpoints) | Done |
+| Owner/employee booking list UI | Done (`/dashboard/bookings`; filters + pagination; no detail/status) |
+| Employee assigned-services list | Done (Employee Services Drawer, per-employee cache) |
+| Employee service assignment | Done (Add Service modal; multi-select + optional independent overrides) |
+| Employee service edit | Done (Edit Service modal; independent price/duration override patch + reset) |
+| Employee service remove | Done (Drawer confirm + DELETE; assignment-only, not salon-wide service delete) |
+| Business detail page | **Partial** — layout + public business/services; staff/hours/booking blocked on public APIs |
+| Public / customer booking flow | **Partial** — panel wired; blocked without public employee list |
+| Owner booking calendar / detail / status actions | **Not started** (list page exists) |
 | Employee self portal | **Not started** |
 | Admin panel | **Not started** |
 | Role-aware nav (hide owner-only items for Customer) | **Not started** |
@@ -202,7 +232,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 
 10. Optional: call `GET /api/auth/session` after restore (roles without profile fetch)
 11. `GET /api/business/{id}` detail page even before booking (description, image, city)
-12. City filter/search on `/businesses` (BE index exists; filter may need query param)
+12. ~~City filter/search on `/businesses`~~ — Done (paged `search` / `city` / sort / page)
 13. Employee self view of own schedule (reuse working-hours APIs with `employeeId` from profile)
 14. Align refresh strategy with BE cookie (today FE correctly uses body tokens)
 
@@ -222,7 +252,7 @@ Landing/dashboard mockups show appointments; **zero real booking API usage**.
 | No roles in auth user | `AuthResponse.user` has no roles; roles only on Profile — nav cannot gate by role until profile/session loaded |
 | Bookings marketing vs reality | Landing shows appointment UI; product has no booking surface |
 | CRM role bug on BE | Even after FE customers page, owners need BE role fix |
-| Employee↔service assign | Not in owner services UI yet (needs BE contract if not ready) |
+| Employee↔service assign/remove | Read-only list is wired in the Employee Services Drawer; assign/edit/remove UI is still missing |
 | Token in localStorage | Documented XSS tradeoff; matches current SPA setup |
 
 ---
@@ -254,7 +284,7 @@ src/lib/api/
     employee.endpoints.ts — employees CRUD-ish + working hours
     service.endpoints.ts  — public list + owner CRUD
     customer.endpoints.ts
-    (missing) booking.endpoints.ts
+    booking.endpoints.ts  — availability, create, guest, list, mine, detail, status
 ```
 
 ---
@@ -270,8 +300,8 @@ src/lib/api/
 | Working hours | Done | Mostly | FE update UI; public read (BE) |
 | Services | CRUD ready (per feature-spec) | Owner dashboard Done | Assign + public detail catalog |
 | Customers CRM | Partial (Admin bug) | **None** | BE role fix + FE P1 |
-| Bookings | **Not wired** | **None** | BE P0 then FE P0 |
-| Availability | Missing | Missing | BE then FE |
+| Bookings | Ready (per FE guide) | List UI wired; create/detail/status/mine pending | Remaining booking screens |
+| Availability | Ready | Endpoint only | FE slot picker |
 | Payments / notifs / reviews | Missing | Missing | Later |
 
 ---

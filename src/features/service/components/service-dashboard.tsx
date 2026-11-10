@@ -69,9 +69,7 @@ function LoadingState() {
       className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-10 sm:py-10"
       aria-busy="true"
     >
-      <div className="h-8 w-40 animate-pulse rounded-lg bg-surface-secondary motion-reduce:animate-none" />
-      <div className="skeleton-shimmer h-10 w-56 rounded-xl bg-surface-secondary" />
-      <div className="skeleton-shimmer h-4 w-full max-w-md rounded bg-surface-secondary" />
+      <PageHeader title="مدیریت خدمات" description="در حال بارگذاری…" />
       <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
         {[0, 1, 2, 3].map((i) => (
           <div
@@ -155,7 +153,7 @@ function ServiceCard({ service, removing, onEdit, onRemove }: ServiceRowProps) {
 
 function ServicesBreadcrumb() {
   return (
-    <nav aria-label="مسیر صفحه" className="mb-4">
+    <nav aria-label="مسیر صفحه" className="mb-4 hidden md:block">
       <ol className="flex flex-wrap items-center gap-1.5 text-[13px] font-semibold text-slate-500">
         <li>
           <Link
@@ -232,9 +230,8 @@ export function ServiceDashboard() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-10 sm:py-10">
         <ServicesBreadcrumb />
         <PageHeader
-          hideBack
           title="مدیریت خدمات"
-          description="برای مدیریت خدمات، ابتدا باید اطلاعات کسب‌وکار شما دریافت شود."
+          description="برای مدیریت خدمات، ابتدا باید اطلاعات سالن شما دریافت شود."
         />
         {businessError && <AuthError message={businessError} />}
         <div>
@@ -251,7 +248,6 @@ export function ServiceDashboard() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-10 sm:py-10">
         <ServicesBreadcrumb />
         <PageHeader
-          hideBack
           title="مدیریت خدمات"
           description="فهرست خدمات، قیمت‌ها و مدت زمان هر خدمت."
         />
@@ -266,10 +262,10 @@ export function ServiceDashboard() {
           </span>
           <div>
             <h2 className="text-[17px] font-extrabold text-[#1e1b4b]">
-              ابتدا کسب‌وکار خود را ثبت کنید
+              ابتدا سالن خود را ثبت کنید
             </h2>
             <p className="mx-auto mt-1.5 max-w-md text-sm leading-6 font-medium text-slate-600">
-              برای افزودن و مدیریت خدمات، ابتدا باید اطلاعات کسب‌وکار شما تکمیل شده
+              برای افزودن و مدیریت خدمات، ابتدا باید اطلاعات سالن شما تکمیل شده
               باشد.
             </p>
           </div>
@@ -278,7 +274,7 @@ export function ServiceDashboard() {
             className="h-11 px-6 font-bold"
             onClick={() => router.push("/dashboard/business")}
           >
-            ثبت کسب‌وکار
+            ثبت سالن
           </Button>
         </motion.div>
       </main>
@@ -302,7 +298,6 @@ export function ServiceDashboard() {
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-10 sm:py-10">
       <ServicesBreadcrumb />
       <PageHeader
-        hideBack
         title="مدیریت خدمات"
         badge={
           status === "loaded" || services.length > 0 ? (

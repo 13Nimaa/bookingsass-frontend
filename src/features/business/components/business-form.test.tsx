@@ -9,6 +9,10 @@ vi.mock("@/features/business/components/business-image-field", () => ({
   BusinessImageField: () => <div data-testid="image-field" />,
 }));
 
+vi.mock("@/features/business/components/business-gallery-field", () => ({
+  BusinessGalleryField: () => <div data-testid="gallery-field" />,
+}));
+
 const sample: BusinessDto = {
   id: 3,
   name: "سالن موجود",
@@ -40,15 +44,15 @@ describe("BusinessForm", () => {
       <BusinessForm mode="edit" initial={sample} onDone={onDone} />,
     );
 
-    expect(screen.getByLabelText("نام کسب‌وکار")).toHaveProperty(
+    expect(screen.getByLabelText("نام سالن")).toHaveProperty(
       "value",
       "سالن موجود",
     );
     expect(screen.getByLabelText("شهر")).toHaveProperty("value", "اصفهان");
     expect(screen.getByLabelText("نشانی")).toHaveProperty("value", "چهارباغ");
 
-    await user.clear(screen.getByLabelText("نام کسب‌وکار"));
-    await user.type(screen.getByLabelText("نام کسب‌وکار"), "سالن به‌روز");
+    await user.clear(screen.getByLabelText("نام سالن"));
+    await user.type(screen.getByLabelText("نام سالن"), "سالن به‌روز");
     await user.click(screen.getByRole("button", { name: "ذخیره تغییرات" }));
 
     await waitFor(() => {
@@ -76,10 +80,10 @@ describe("BusinessForm", () => {
       />,
     );
 
-    await user.type(screen.getByLabelText("نام کسب‌وکار"), "جدید");
+    await user.type(screen.getByLabelText("نام سالن"), "جدید");
     await user.type(screen.getByLabelText("شهر"), "شیراز");
     await user.type(screen.getByLabelText("نشانی"), "زند");
-    await user.click(screen.getByRole("button", { name: "ایجاد کسب‌وکار" }));
+    await user.click(screen.getByRole("button", { name: "ایجاد سالن" }));
 
     await waitFor(() => {
       expect(submit).toHaveBeenCalled();

@@ -67,7 +67,7 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByLabelText("نام کسب‌وکار"), "سالن آرتا");
+  await user.type(screen.getByLabelText("نام سالن"), "سالن آرتا");
   await user.type(screen.getByLabelText("شهر"), "تهران");
   await user.type(screen.getByLabelText("نشانی"), "ولیعصر ۱۲");
 }
@@ -84,9 +84,9 @@ describe("RegisterBusinessContent", () => {
     const user = userEvent.setup();
     render(<RegisterBusinessContent />);
 
-    await user.click(screen.getByRole("button", { name: "ایجاد کسب‌وکار" }));
+    await user.click(screen.getByRole("button", { name: "ایجاد سالن" }));
 
-    expect(await screen.findByText("نام کسب‌وکار الزامی است.")).toBeTruthy();
+    expect(await screen.findByText("نام سالن الزامی است.")).toBeTruthy();
     expect(screen.getByText("شهر الزامی است.")).toBeTruthy();
     expect(screen.getByText("نشانی الزامی است.")).toBeTruthy();
     expect(registerBusinessRequestMock).not.toHaveBeenCalled();
@@ -101,7 +101,7 @@ describe("RegisterBusinessContent", () => {
     render(<RegisterBusinessContent />);
     await fillRequiredFields(user);
     await user.click(
-      screen.getByRole("button", { name: "ایجاد کسب‌وکار" }),
+      screen.getByRole("button", { name: "ایجاد سالن" }),
     );
 
     await waitFor(() => {
@@ -126,11 +126,11 @@ describe("RegisterBusinessContent", () => {
     render(<RegisterBusinessContent />);
     await fillRequiredFields(user);
     await user.click(
-      screen.getByRole("button", { name: "ایجاد کسب‌وکار" }),
+      screen.getByRole("button", { name: "ایجاد سالن" }),
     );
 
     expect(
-      await screen.findByText("شما قبلاً یک کسب‌وکار ثبت کرده‌اید."),
+      await screen.findByText("شما قبلاً یک سالن ثبت کرده‌اید."),
     ).toBeTruthy();
     expect(push).not.toHaveBeenCalled();
   });
@@ -144,7 +144,7 @@ describe("RegisterBusinessContent", () => {
     render(<RegisterBusinessContent />);
     await fillRequiredFields(user);
     await user.click(
-      screen.getByRole("button", { name: "ایجاد کسب‌وکار" }),
+      screen.getByRole("button", { name: "ایجاد سالن" }),
     );
 
     expect(
@@ -166,7 +166,7 @@ describe("RegisterBusinessContent", () => {
     render(<RegisterBusinessContent />);
     await fillRequiredFields(user);
     await user.click(
-      screen.getByRole("button", { name: "ایجاد کسب‌وکار" }),
+      screen.getByRole("button", { name: "ایجاد سالن" }),
     );
 
     expect(

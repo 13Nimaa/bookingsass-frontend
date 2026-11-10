@@ -21,7 +21,7 @@ Alias: `@/*` → `src/*`. Prefer these before inventing new banners, headers, di
 | `input.tsx` | `Input` | Labeled RTL fields with `error`, `hint`, start/end icons. |
 | `checkbox.tsx` | `Checkbox` | Base UI checkbox. Present; little/no app usage yet — preferred when adding checkboxes. |
 | `dialog.tsx` | `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` | Modal shell. Compose feature dialogs from this. |
-| `confirm-dialog.tsx` | `ConfirmDialog` | Confirm/cancel (`tone`: `danger` \| `primary`, supports `loading`). |
+| `confirm-dialog.tsx` | `ConfirmDialog` | Confirm/cancel (`tone`: `danger` \| `primary`, supports `loading` + optional inline `error` for retry-in-place). |
 | `password-strength.tsx` | `PasswordStrength` | Auth signup password meter (Persian labels). |
 | `select.tsx` | `SelectField`, `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectLabel`, `SelectGroup`, `SelectSeparator` | Custom dropdown (Base UI). Prefer `SelectField` for labeled single-select forms; compose parts for groups / custom item UI. Portal z-index sits above dialogs; `modal` defaults `false` on `SelectField` for nested modals. |
 
@@ -33,7 +33,7 @@ Stack: Base UI + CVA + `cn` package (`import { cn } from "cn"`). `components.jso
 
 | File | Export | Role |
 | ---- | ------ | ---- |
-| `sidebar.tsx` | `Sidebar` | Dashboard desktop nav + logout. |
+| `sidebar.tsx` | `Sidebar` | Dashboard desktop nav + logout; BusinessOwner vs customer link sets. |
 | `mobile-tab-bar.tsx` | `MobileTabBar` | Fixed bottom tabs (`md:hidden`); guest vs authenticated. |
 | `navbar.tsx` | `Navbar`, `NavbarLink` | Marketing sticky header. |
 
@@ -51,8 +51,8 @@ Related (not under `layout/`):
 | File | Export | Role |
 | ---- | ------ | ---- |
 | `auth-error.tsx` | `AuthError` | Focusable `role="alert"` error banner. Used beyond auth (forms/dashboards). |
-| `page-header.tsx` | `PageHeader` | Dashboard header: eyebrow, title, description, actions, optional back. |
-| `back-button.tsx` | `BackButton` | RTL-aware back (`router.back` + fallback href). |
+| `page-header.tsx` | `PageHeader` | Dashboard header. Mobile: fixed glass bar (back icon + centered title). Desktop: eyebrow, title, description, actions, optional back. |
+| `back-button.tsx` | `BackButton` | RTL-aware back (`router.back` + fallback href). Desktop PageHeader uses this. |
 
 App Router: `src/app/error.tsx` — global error boundary with Persian copy + retry.
 
@@ -71,6 +71,8 @@ Still live under `features/` (domain-owned), but reused across routes:
 | `BusinessForm` | `features/business/components/business-form.tsx` | Dashboard + register-business |
 | `BusinessImageField` | `features/business/components/business-image-field.tsx` | Inside `BusinessForm` |
 | `RegisterBusinessContent` | `features/business/components/register-business-content.tsx` | `/register/business` |
+| `SalonDiscoveryPage` | `features/business/components/salon-discovery-page.tsx` | Public `/businesses` (uses shared `Navbar`) |
+| `SalonCard` | `features/business/components/salon-card.tsx` | Public salon listing cards |
 | `*Dashboard` | `features/*/components/*-dashboard.tsx` | Thin dashboard pages |
 
 Landing components under `features/landing/` are marketing-only — do not reuse as product shell.

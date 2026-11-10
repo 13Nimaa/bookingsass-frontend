@@ -31,12 +31,12 @@ export function RegisterBusinessContent() {
       const res = await registerBusinessRequest(input);
 
       if (res.status === 409) {
-        setError("شما قبلاً یک کسب‌وکار ثبت کرده‌اید.");
+        setError("شما قبلاً یک سالن ثبت کرده‌اید.");
         return false;
       }
       if (!res.ok) {
         await res.text().catch(() => "");
-        setError("ایجاد کسب‌وکار انجام نشد. اطلاعات را بررسی کنید.");
+        setError("ایجاد سالن انجام نشد. اطلاعات را بررسی کنید.");
         return false;
       }
       const data: AuthResponse = await res.json();

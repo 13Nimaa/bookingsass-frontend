@@ -16,7 +16,7 @@ const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
 const triggerClassName =
-  "flex h-12 w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 text-[15px] font-semibold text-text-primary outline-none transition-all hover:border-border-strong focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary-soft data-popup-open:border-primary data-popup-open:ring-4 data-popup-open:ring-primary-soft disabled:cursor-not-allowed disabled:bg-surface-secondary disabled:opacity-60 aria-invalid:border-error aria-invalid:focus-visible:ring-error-soft";
+  "flex h-12 w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 text-[15px] font-medium text-text-primary outline-none transition-all duration-150 hover:border-border-strong focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/15 data-popup-open:border-primary data-popup-open:ring-2 data-popup-open:ring-primary/15 disabled:cursor-not-allowed disabled:bg-surface-secondary disabled:opacity-60 aria-invalid:border-error aria-invalid:focus-visible:ring-error-soft";
 
 function SelectTrigger({
   className,
@@ -67,7 +67,7 @@ function SelectContent({
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
-            "w-[var(--anchor-width)] origin-[var(--transform-origin)] overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_20px_45px_-24px_rgba(30,27,75,0.45)] outline-none transition-[transform,opacity] duration-150 ease-out data-[starting-style]:scale-[0.98] data-[starting-style]:opacity-0 data-[ending-style]:scale-[0.98] data-[ending-style]:opacity-0",
+            "w-[var(--anchor-width)] origin-[var(--transform-origin)] overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_16px_36px_-20px_rgba(34,31,28,0.28)] outline-none transition-[transform,opacity] duration-150 ease-out data-[starting-style]:scale-[0.98] data-[starting-style]:opacity-0 data-[ending-style]:scale-[0.98] data-[ending-style]:opacity-0",
             className,
           )}
           {...props}

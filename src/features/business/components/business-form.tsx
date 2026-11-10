@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useBusinessStore } from "@/features/business/store/business-store";
 import { businessSchema, toBusinessInput, type BusinessFormData } from "@/features/business/schemas/business.schema";
 import { BusinessImageField } from "@/features/business/components/business-image-field";
+import { BusinessGalleryField } from "@/features/business/components/business-gallery-field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AuthError } from "@/components/shared/auth-error";
@@ -32,12 +33,12 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
   const clearError = useBusinessStore((s) => s.clearError);
   const errorRef = useRef<HTMLDivElement>(null);
 
-  // For the create/upgrade flow the business does not exist yet, so the image
-  // endpoint would 404. We keep the picked file locally, show a preview, and
-  // upload it only after the business has been created. In edit mode the
-  // business already exists, so uploads happen immediately (like the profile).
+  // For the create/upgrade flow the business does not exist yet, so image /
+  // gallery endpoints would 404. Keep picks locally and upload after create.
+  // In edit mode uploads happen immediately.
   const [pendingImage, setPendingImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [pendingGallery, setPendingGallery] = useState<File[]>([]);
 
   useEffect(() => {
     if (error) errorRef.current?.focus();
@@ -103,15 +104,21 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
         : await update(input);
     if (!ok) return;
 
-    if (mode === "create" && pendingImage) {
+    if (mode === "create") {
       const store = useBusinessStore.getState();
       if (!store.business) await store.fetchMine();
       if (useBusinessStore.getState().business) {
-        await useBusinessStore.getState().uploadImage(pendingImage);
+        if (pendingImage) {
+          await useBusinessStore.getState().uploadImage(pendingImage);
+        }
+        if (pendingGallery.length > 0) {
+          await useBusinessStore.getState().uploadGallery(pendingGallery);
+        }
       }
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       setPendingImage(null);
+      setPendingGallery([]);
     }
 
     onDone();
@@ -131,9 +138,15 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
         onRemove={handleImageRemove}
       />
 
+      <BusinessGalleryField
+        disabled={isSubmitting}
+        deferred={mode === "create"}
+        onDeferredFilesChange={setPendingGallery}
+      />
+
       <Input
         id="business-name"
-        label="نام کسب‌وکار"
+        label="نام سالن"
         aria-invalid={!!errors.name}
         autoComplete="organization"
         placeholder="مثلاً سالن زیبایی آرتا"
@@ -187,7 +200,7 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
                 : "border-border bg-surface text-[#1e1b4b] placeholder:text-slate-400 hover:border-border-strong focus:border-primary focus:bg-surface focus:ring-4 focus:ring-primary-soft"
             }
           `}
-          placeholder="چند خط درباره‌ی کسب‌وکار، خدمات و فضای آن..."
+          placeholder="چند خط درباره‌ی سالن، خدمات و فضای آن..."
           {...register("description")}
         />
         {errors.description && (
@@ -200,7 +213,7 @@ export function BusinessForm({ mode, initial, onDone, onCancel, submit }: Busine
           {isSubmitting
             ? "در حال ذخیره..."
             : mode === "create"
-              ? "ایجاد کسب‌وکار"
+              ? "ایجاد سالن"
               : "ذخیره تغییرات"}
         </Button>
         {onCancel && (

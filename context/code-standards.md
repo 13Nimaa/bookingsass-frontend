@@ -60,12 +60,12 @@
 
 Name files after responsibility, not after a library.
 
-## Testing
+<!-- ## Testing
 
 - Unit/component: Vitest + Testing Library under colocated `*.test.ts(x)`.
 - E2E: Playwright under `tests/`.
 - Mock API in unit tests; do not use production credentials.
-- Prefer accessible queries and observable behavior.
+- Prefer accessible queries and observable behavior. -->
 
 ## Protected Foundation
 

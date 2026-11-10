@@ -1,25 +1,42 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarCheck,
+  Heart,
   LogOut,
   Sparkles,
   Store,
   UserRound,
   UserRoundCog,
   Users,
+  type LucideIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth-store";
+import { useProfileStore } from "@/features/profile/store/profile-store";
 
-const NAV = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+const OWNER_NAV: readonly NavItem[] = [
   { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
-  { href: "/dashboard/business", label: "کسب‌وکار", icon: Store },
+  { href: "/dashboard/business", label: "سالن", icon: Store },
+  { href: "/dashboard/bookings", label: "رزروها", icon: CalendarCheck },
   { href: "/dashboard/employees", label: "کارمندان", icon: UserRoundCog },
   { href: "/dashboard/services", label: "خدمات", icon: Sparkles },
   { href: "/dashboard/customers", label: "مشتریان", icon: Users },
-] as const;
+];
+
+const CUSTOMER_NAV: readonly NavItem[] = [
+  { href: "/dashboard/my-bookings", label: "رزروها", icon: CalendarCheck },
+  { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
+  { href: "/dashboard/favorites", label: "علاقه‌مندی‌ها", icon: Heart },
+];
 
 function userInitials(name: string | undefined): string {
   if (!name?.trim()) return "؟";
@@ -27,80 +44,99 @@ function userInitials(name: string | undefined): string {
   return parts.map((p) => p[0]!).join("");
 }
 
+function isBusinessOwner(roles: string[] | undefined): boolean {
+  return roles?.includes("BusinessOwner") ?? false;
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const profile = useProfileStore((s) => s.profile);
+  const profileStatus = useProfileStore((s) => s.status);
+  const fetchProfile = useProfileStore((s) => s.fetchProfile);
+
+  useEffect(() => {
+    if (profileStatus === "idle") void fetchProfile();
+  }, [profileStatus, fetchProfile]);
+
+  const navReady = profileStatus === "loaded" || profileStatus === "error";
+  const isCustomer =
+    profileStatus === "loaded" && !isBusinessOwner(profile?.roles);
+  const nav = isCustomer ? CUSTOMER_NAV : OWNER_NAV;
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-[100vh] md:w-64 md:border-b-0 md:border-e">
-      <div className="flex items-center gap-2.5 px-4 py-3 md:px-5 md:py-5">
+    <aside className="hidden shrink-0 flex-col border-border bg-surface md:sticky md:top-0 md:flex md:h-[100vh] md:w-[232px] md:border-e">
+      <div className="flex h-16 shrink-0 items-center px-4 lg:h-[68px] lg:px-5">
         <Link
-          href="/"
-          className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          href="/dashboard"
+          className="flex min-w-0 items-center gap-2.5 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-            <CalendarCheck size={20} aria-hidden="true" />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-primary-soft text-primary">
+            <CalendarCheck size={18} aria-hidden="true" />
           </span>
-          <span className="truncate text-[17px] font-extrabold tracking-tight text-[#1e1b4b]">
+          <span className="truncate text-[16px] font-bold tracking-tight text-text-primary">
             BookFlow
           </span>
         </Link>
-        <button
-          type="button"
-          onClick={() => void logout()}
-          aria-label="خروج"
-          title="خروج"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-error-soft hover:text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.97] md:hidden"
-        >
-          <LogOut size={18} aria-hidden="true" />
-        </button>
       </div>
 
       <nav
-        className="hidden px-3 md:flex md:flex-col md:gap-1"
+        className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3"
         aria-label="ناوبری داشبورد"
       >
-        {NAV.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              className={`relative flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] ${
-                active
-                  ? "bg-primary-soft font-bold text-primary"
-                  : "font-semibold text-slate-600 hover:bg-primary-soft/60 hover:text-[#1e1b4b]"
-              }`}
-            >
-              {active && (
-                <span
+        {!navReady ? (
+          <div className="flex flex-col gap-1" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="skeleton-shimmer h-11 rounded-[11px] bg-surface-secondary"
+              />
+            ))}
+          </div>
+        ) : (
+          nav.map(({ href, label, icon: Icon }) => {
+            const active = pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={`flex h-11 items-center gap-2.5 rounded-[11px] px-3.5 text-[13.5px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none ${
+                  active
+                    ? "bg-primary-soft font-semibold text-primary"
+                    : "font-medium text-[#4B5563] hover:bg-surface-secondary hover:text-text-primary"
+                }`}
+              >
+                <Icon
+                  size={18}
+                  className={`shrink-0 ${active ? "text-primary" : "text-[#64748B]"}`}
                   aria-hidden="true"
-                  className="absolute top-1/2 start-0 h-5 w-1 -translate-y-1/2 rounded-full bg-primary"
                 />
-              )}
-              <Icon size={18} className="shrink-0" aria-hidden="true" />
-              {label}
-            </Link>
-          );
-        })}
+                {label}
+              </Link>
+            );
+          })
+        )}
       </nav>
 
-      <div className="hidden md:mt-auto md:block md:border-t md:border-border-subtle md:px-4 md:py-4">
-        <div className="flex items-center gap-3 rounded-2xl bg-surface-subtle px-3 py-3">
+      <div className="mt-auto shrink-0 px-3 pb-4 pt-3">
+        <div className="flex items-center gap-3 rounded-[14px] bg-surface-secondary/80 px-3 py-2.5">
           <span
             aria-hidden="true"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[13px] font-extrabold text-primary ring-1 ring-primary-subtle ring-inset"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[12px] font-bold text-primary"
           >
             {userInitials(user?.name)}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-[#1e1b4b]">
+            <p className="truncate text-[13px] font-semibold text-text-primary">
               {user?.name ?? "کاربر"}
             </p>
             {user?.phoneNumber && (
-              <p dir="ltr" className="mt-0.5 truncate text-start text-[12px] font-semibold text-slate-500 tnum">
+              <p
+                dir="ltr"
+                className="mt-0.5 truncate text-start text-[11.5px] font-medium text-[#6B7280] tnum"
+              >
                 {user.phoneNumber}
               </p>
             )}
@@ -109,7 +145,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={() => void logout()}
-          className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface text-[13px] font-bold text-slate-600 transition-colors hover:border-error-border hover:bg-error-soft hover:text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="mt-2.5 flex h-10 w-full items-center justify-center gap-2 rounded-[11px] border border-border bg-surface text-[13px] font-medium text-[#4B5563] transition-colors duration-150 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
         >
           <LogOut size={16} aria-hidden="true" />
           خروج از حساب

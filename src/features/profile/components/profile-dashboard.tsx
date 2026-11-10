@@ -7,6 +7,7 @@ import {
   BadgeCheck,
   Briefcase,
   CheckCircle2,
+  LogOut,
   Mail,
   Pencil,
   Phone,
@@ -16,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AuthError } from "@/components/shared/auth-error";
 import { PageHeader } from "@/components/shared/page-header";
+import { useAuthStore } from "@/features/auth/store/auth-store";
 import { useProfileStore } from "@/features/profile/store/profile-store";
 import { roleLabel } from "@/features/profile/types";
 import { ProfileAvatar } from "@/features/profile/components/profile-avatar";
@@ -33,7 +35,7 @@ const fadeUp = {
 function Skeleton() {
   return (
     <main className="mx-auto flex w-full max-w-[1140px] flex-1 flex-col gap-5 px-4 py-6 sm:gap-6 sm:px-6 sm:py-8 lg:px-8" aria-busy="true">
-      <div className="h-9 w-28 animate-pulse rounded-full bg-surface-secondary motion-reduce:animate-none" />
+      <PageHeader title="پروفایل" description="در حال بارگذاری…" />
       <div className="w-full overflow-hidden rounded-2xl border border-border bg-surface">
         <div className="skeleton-shimmer h-[72px] bg-primary-soft sm:h-24" />
         <div className="flex flex-col gap-3 px-5 pb-5 sm:flex-row sm:items-end sm:px-6 sm:pb-6">
@@ -60,6 +62,7 @@ export function ProfileDashboard() {
   const fetchProfile = useProfileStore((s) => s.fetchProfile);
   const clearError = useProfileStore((s) => s.clearError);
   const clearNotice = useProfileStore((s) => s.clearNotice);
+  const logout = useAuthStore((s) => s.logout);
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
@@ -107,17 +110,17 @@ export function ProfileDashboard() {
       <PageHeader
         eyebrow="حساب کاربری"
         title="پروفایل"
-        description="اطلاعات حساب، تصویر پروفایل و نقش‌های خود را مدیریت کنید."
         actions={
           !editing ? (
             <Button
               variant="secondary"
-              size="lg"
+              size="icon"
               onClick={openEdit}
-              className="max-sm:h-10 max-sm:px-4 max-sm:text-sm"
+              aria-label="ویرایش پروفایل"
+              title="ویرایش پروفایل"
+              className="h-10 w-10"
             >
               <Pencil className="h-4 w-4" aria-hidden="true" />
-              ویرایش پروفایل
             </Button>
           ) : undefined
         }
@@ -288,15 +291,15 @@ export function ProfileDashboard() {
               <Store className="h-[18px] w-[18px]" aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-bold text-[#1e1b4b]">کسب‌وکار</p>
+              <p className="text-[15px] font-bold text-[#1e1b4b]">سالن</p>
               <p className="mt-0.5 text-[13px] leading-6 font-medium text-slate-600">
-                {hasBusiness ? "شما یک کسب‌وکار ثبت کرده‌اید." : "هنوز کسب‌وکاری ثبت نکرده‌اید."}
+                {hasBusiness ? "شما یک سالن ثبت کرده‌اید." : "هنوز سالنی ثبت نکرده‌اید."}
               </p>
               <Link
                 href="/dashboard/business"
                 className="mt-1.5 inline-block text-[13px] font-bold text-primary transition hover:text-primary-hover"
               >
-                {hasBusiness ? "مدیریت کسب‌وکار ←" : "ثبت کسب‌وکار ←"}
+                {hasBusiness ? "مدیریت سالن ←" : "ثبت سالن ←"}
               </Link>
             </div>
           </div>
@@ -330,6 +333,15 @@ export function ProfileDashboard() {
           </p>
         </motion.aside>
       </div>
+
+      <button
+        type="button"
+        onClick={() => void logout()}
+        className="flex h-11 w-full items-center justify-center gap-2 rounded-[12px] border border-error-border bg-error-soft text-[13.5px] font-medium text-error transition-colors duration-150 hover:bg-error-soft/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error motion-reduce:transition-none md:hidden"
+      >
+        <LogOut className="h-4 w-4" aria-hidden="true" />
+        خروج از حساب
+      </button>
     </main>
   );
 }

@@ -26,7 +26,7 @@ export const PROFILE_IMAGE_RULES = {
 // Persian labels for backend role names.
 export const ROLE_LABELS: Record<string, string> = {
   Customer: "مشتری",
-  BusinessOwner: "مدیر کسب‌وکار",
+  BusinessOwner: "مدیر سالن",
   Employee: "کارمند",
   Admin: "مدیر سیستم",
 };

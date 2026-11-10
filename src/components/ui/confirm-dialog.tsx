@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { AuthError } from "@/components/shared/auth-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,6 +20,8 @@ interface ConfirmDialogProps {
   cancelLabel?: string;
   tone?: "danger" | "primary";
   loading?: boolean;
+  /** Shown inside the dialog so a failed confirm can stay open for retry. */
+  error?: string | null;
   onConfirm: () => void;
 }
 
@@ -31,6 +34,7 @@ export function ConfirmDialog({
   cancelLabel = "انصراف",
   tone = "danger",
   loading = false,
+  error = null,
   onConfirm,
 }: ConfirmDialogProps) {
   return (
@@ -38,6 +42,11 @@ export function ConfirmDialog({
       <DialogContent className="max-w-md" showClose={false}>
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription className="mt-2">{description}</DialogDescription>
+        {error ? (
+          <div className="mt-4 rounded-xl border border-error-border bg-error-soft px-3.5 py-3">
+            <AuthError message={error} />
+          </div>
+        ) : null}
         <DialogFooter className="mt-6">
           <Button
             type="button"
