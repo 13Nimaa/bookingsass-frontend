@@ -86,10 +86,10 @@ Primitives live in `src/components/ui/`. Prefer the CLI / existing patterns over
 ### Dashboard
 
 - `AuthGuard` → sticky `Sidebar` (`md+` only, ~232px, right in RTL) + main content + `MobileTabBar`
-- Sidebar: refined nav (active `primary-soft`, hover neutral), user card + logout in footer
+- Sidebar: refined nav (active `primary-soft`, hover neutral), user card + logout in footer; role-aware — BusinessOwner gets management links; other roles get رزروها (`/dashboard/my-bookings`) / پروفایل / علاقه‌مندی‌ها (`/dashboard/favorites`)
 - Main: typically `max-w-5xl`–`max-w-7xl`, padded; avoid duplicating sidebar links on desktop
 - Page chrome: `PageHeader` + feature dashboard body
-- Home (`/dashboard`): BusinessOwner sees live analytics (KPI cards, today bookings, weekly estimated-value chart, top services) from `GET /api/Business/dashboard`; non-owners keep the hub management grid; owners also get the hub as mobile-only shortcuts under analytics; hub grid is 1 column on mobile, 2 from `sm`, 3 from `lg`; no logout on the hub; `MobileTabBar` unchanged
+- Home (`/dashboard`): BusinessOwner sees live analytics (KPI cards, today bookings, weekly estimated-value chart, top services) from `GET /api/Business/dashboard`; non-owners (403) see customer home from `GET /api/customer/dashboard` (hero + search, summary stats, upcoming ≤5, recent ≤5, self-cancel) — no discount/rating/notification widgets; owners also get mobile-only management shortcuts under analytics; `MobileTabBar` unchanged
 - Cards: soft border, light surfaces, generous radius (grid cards ~16px)
 
 ### Mobile

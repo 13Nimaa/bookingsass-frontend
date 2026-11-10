@@ -26,6 +26,7 @@ src/lib/api/
     ├── employee.endpoints.ts
     ├── service.endpoints.ts
     ├── customer.endpoints.ts
+    ├── customer-dashboard.endpoints.ts
     └── profile.endpoints.ts
 ```
 
@@ -60,7 +61,8 @@ Auth endpoints use `backendFetch`. Authenticated domains use `apiClient`.
 | `employee.endpoints.ts` | `apiClient` | employees + working hours + employee↔service assign |
 | `service.endpoints.ts` | both | public list (`backendFetch`); get/create/update/delete (`apiClient`) |
 | `customer.endpoints.ts` | `apiClient` | CRM list (paged) / get / create / update / soft-delete |
-| `booking.endpoints.ts` | both | availability + guest create (`backendFetch`); auth create / list / mine / detail / status (`apiClient`) |
+| `customer-dashboard.endpoints.ts` | `apiClient` | customer home dashboard + favorites list/add/remove |
+| `booking.endpoints.ts` | both | availability + guest create (`backendFetch`); auth create / list / mine / detail / cancel / status (`apiClient`) |
 
 Naming: `{domain}.endpoints.ts`, exports like `loginRequest`, `getMineBusiness`, `listEmployeesRequest`.
 
@@ -88,7 +90,7 @@ Colocated under features — not under `src/lib/api`:
 | `features/profile/types.ts` | `UserProfile`, `UpdateProfileInput`, image rules |
 | `features/employee/types.ts` | `EmployeeDto`, date-based `WorkingHourDto`, inputs, `AssignServiceInput` (`serviceId` + optional independent `priceOverride` / `durationMinutesOverride`), `UpdateEmployeeServiceInput` (sparse PUT; `null` clears an override), `AssignServicesResult`, `EmployeeServiceDto` (`id`, `businessId`, default/override/effective price + duration) |
 | `features/service/types.ts` | `ServiceDto`, `ServiceInput` |
-| `features/customer/types.ts` | `CustomerDto`, `PagedCustomers`, list/create/update inputs |
+| `features/customer/types.ts` | `CustomerDto`, `PagedCustomers`, list/create/update inputs; `CustomerDashboardDto` + booking items; `BusinessFavoriteDto` |
 | `features/booking/types.ts` | `BookingStatus`, `BookingDto`, availability, list/mine/detail DTOs, create inputs |
 | `features/employee/types.ts` | (+ `AssignServiceInput` for employee↔service) |
 
@@ -97,14 +99,15 @@ Zod schemas in `features/*/schemas/` map form values → API inputs.
 ### Booking transport notes
 
 - Anonymous: `getAvailabilityRequest`, `createGuestBookingRequest` → `backendFetch`.
-- Authenticated: `createBookingRequest`, `listBookingsRequest`, `listMyBookingsRequest`, `getBookingRequest`, `updateBookingStatusRequest` → `apiClient`.
+- Authenticated: `createBookingRequest`, `listBookingsRequest`, `listMyBookingsRequest`, `getBookingRequest`, `cancelBookingRequest`, `updateBookingStatusRequest` → `apiClient`.
 - Employee↔service: `listEmployeeServicesRequest`, `assignEmployeeServiceRequest`, `removeEmployeeServiceRequest` on `employee.endpoints.ts`.
 - `listBookingsRequest` is wired through `useBookingStore.fetchBookings` and the owner/employee Bookings management page (`/dashboard/bookings`). Filters: `status`, `fromDate`/`toDate` (UTC ISO day bounds), `search` (customer name/phone), pagination. List items normalize missing `price` to `null` (current BE list DTO omits price snapshot).
 - `listEmployeeServicesRequest` is wired to the Employee Services Drawer through `useEmployeeStore.loadEmployeeServices` (per-employee cache + loading/error state).
 - `assignEmployeeServiceRequest` is wired through `useEmployeeStore.assignServices` and the Add Service modal (one POST per selected service, optional independent overrides omitted when empty). After success it force-refreshes only the selected employee's cached list.
 - `updateEmployeeServiceRequest` is wired through `useEmployeeStore.updateEmployeeService` and the Edit Service modal (`PUT`; only changed override fields; explicit `null` resets). After success it force-refreshes only the selected employee's cached list.
 - `removeEmployeeServiceRequest` is wired through `useEmployeeStore.removeEmployeeService` and the Drawer confirm dialog (`DELETE`). On success it filters only the selected employee's cached list (no optimistic remove; failures keep the row and the dialog open).
-- `getBusinessDashboardRequest` → `GET /api/Business/dashboard` (`cache: "no-store"`). Wired through `useOwnerDashboardStore.fetchDashboard` and `/dashboard` owner home. Single payload: summary, capacity, weeklyRevenue (Sat→Fri order), todayBookings, topServices. 403 falls back to the static hub; 404 prompts business setup.
+- `getBusinessDashboardRequest` → `GET /api/Business/dashboard` (`cache: "no-store"`). Wired through `useOwnerDashboardStore.fetchDashboard` and `/dashboard` owner home. Single payload: summary, capacity, weeklyRevenue (Sat→Fri order), todayBookings, topServices. 403 falls back to customer home; 404 prompts business setup.
+- `getCustomerDashboardRequest` → `GET /api/customer/dashboard` (`cache: "no-store"`). Wired through `useCustomerDashboardStore` and customer `/dashboard` home (shown when owner dashboard returns 403). Payload: summary counts, upcoming (≤5 + totalCount), recent (≤5). Cancel via `cancelBookingRequest` (`POST .../cancel`) then refetch. Favorites transport helpers exist (`list/add/removeCustomerFavoriteRequest`); favorites page UI still stubbed.
 
 ## Store Pattern
 
@@ -128,6 +131,7 @@ UI → Zustand store → *.endpoints.ts → backendFetch | apiClient → fetch
 | `useEmployeeStore` | `features/employee/store/employee-store.ts` |
 | `useServiceStore` | `features/service/store/service-store.ts` |
 | `useCustomerStore` | `features/customer/store/customer-store.ts` |
+| `useCustomerDashboardStore` | `features/customer/store/customer-dashboard-store.ts` |
 | `useBookingStore` | `features/booking/store/booking-store.ts` |
 
 Some flows bypass the store intentionally (e.g. register-business content calls `registerBusinessRequest` then `applySession`).

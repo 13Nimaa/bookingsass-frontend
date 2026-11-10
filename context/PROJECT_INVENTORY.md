@@ -135,6 +135,17 @@ Types: `src/features/customer/types.ts`. Transport: `customer.endpoints.ts`. Sto
 
 BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid` until BE is fixed.
 
+### 3.7b Customer home — `api/customer`
+
+| Method | Path | Frontend | Notes |
+|--------|------|----------|-------|
+| GET | `/dashboard` | **Wired** | `getCustomerDashboardRequest` + customer `/dashboard` home |
+| GET | `/favorites` | **Partial** | `listCustomerFavoritesRequest` — page still stub |
+| POST | `/favorites` | **Partial** | `addCustomerFavoriteRequest` — no UI |
+| DELETE | `/favorites/{businessId}` | **Partial** | `removeCustomerFavoriteRequest` — no UI |
+
+Types: `CustomerDashboardDto`, `BusinessFavoriteDto` in `features/customer/types.ts`. Transport: `customer-dashboard.endpoints.ts`. Store: `customer-dashboard-store.ts` (home + cancel).
+
 ### 3.8 Bookings — `api/bookings` (+ employee services)
 
 | Method | Path | Frontend | Notes |
@@ -143,8 +154,9 @@ BE caveat: CRM may still be **Admin-gated** on BE — owner FE would get `Forbid
 | POST | `/` | **Partial** | Wired in public booking panel (authenticated path) |
 | POST | `/guest` | **Partial** | Wired in public booking panel (guest path) |
 | GET | `/` | **Wired** | `listBookingsRequest` + `/dashboard/bookings` list UI (no detail/status yet) |
-| GET | `/mine` | **Partial** | `listMyBookingsRequest` — no UI |
-| GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no UI |
+| GET | `/mine` | **Partial** | `listMyBookingsRequest` — link from customer home; full list page still stub |
+| GET | `/{bookingId}` | **Partial** | `getBookingRequest` — no dedicated detail UI |
+| POST | `/{bookingId}/cancel` | **Wired** | `cancelBookingRequest` + customer home confirm |
 | PATCH | `/{bookingId}/status` | **Partial** | `updateBookingStatusRequest` — no UI |
 | GET | `/api/employees/{id}/services` | **Wired** | Employee Services Drawer (per-employee cache, loading/error/retry) |
 | POST | `/api/employees/{id}/services` | **Wired** | Add Service modal: one request per selected service; optional price/duration overrides; per-employee cache refresh |

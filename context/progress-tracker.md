@@ -1,8 +1,69 @@
 # Frontend progress
 
-**Last updated:** 2026-11-07  
-**Current task:** Dashboard mobile shortcuts — sticky 3×2 strip under header; removed buried bottom hub  
-**Prior:** Salon detail layout polish — `container mx-auto`, back header with business title
+**Last updated:** 2026-11-08  
+**Current task:** Customer dashboard API wiring (`13`)  
+**Prior:** Customer sidebar nav + mock customer home
+
+---
+
+# Customer dashboard API (`13`)
+
+| Area | Status |
+|------|--------|
+| Transport | `GET /api/customer/dashboard` via `getCustomerDashboardRequest` (`cache: "no-store"`) |
+| Types | `CustomerDashboardDto` + summary / upcoming / booking item; `BusinessFavoriteDto` |
+| Store | `useCustomerDashboardStore` — fetch + cancel; stale-seq guard |
+| Cancel | `POST /api/bookings/{id}/cancel` + confirm dialog; only Pending/Confirmed + future start |
+| UI | Stats / upcoming list / recent table from API; Jalali times; Pending label «در انتظار تأیید» |
+| Header | `useProfileStore.fullName` + avatar; notification badge removed (not in API) |
+| Links | مشاهده همه → `/dashboard/my-bookings`; جزئیات/مشاهده → `/businesses/{id}` |
+| Favorites helpers | list/add/remove request helpers present; favorites page still stub |
+| Omitted | Rating card; discount banner; notification badge |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `context/feature-specs/13-customer-dashboar-API.md` | Spec |
+| `src/features/customer/types.ts` | Dashboard + favorite DTOs |
+| `src/lib/api/endpoints/customer-dashboard.endpoints.ts` | Request + parse |
+| `src/lib/api/endpoints/booking.endpoints.ts` | `cancelBookingRequest` |
+| `src/features/customer/store/customer-dashboard-store.ts` | Fetch + cancel |
+| `src/features/customer/components/customer-home-dashboard.tsx` | Wired UI |
+| `src/lib/api/endpoints/customer-dashboard.test.ts` | Parse tests |
+
+## Verify
+
+```bash
+npx vitest run src/lib/api/endpoints/customer-dashboard.test.ts
+npx tsc --noEmit
+npx eslint src/features/customer/components/customer-home-dashboard.tsx src/features/customer/store/customer-dashboard-store.ts src/lib/api/endpoints/customer-dashboard.endpoints.ts
+```
+
+## Next
+
+Wire `/dashboard/my-bookings` (`GET /api/bookings/mine`) and `/dashboard/favorites` (favorites CRUD).
+
+---
+
+# Customer sidebar nav
+
+| Area | Status |
+|------|--------|
+| Detection | `useProfileStore` roles — non-`BusinessOwner` → customer nav |
+| Customer links | رزروها → `/dashboard/my-bookings`; پروفایل → `/dashboard/profile`; علاقه‌مندی‌ها → `/dashboard/favorites` |
+| Owner links | Unchanged management set |
+| Stub pages | my-bookings + favorites placeholder (“به‌زودی”) until APIs wired |
+| Loading | Sidebar nav skeleton until profile loaded |
+
+## Files
+
+| Path | Role |
+|------|------|
+| `src/components/layout/sidebar.tsx` | Role-aware nav |
+| `src/app/(dashboard)/dashboard/my-bookings/page.tsx` | Customer bookings stub |
+| `src/app/(dashboard)/dashboard/favorites/page.tsx` | Favorites stub |
+| `src/features/customer/components/customer-placeholder-page.tsx` | Shared stub shell |
 
 ---
 

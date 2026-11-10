@@ -33,7 +33,7 @@ Stack: Base UI + CVA + `cn` package (`import { cn } from "cn"`). `components.jso
 
 | File | Export | Role |
 | ---- | ------ | ---- |
-| `sidebar.tsx` | `Sidebar` | Dashboard desktop nav + logout. |
+| `sidebar.tsx` | `Sidebar` | Dashboard desktop nav + logout; BusinessOwner vs customer link sets. |
 | `mobile-tab-bar.tsx` | `MobileTabBar` | Fixed bottom tabs (`md:hidden`); guest vs authenticated. |
 | `navbar.tsx` | `Navbar`, `NavbarLink` | Marketing sticky header. |
 

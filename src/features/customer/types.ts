@@ -46,3 +46,43 @@ export interface UpdateCustomerInput {
   notes?: string | null;
   isActive: boolean;
 }
+
+/** Customer home — `GET /api/customer/dashboard` */
+export type CustomerDashboardSummaryDto = {
+  upcomingBookingsCount: number;
+  totalBookingsCount: number;
+  favoriteSalonsCount: number;
+};
+
+export type CustomerDashboardBookingItemDto = {
+  id: number;
+  startTime: string;
+  endTime: string;
+  status: number;
+  businessId: number;
+  businessName: string;
+  businessProfileImageUrl: string | null;
+  serviceName: string;
+  employeeName: string;
+};
+
+export type CustomerUpcomingBookingsDto = {
+  /** All upcoming bookings, not just `items.length`. */
+  totalCount: number;
+  items: CustomerDashboardBookingItemDto[];
+};
+
+export type CustomerDashboardDto = {
+  summary: CustomerDashboardSummaryDto;
+  upcomingBookings: CustomerUpcomingBookingsDto;
+  recentBookings: CustomerDashboardBookingItemDto[];
+};
+
+/** `GET/POST /api/customer/favorites` */
+export type BusinessFavoriteDto = {
+  businessId: number;
+  name: string;
+  city: string;
+  profileImageUrl: string | null;
+  favoritedAt: string;
+};

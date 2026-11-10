@@ -1,26 +1,42 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarCheck,
+  Heart,
   LogOut,
   Sparkles,
   Store,
   UserRound,
   UserRoundCog,
   Users,
+  type LucideIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth-store";
+import { useProfileStore } from "@/features/profile/store/profile-store";
 
-const NAV = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+const OWNER_NAV: readonly NavItem[] = [
   { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
   { href: "/dashboard/business", label: "سالن", icon: Store },
   { href: "/dashboard/bookings", label: "رزروها", icon: CalendarCheck },
   { href: "/dashboard/employees", label: "کارمندان", icon: UserRoundCog },
   { href: "/dashboard/services", label: "خدمات", icon: Sparkles },
   { href: "/dashboard/customers", label: "مشتریان", icon: Users },
-] as const;
+];
+
+const CUSTOMER_NAV: readonly NavItem[] = [
+  { href: "/dashboard/my-bookings", label: "رزروها", icon: CalendarCheck },
+  { href: "/dashboard/profile", label: "پروفایل", icon: UserRound },
+  { href: "/dashboard/favorites", label: "علاقه‌مندی‌ها", icon: Heart },
+];
 
 function userInitials(name: string | undefined): string {
   if (!name?.trim()) return "؟";
@@ -28,16 +44,32 @@ function userInitials(name: string | undefined): string {
   return parts.map((p) => p[0]!).join("");
 }
 
+function isBusinessOwner(roles: string[] | undefined): boolean {
+  return roles?.includes("BusinessOwner") ?? false;
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const profile = useProfileStore((s) => s.profile);
+  const profileStatus = useProfileStore((s) => s.status);
+  const fetchProfile = useProfileStore((s) => s.fetchProfile);
+
+  useEffect(() => {
+    if (profileStatus === "idle") void fetchProfile();
+  }, [profileStatus, fetchProfile]);
+
+  const navReady = profileStatus === "loaded" || profileStatus === "error";
+  const isCustomer =
+    profileStatus === "loaded" && !isBusinessOwner(profile?.roles);
+  const nav = isCustomer ? CUSTOMER_NAV : OWNER_NAV;
 
   return (
     <aside className="hidden shrink-0 flex-col border-border bg-surface md:sticky md:top-0 md:flex md:h-[100vh] md:w-[232px] md:border-e">
       <div className="flex h-16 shrink-0 items-center px-4 lg:h-[68px] lg:px-5">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex min-w-0 items-center gap-2.5 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-primary-soft text-primary">
@@ -53,28 +85,39 @@ export function Sidebar() {
         className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3"
         aria-label="ناوبری داشبورد"
       >
-        {NAV.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              className={`flex h-11 items-center gap-2.5 rounded-[11px] px-3.5 text-[13.5px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none ${
-                active
-                  ? "bg-primary-soft font-semibold text-primary"
-                  : "font-medium text-[#4B5563] hover:bg-surface-secondary hover:text-text-primary"
-              }`}
-            >
-              <Icon
-                size={18}
-                className={`shrink-0 ${active ? "text-primary" : "text-[#64748B]"}`}
-                aria-hidden="true"
+        {!navReady ? (
+          <div className="flex flex-col gap-1" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="skeleton-shimmer h-11 rounded-[11px] bg-surface-secondary"
               />
-              {label}
-            </Link>
-          );
-        })}
+            ))}
+          </div>
+        ) : (
+          nav.map(({ href, label, icon: Icon }) => {
+            const active = pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={`flex h-11 items-center gap-2.5 rounded-[11px] px-3.5 text-[13.5px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none ${
+                  active
+                    ? "bg-primary-soft font-semibold text-primary"
+                    : "font-medium text-[#4B5563] hover:bg-surface-secondary hover:text-text-primary"
+                }`}
+              >
+                <Icon
+                  size={18}
+                  className={`shrink-0 ${active ? "text-primary" : "text-[#64748B]"}`}
+                  aria-hidden="true"
+                />
+                {label}
+              </Link>
+            );
+          })
+        )}
       </nav>
 
       <div className="mt-auto shrink-0 px-3 pb-4 pt-3">

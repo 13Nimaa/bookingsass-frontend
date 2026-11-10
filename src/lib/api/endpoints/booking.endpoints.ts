@@ -70,9 +70,16 @@ export function listMyBookingsRequest(
   return apiClient(`/api/bookings/mine${toQuery({ ...params })}`);
 }
 
-// GET /api/bookings/:bookingId — owner / employee (scoped)
+// GET /api/bookings/:bookingId — owner / employee / own customer booking
 export function getBookingRequest(bookingId: number): Promise<Response> {
   return apiClient(`/api/bookings/${bookingId}`);
+}
+
+// POST /api/bookings/:bookingId/cancel — customer self-cancel (Pending/Confirmed)
+export function cancelBookingRequest(bookingId: number): Promise<Response> {
+  return apiClient(`/api/bookings/${bookingId}/cancel`, {
+    method: "POST",
+  });
 }
 
 // PATCH /api/bookings/:bookingId/status — BusinessOwner only
